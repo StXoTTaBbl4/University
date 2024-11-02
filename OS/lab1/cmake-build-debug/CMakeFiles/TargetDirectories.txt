@@ -1,0 +1,3 @@
+D:/ITMO/3-re/OS/lab1/cmake-build-debug/CMakeFiles/lab1.dir
+D:/ITMO/3-re/OS/lab1/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/ITMO/3-re/OS/lab1/cmake-build-debug/CMakeFiles/rebuild_cache.dir

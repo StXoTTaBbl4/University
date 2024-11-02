@@ -1,0 +1,4 @@
+tanks and hasName value "Junker Queen" - поиск конкретного объекта
+tanks or damagers or supports
+(tanks or damagers or supports) and d-hard and r-high
+tanks and member_of_talon some

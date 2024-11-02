@@ -1,0 +1,7 @@
+# ninja log v6
+57	152	7515585765390227	D:/ITMO/3-re/OS/lab1-1/cmake-build-debug/CMakeFiles/cmake.verify_globs	9e560db1878530cd
+154	1360	7515585766354606	source/CMakeFiles/monolith.dir/monolith/HelloWorld.cpp.obj	d1064382fa1eb2f2
+179	1433	7515585766601300	source/CMakeFiles/monolith-app.dir/monolith/app/Main.cpp.obj	ebfe1fe941dd260c
+168	1460	7515585766497781	source/CMakeFiles/monolith.dir/monolith/app/Main.cpp.obj	5eae9775a080e473
+1460	1816	7515585779411361	source/libmonolith.a	43d9c3b035bf9cbb
+1816	2058	7515585782976717	source/monolith.exe	3edad5d3a4ba2b45

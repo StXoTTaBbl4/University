@@ -1,0 +1,542 @@
+@prefix : <http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/> .
+
+<http://www.semanticweb.org/arums/ontologies/2024/9/overwatch> rdf:type owl:Ontology ;
+                                                                rdfs:comment "Онтология для второй части первой лабораторной работы по курсу \"Системы искусственного интеллекта\""@ru .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_GOTD
+:member_of_GOTD rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_junkers
+:member_of_junkers rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_nullsector
+:member_of_nullsector rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_overwatch
+:member_of_overwatch rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_talon
+:member_of_talon rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/member_of_vishkar
+:member_of_vishkar rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/neutral
+:neutral rdf:type owl:ObjectProperty ;
+         rdfs:subPropertyOf :organizations .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/organizations
+:organizations rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf owl:topObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/hasName
+:hasName rdf:type owl:DatatypeProperty ;
+         rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/characters
+:characters rdf:type owl:Class ;
+            rdfs:subClassOf :overwatch .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/d-easy
+:d-easy rdf:type owl:Class ;
+        rdfs:subClassOf :difficulty .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/d-hard
+:d-hard rdf:type owl:Class ;
+        rdfs:subClassOf :difficulty .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/d-medium
+:d-medium rdf:type owl:Class ;
+          rdfs:subClassOf :difficulty .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/damagers
+:damagers rdf:type owl:Class ;
+          rdfs:subClassOf :characters .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/difficulty
+:difficulty rdf:type owl:Class ;
+            rdfs:subClassOf :metrics .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/metrics
+:metrics rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/overwatch
+:overwatch rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/r-high
+:r-high rdf:type owl:Class ;
+        rdfs:subClassOf :relevance .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/r-low
+:r-low rdf:type owl:Class ;
+       rdfs:subClassOf :relevance .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/r-normal
+:r-normal rdf:type owl:Class ;
+          rdfs:subClassOf :relevance .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/relevance
+:relevance rdf:type owl:Class ;
+           rdfs:subClassOf :metrics .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/supports
+:supports rdf:type owl:Class ;
+          rdfs:subClassOf :characters .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/tanks
+:tanks rdf:type owl:Class ;
+       rdfs:subClassOf :characters .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Ana
+:Ana rdf:type owl:NamedIndividual ,
+              :d-hard ,
+              :r-normal ,
+              :supports ;
+     :neutral :Ana ;
+     :hasName "Ana" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Ashe
+:Ashe rdf:type owl:NamedIndividual ,
+               :d-medium ,
+               :damagers ,
+               :r-high ;
+      :member_of_GOTD :Ashe ;
+      :hasName "Ashe" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Baptiste
+:Baptiste rdf:type owl:NamedIndividual ,
+                   :d-medium ,
+                   :r-normal ,
+                   :supports ;
+          :member_of_overwatch :Baptiste ;
+          :hasName "Baptiste" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Bastion
+:Bastion rdf:type owl:NamedIndividual ,
+                  :d-easy ,
+                  :damagers ,
+                  :r-low ;
+         :neutral :Bastion ;
+         :hasName "Bastion" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Brigitte
+:Brigitte rdf:type owl:NamedIndividual ,
+                   :d-easy ,
+                   :r-normal ,
+                   :supports ;
+          :member_of_overwatch :Brigitte ;
+          :hasName "Brigitte" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/D.va
+:D.va rdf:type owl:NamedIndividual ,
+               :d-medium ,
+               :r-high ,
+               :tanks ;
+      :member_of_overwatch :D.va ;
+      :hasName "D.va" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Doomfist
+:Doomfist rdf:type owl:NamedIndividual ,
+                   :d-hard ,
+                   :r-normal ,
+                   :tanks ;
+          :member_of_talon :Doomfist ;
+          :hasName "Doomfist" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Echo
+:Echo rdf:type owl:NamedIndividual ,
+               :d-hard ,
+               :damagers ,
+               :r-normal ;
+      :member_of_overwatch :Echo ;
+      :hasName "Echo" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Genji
+:Genji rdf:type owl:NamedIndividual ,
+                :d-hard ,
+                :damagers ,
+                :r-low ;
+       :member_of_overwatch :Genji ;
+       :hasName "Genji" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Hanzo
+:Hanzo rdf:type owl:NamedIndividual ,
+                :d-medium ,
+                :damagers ,
+                :r-low ;
+       :neutral :Hanzo ;
+       :hasName "Hanzo" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Illari
+:Illari rdf:type owl:NamedIndividual ,
+                 :d-medium ,
+                 :r-normal ,
+                 :supports ;
+        :neutral :Illari ;
+        :hasName "Illari" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Junker_Queen
+:Junker_Queen rdf:type owl:NamedIndividual ,
+                       :d-medium ,
+                       :r-normal ,
+                       :tanks ;
+              :member_of_junkers :Junker_Queen ;
+              :hasName "Junker Queen" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Junkrat
+:Junkrat rdf:type owl:NamedIndividual ,
+                  :d-easy ,
+                  :damagers ,
+                  :r-low ;
+         :member_of_junkers :Junkrat ;
+         :hasName "Junkrat" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Juno
+:Juno rdf:type owl:NamedIndividual ,
+               :d-easy ,
+               :r-high ,
+               :supports ;
+      :neutral :Juno ;
+      :hasName "Juno" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Kiriko
+:Kiriko rdf:type owl:NamedIndividual ,
+                 :d-medium ,
+                 :r-normal ,
+                 :supports ;
+        :neutral :Kiriko ;
+        :hasName "Kiriko" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Lifeweaver
+:Lifeweaver rdf:type owl:NamedIndividual ,
+                     :d-easy ,
+                     :r-low ,
+                     :supports ;
+            :neutral :Lifeweaver ;
+            :hasName "Lifeweaver" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Lucio
+:Lucio rdf:type owl:NamedIndividual ,
+                :d-hard ,
+                :r-normal ,
+                :supports ;
+       :member_of_overwatch :Lucio ;
+       :hasName "Lucio" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Mauga
+:Mauga rdf:type owl:NamedIndividual ,
+                :d-easy ,
+                :r-low ,
+                :tanks ;
+       :member_of_talon :Mauga ;
+       :hasName "Mauga" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/McCree
+:McCree rdf:type owl:NamedIndividual ,
+                 :d-medium ,
+                 :damagers ,
+                 :r-high ;
+        :member_of_overwatch :McCree ;
+        :hasName "McCree" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Mei
+:Mei rdf:type owl:NamedIndividual ,
+              :d-medium ,
+              :damagers ,
+              :r-normal ;
+     :member_of_overwatch :Mei ;
+     :hasName "Mei" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Mercy
+:Mercy rdf:type owl:NamedIndividual ,
+                :d-easy ,
+                :r-low ,
+                :supports ;
+       :member_of_overwatch :Mercy ;
+       :hasName "Mercy" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Moira
+:Moira rdf:type owl:NamedIndividual ,
+                :d-easy ,
+                :r-low ,
+                :supports ;
+       :member_of_talon :Moira ;
+       :hasName "Moira" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Orisa
+:Orisa rdf:type owl:NamedIndividual ,
+                :d-easy ,
+                :r-low ,
+                :tanks ;
+       :neutral :Orisa ;
+       :hasName "Orisa" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Pharah
+:Pharah rdf:type owl:NamedIndividual ,
+                 :d-medium ,
+                 :damagers ,
+                 :r-low ;
+        :member_of_overwatch :Pharah ;
+        :hasName "Pharah" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Rammathra
+:Rammathra rdf:type owl:NamedIndividual ,
+                    :d-medium ,
+                    :r-normal ,
+                    :tanks ;
+           :member_of_nullsector :Rammathra ;
+           :hasName "Rammathra" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Reaper
+:Reaper rdf:type owl:NamedIndividual ,
+                 :d-easy ,
+                 :damagers ,
+                 :r-normal ;
+        :member_of_talon :Reaper ;
+        :hasName "Reaper" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Reinhardt
+:Reinhardt rdf:type owl:NamedIndividual ,
+                    :d-hard ,
+                    :r-low ,
+                    :tanks ;
+           :member_of_overwatch :Reinhardt ;
+           :hasName "Reinhardt" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Roadhog
+:Roadhog rdf:type owl:NamedIndividual ,
+                  :d-medium ,
+                  :r-low ,
+                  :tanks ;
+         :member_of_junkers :Roadhog ;
+         :hasName "Roadhog" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Sigma
+:Sigma rdf:type owl:NamedIndividual ,
+                :d-hard ,
+                :r-normal ,
+                :tanks ;
+       :member_of_talon :Sigma ;
+       :hasName "Sigma" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Sojourn
+:Sojourn rdf:type owl:NamedIndividual ,
+                  :d-hard ,
+                  :damagers ,
+                  :r-low ;
+         :member_of_overwatch :Sojourn ;
+         :hasName "Sojourn" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Soldier_76
+:Soldier_76 rdf:type owl:NamedIndividual ,
+                     :d-easy ,
+                     :damagers ,
+                     :r-low ;
+            :neutral :Soldier_76 ;
+            :hasName "Solider_76" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Sombra
+:Sombra rdf:type owl:NamedIndividual ,
+                 :d-hard ,
+                 :damagers ,
+                 :r-low ;
+        :member_of_talon :Sombra ;
+        :hasName "Sombra" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Symmethra
+:Symmethra rdf:type owl:NamedIndividual ,
+                    :d-medium ,
+                    :damagers ,
+                    :r-low ;
+           :member_of_vishkar :Symmethra ;
+           :hasName "Symmethra" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Torbjorn
+:Torbjorn rdf:type owl:NamedIndividual ,
+                   :d-easy ,
+                   :damagers ,
+                   :r-normal ;
+          :neutral :Torbjorn ;
+          :hasName "Torbjorn" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Tracer
+:Tracer rdf:type owl:NamedIndividual ,
+                 :d-hard ,
+                 :damagers ,
+                 :r-high ;
+        :member_of_overwatch :Tracer ;
+        :hasName "Tracer" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Venture
+:Venture rdf:type owl:NamedIndividual ,
+                  :d-medium ,
+                  :damagers ,
+                  :r-low ;
+         :neutral :Venture ;
+         :hasName "Venture" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Widowmaker
+:Widowmaker rdf:type owl:NamedIndividual ,
+                     :d-medium ,
+                     :damagers ,
+                     :r-low ;
+            :member_of_talon :Widowmaker ;
+            :hasName "Widowmaker" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Winston
+:Winston rdf:type owl:NamedIndividual ,
+                  :d-hard ,
+                  :r-high ,
+                  :tanks ;
+         :member_of_overwatch :Winston ;
+         :hasName "Winston" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Wrecking_ball
+:Wrecking_ball rdf:type owl:NamedIndividual ,
+                        :d-hard ,
+                        :r-low ,
+                        :tanks ;
+               :member_of_junkers :Wrecking_ball ;
+               :hasName "Wrecking Ball" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Zarya
+:Zarya rdf:type owl:NamedIndividual ,
+                :d-medium ,
+                :r-low ,
+                :tanks ;
+       :member_of_overwatch :Zarya ;
+       :hasName "Zarya" .
+
+
+###  http://www.semanticweb.org/arums/ontologies/2024/9/overwatch/Zenyatta
+:Zenyatta rdf:type owl:NamedIndividual ,
+                   :d-medium ,
+                   :r-normal ,
+                   :supports ;
+          :neutral :Zenyatta ;
+          :hasName "Zenyatta" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :d-easy
+                :d-hard
+                :d-medium
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :r-high
+                :r-low
+                :r-normal
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointProperties ;
+  owl:members ( :member_of_GOTD
+                :member_of_junkers
+                :member_of_nullsector
+                :member_of_overwatch
+                :member_of_talon
+                :member_of_vishkar
+                :neutral
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
