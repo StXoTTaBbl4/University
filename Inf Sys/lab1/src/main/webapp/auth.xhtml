@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Основа взята отсюда: https://codehalweb.com/animated-login-registration/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+    <title>Auth page</title>
+    <h:outputStylesheet name="auth.css" library="CSS"/>
+    <h:outputStylesheet name="snackbar.css" library="CSS"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</h:head>
+<f:view>
+    <div class="wrapper">
+        <div id="snackbar-wrapper">
+            <div id="snackbar">
+                <h:outputText id="snackbar-text" value="#{userBean.message}"/>
+            </div>
+        </div>
+        <div class="form-wrapper sign-in">
+            <h:form>
+                <h2>Добро пожаловать</h2>
+                <div class="input-group">
+                    <h:inputText type="text" a:placeholder="Имя пользователья" value="#{userBean.user.username}"/>
+                </div>
+                <div class="input-group">
+                    <h:inputSecret type="password" a:placeholder="Пароль" value="#{userBean.user.passwordHash}"/>
+                </div>
+                <h:commandButton a:class="com-button" id="login-button" action="#{userBean.loginUser}" value="Войти"/>
+                <div class="signUp-link">
+                    <p>Нет аккаунта? <a href="#" class="signUpBtn-link">Зарегистрироваться</a></p>
+                </div>
+            </h:form>
+        </div>
+        <div class="form-wrapper sign-up">
+            <h:form>
+                <h2>Регистрация</h2>
+                <div class="input-group">
+                    <h:inputText type="text" value="#{userBean.user.username}" a:placeholder="Имя пользователя"/>
+                </div>
+                <div class="input-group">
+                    <h:inputSecret a:class="reg-pwd" a:placeholder="Пароль"/>
+                </div>
+                <div class="input-group">
+                    <h:inputSecret a:class="re-reg-pwd" a:placeholder="Повторите пароль"/>
+                </div>
+                <h:inputHidden class="pwd" value="#{userBean.user.passwordHash}"/>
+                <h:commandButton a:class="com-button signup-button" action="#{userBean.registerUser}" value="Зарегистрироваться"/>
+                <div class="signUp-link">
+                    <p>Уже есть аккаунт? <a href="#" class="signInBtn-link">Выполнить вход</a></p>
+                </div>
+            </h:form>
+        </div>
+    </div>
+</f:view>
+<h:outputScript name="auth.js" library="JS"/>
+</html>
