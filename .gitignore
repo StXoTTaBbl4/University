@@ -1,2 +1,6 @@
+# IDE
 .idea
-.pyc
+
+# Python
+*.pyc
+.venv
