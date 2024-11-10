@@ -16,6 +16,8 @@ def initialize_features(path: str, dependent_feature: str) -> tuple[DataFrame, D
     dataframe.dropna(axis=0, how='any', inplace=True)
     # Кодирование категориального признака
     dataframe = dataframe.replace({"Extracurricular Activities": {"Yes": 1, "No": 0}})
+    # Синтаксический признак так вводить?
+    # dataframe["synt"] = dataframe["Extracurricular Activities"] + dataframe["Sleep Hours"]
     # Визуализация статистики
     print(dataframe.info())
     print(dataframe.describe())
@@ -26,7 +28,7 @@ def initialize_features(path: str, dependent_feature: str) -> tuple[DataFrame, D
     return dataframe[dependent_feature], dataframe.drop(dependent_feature, axis=1)
 
 
-def split_data(x: DataFrame, y: DataFrame, length_of_frame: int) -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
+def split_data(x: DataFrame, y: DataFrame, length_of_frame: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Разбивает данные на тестовые и тренировочные сеты
     :param x: независимые параметры
@@ -36,8 +38,11 @@ def split_data(x: DataFrame, y: DataFrame, length_of_frame: int) -> tuple[DataFr
     """
     split_index = int(length_of_frame * 0.8)
     # Мне нужны были массивы ndarray, так что вот такой вот костыль
-    return (x[:split_index].to_numpy(),
-            x[split_index:].to_numpy(),
+    x_train = x[:split_index].to_numpy()
+    x_test = x[split_index:].to_numpy()
+
+    return (np.hstack((np.ones((x_train.shape[0], 1)), x_train)),
+            np.hstack((np.ones((x_test.shape[0], 1)), x_test)),
             y[:split_index].to_numpy(),
             y[split_index:].to_numpy())
 
@@ -48,4 +53,4 @@ def normalized_matrix(matrix: DataFrame) -> DataFrame:
     :param matrix: Матрица значений
     :return: Нормализованная матрица
     """
-    return (matrix-matrix.min())/(matrix.max()-matrix.min())
+    return (matrix - matrix.min()) / (matrix.max() - matrix.min())

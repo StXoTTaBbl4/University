@@ -44,5 +44,5 @@ for key in r2_scores.keys():
     if abs(r2_scores[key][1]) > max_diff:
         max_diff = abs(r2_scores[key][1])
         max_diff_name = key
-    print(f'name: {key} r2: {r2_scores[key][0]} diff: { r2_scores[key][1]}')
+    print(f'name: {key} r2: {r2_scores[key][0]} diff: {r2_scores[key][1]}')
 print(f'\nНаибольшее влияние: {max_diff_name}')

@@ -1,8 +1,7 @@
 import numpy as np
-from pandas import DataFrame
 
 
-def get_weights_matrix(X: DataFrame, Y: DataFrame):
+def get_weights_matrix(X: np.ndarray, Y: np.ndarray):
     """
     Вычисляет коэффициенты линейной регрессии матричным методом
     :param X: Матрица независимых коэффициентов (получена с помощью utility.get_normalized_matrix(df, features))

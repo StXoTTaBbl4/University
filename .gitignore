@@ -4,3 +4,50 @@
 # Python
 *.pyc
 .venv
+
+# Clangd
+.cache
+compile_commands.json
+
+# CMake
+build/
+build-*/
+
+# Temporaries
+*.log
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Other stuff
+tastFile.bin
