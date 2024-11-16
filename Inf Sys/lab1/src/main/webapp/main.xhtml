@@ -4,11 +4,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-<f:view>
-    <h:outputLabel value="Hello, world"/>
-    <div>
-        #{vehicleBean.vehicle}
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+    <title>Main page</title>
+    <h:outputStylesheet name="main.css" library="CSS"/>
+    <h:outputStylesheet name="snackbar.css" library="CSS"/>
+    <h:outputStylesheet name="sidebar.css" library="CSS"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</h:head>
+<h:body>
+    <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
+    <div class="table-wrapper">
+        <div class="tab-header">
+            <button class="tab-header--button" id="vehicle-page--button">Vehicles</button>
+            <button class="tab-header--button" id="coordinates-page--button">Coordinates</button>
+        </div>
+        <h:form id="vehicle-form">
+            <h:dataTable value="#{vehicleBean.vehicles}" var="vehicle" a:calss="table vehicle-table">
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{vehicle.id}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Name</f:facet>
+                    #{vehicle.name}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Type</f:facet>
+                    #{vehicle.type}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Fuel type</f:facet>
+                    #{vehicle.fuelType}
+                </h:column>
+            </h:dataTable>
+        </h:form>
     </div>
-</f:view>
+</h:body>
+<h:outputScript name="sidebar.js" library="JS"/>
+<h:outputScript name="main.js" library="JS"/>
 </html>

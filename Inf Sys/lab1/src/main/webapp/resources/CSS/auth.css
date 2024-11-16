@@ -1,8 +1,13 @@
+:root {
+    --background-main: black;
+    --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'system-ui', sans-serif;
+    font-family: var(--system-ui), serif;
 }
 
 body {
@@ -10,7 +15,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #000;
+    background: var(--background-main);
 }
 
 .wrapper {
@@ -150,4 +155,15 @@ h2 {
 .signUp-link p a:hover {
     color: #FFFFFF;
     text-decoration: underline;
+}
+
+#sid {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    background: var(--background-main);
+    color: grey;
+    font-family: monospace;
+    font-size: 15px;
 }

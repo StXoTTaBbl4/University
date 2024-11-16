@@ -1,0 +1,40 @@
+.sidebar img {
+    max-height: 45px;
+    max-width: 45px;
+    align-self: center;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    width: 60px;
+    height: 100vh;
+    background-color: #202020;
+    color: white;
+    transition: width 0.3s ease;
+    user-select: none;
+}
+
+.sidebar__extended {
+    width: 200px;
+}
+
+#sidebar-header--button {
+    background-color: #FA8072FF;
+}
+
+.sidebar-button {
+    border: none;
+    height: 60px;
+    width: 60px;
+    transition: width 0.3s ease;
+    user-select: none;
+}
+
+.sidebar__extended .sidebar-button {
+    width: 200px;
+}
+
+.sidebar-button:hover, .sidebar-button__expanded:hover {
+    box-shadow: 0 0 50px #FA8072FF;
+}

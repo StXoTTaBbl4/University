@@ -6,6 +6,10 @@ CREATE TYPE fuel_type AS ENUM (
     'ELECTRICITY', 'DIESEL', 'ALCOHOL', 'MANPOWER', 'NUCLEAR'
 );
 
+CREATE TYPE roles AS ENUM (
+    'ADMIN', 'USER'
+);
+
 CREATE TABLE coordinates (
     id SERIAL PRIMARY KEY,
 	x BIGINT NOT NULL CHECK (x > -694),  -- поле x с ограничением
@@ -30,7 +34,8 @@ CREATE TABLE vehicle (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL UNIQUE,
-    password_hash VARCHAR NOT NULL
+    password_hash VARCHAR NOT NULL,
+    role roles NOT NULL DEFAULT 'USER',
 );
 
 CREATE TABLE vehicle_interactions (

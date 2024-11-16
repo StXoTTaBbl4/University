@@ -18,16 +18,17 @@ signUpBtnLink.addEventListener("click", () => {
     wrapper.classList.toggle("active");
 });
 
+reg_password.addEventListener("keyup", ()=>{
+    validatePassword();
+});
+
 re_reg_password.addEventListener("keyup", ()=>{
-    if (reg_password.value !== re_reg_password.value){
-        signup_button.disabled = true;
-        reg_pwd.value = reg_password.value;
-    } else {
-        signup_button.disabled = false;
-    }
+    validatePassword();
 });
 
 window.addEventListener("load", () => {
+    signup_button.disabled = false;
+
     if(message.textContent !== "") {
         snackbar.classList.toggle("show")
         setTimeout(function () {
@@ -35,6 +36,15 @@ window.addEventListener("load", () => {
         }, 3000);
     }
 });
+
+function validatePassword() {
+    if (reg_password.value !== re_reg_password.value){
+        signup_button.disabled = true;
+        reg_pwd.value = reg_password.value;
+    } else {
+        signup_button.disabled = false;
+    }
+}
 
 
 
