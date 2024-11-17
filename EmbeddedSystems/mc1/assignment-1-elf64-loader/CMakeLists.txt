@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(elf64-loader LANGUAGES C)
 
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(CMAKE_C_COMPILER_ID STREQUAL GNU)
