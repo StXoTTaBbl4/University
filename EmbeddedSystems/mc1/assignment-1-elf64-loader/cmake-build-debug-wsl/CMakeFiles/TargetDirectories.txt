@@ -1,0 +1,11 @@
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/CMakeFiles/test.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/CMakeFiles/edit_cache.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/CMakeFiles/rebuild_cache.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/solution/CMakeFiles/elf64-loader.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/solution/CMakeFiles/test.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/solution/CMakeFiles/edit_cache.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/solution/CMakeFiles/rebuild_cache.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/tester/CMakeFiles/check.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/tester/CMakeFiles/test.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/tester/CMakeFiles/edit_cache.dir
+/mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl/tester/CMakeFiles/rebuild_cache.dir

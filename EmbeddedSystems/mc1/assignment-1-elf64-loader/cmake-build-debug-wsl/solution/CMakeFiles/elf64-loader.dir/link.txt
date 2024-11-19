@@ -1,0 +1,1 @@
+/usr/bin/cc -pedantic -Wall -Werror -Wno-unused -ggdb -g "CMakeFiles/elf64-loader.dir/src/main.c.o" -o elf64-loader 

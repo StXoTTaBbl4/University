@@ -1,0 +1,11 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" -S /mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader -B /mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl
+-- The C compiler identification is GNU 12.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Clang-tidy: CLANG_TIDY-NOTFOUND
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/d/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug-wsl
