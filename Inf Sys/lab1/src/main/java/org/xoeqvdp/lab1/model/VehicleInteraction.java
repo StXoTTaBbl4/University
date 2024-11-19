@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Getter
@@ -29,7 +30,7 @@ public class VehicleInteraction {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "modified_date", nullable = false)
-    private Instant modifiedDate;
+    private Timestamp modifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -42,4 +43,14 @@ public class VehicleInteraction {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    @Override
+    public String toString() {
+        return "VehicleInteraction{" +
+                "id=" + id +
+                ", creator=" + creator +
+                ", modifiedDate=" + modifiedDate +
+                ", modifier=" + modifier +
+                ", vehicle=" + vehicle +
+                '}';
+    }
 }

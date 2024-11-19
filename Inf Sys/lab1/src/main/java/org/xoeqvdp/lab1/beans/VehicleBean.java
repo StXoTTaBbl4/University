@@ -1,6 +1,7 @@
 package org.xoeqvdp.lab1.beans;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
@@ -8,31 +9,57 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
+import org.xoeqvdp.lab1.websocket.VehicleWebSocket;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Named("vehicleBean")
-@SessionScoped
+@RequestScoped
 @Getter
 public class VehicleBean implements Serializable {
 
     private Vehicle vehicle = new Vehicle();
-    private VehicleInteraction vehicleInteraction = new VehicleInteraction();
-    private List<Vehicle> vehicles;
-
-    @Inject
-    private UserBean user;
+    private List<Vehicle> vehicles = null;
+    private String message;
 
     private final Session session = HibernateUtil.getSessionFactory().openSession();
-//    private final Transaction transaction = session.getTransaction();
 
-    public boolean createVehicle(Long userId) {
+    @Inject
+    private UserBean userBean;
+
+
+    @PostConstruct
+    public void init(){
+        loadAllVehicles();
+    }
+
+    public String createVehicle() {
+        if (userBean.getUser() == null || userBean.getUser().getId() == null) {
+            message = "Только авторизованные пользователи могут вносить изменения!";
+            return null;
+        }
+
+        VehicleInteraction vehicleInteraction = new VehicleInteraction();
+
+        vehicle = testVehicleAdd();
+        vehicleInteraction.setVehicle(vehicle);
+        vehicleInteraction.setCreator(userBean.getUser());
+        vehicleInteraction.setModifier(userBean.getUser());
+        vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+
         Transaction transaction = session.beginTransaction();
         session.persist(vehicle);
         session.persist(vehicleInteraction);
         transaction.commit();
-        return true;
+
+        vehicle = new Vehicle();
+        loadAllVehicles();
+        VehicleWebSocket.broadcast("update-vehicle");
+        message = "Successful";
+        return null;
     }
 
     public Vehicle getVehicleById(Long id) {
@@ -42,40 +69,27 @@ public class VehicleBean implements Serializable {
     public boolean updateVehicle(Long userId) {
         session.beginTransaction();
         session.merge(vehicle);
-        session.merge(vehicleInteraction);
+        VehicleWebSocket.broadcast("update-vehicle");
         return true;
-    }
-
-    public boolean deleteVehicle(Long id, Long userId) {
-        return false;
     }
 
     public void loadAllVehicles() {
         vehicles = session.createQuery("from Vehicle", Vehicle.class).getResultList();
     }
 
-    public List<Vehicle> getVehiclesByVehicleType(VehicleType vehicleType) {
-        return List.of();
-    }
+    public Vehicle testVehicleAdd(){
+        System.out.println("Test Invoked");
+        Vehicle vehicle1 = new Vehicle();
+        vehicle1.setName("TestCar");
+        vehicle1.setCoordinates(null);
+        vehicle1.setType(VehicleType.CAR);
+        vehicle1.setEnginePower(50);
+        vehicle1.setNumberOfWheels(4L);
+        vehicle1.setCapacity(600L);
+        vehicle1.setDistanceTravelled(40000L);
+        vehicle1.setFuelConsumption(20L);
+        vehicle1.setFuelType(FuelType.NUCLEAR);
 
-    public List<Vehicle> getVehiclesByFuelType(FuelType fuelType) {
-        return List.of();
+        return vehicle1;
     }
-
-    public List<Vehicle> getVehiclesByEnginePower(Double enginePower) {
-        return List.of();
-    }
-
-    public List<Vehicle> getVehiclesByNumberOfWheels(Long wheels) {
-        return List.of();
-    }
-
-    public List<Vehicle> getVehiclesByCapacity(Long capacity) {
-        return List.of();
-    }
-
-    public List<Vehicle> getVehiclesByFuelConsumption(Long fuelConsumption) {
-        return List.of();
-    }
-
 }

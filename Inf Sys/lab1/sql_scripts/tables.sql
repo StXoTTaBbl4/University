@@ -16,18 +16,18 @@ CREATE TABLE coordinates (
     y BIGINT NOT NULL    
 );
 
-CREATE TABLE vehicle (
+CREATE TABLE vehicles (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     coordinates_id BIGINT,
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    vehicle_type vehicle_type,
+    vehicle_type varchar,
     engine_power DOUBLE PRECISION NOT NULL CHECK (engine_power > 0),
     number_of_wheels BIGINT CHECK (number_of_wheels > 0),
     capacity BIGINT CHECK (capacity > 0),
     distance_travelled BIGINT NOT NULL CHECK (distance_travelled > 0),
     fuel_consumption BIGINT CHECK (fuel_consumption > 0),
-    fuel_type fuel_type NOT NULL,
+    fuel_type varchar NOT NULL,
     FOREIGN KEY (coordinates_id) REFERENCES coordinates(id) ON DELETE CASCADE
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL UNIQUE,
     password_hash VARCHAR NOT NULL,
-    role roles NOT NULL DEFAULT 'USER',
+    role varchar NOT NULL DEFAULT 'USER',
 );
 
 CREATE TABLE vehicle_interactions (

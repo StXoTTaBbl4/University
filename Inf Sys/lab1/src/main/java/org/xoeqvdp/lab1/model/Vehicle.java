@@ -53,6 +53,23 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     @Column(name = "fuel_type", nullable = false)
     private FuelType fuelType;
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", coordinates=" + coordinates +
+                ", creationDate=" + creationDate +
+                ", type=" + type +
+                ", enginePower=" + enginePower +
+                ", numberOfWheels=" + numberOfWheels +
+                ", capacity=" + capacity +
+                ", distanceTravelled=" + distanceTravelled +
+                ", fuelConsumption=" + fuelConsumption +
+                ", fuelType=" + fuelType +
+                '}';
+    }
 }
 
 

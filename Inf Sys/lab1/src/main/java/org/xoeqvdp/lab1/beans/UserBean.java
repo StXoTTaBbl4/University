@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class UserBean implements Serializable{
     private User user = new User();
     private String message = "";
-    private Long userID = null;
+    private boolean loggedIn = false;
 
     FacesContext fCtx = FacesContext.getCurrentInstance();
     HttpSession session = (HttpSession) fCtx.getExternalContext().getSession(false);
@@ -49,12 +49,14 @@ public class UserBean implements Serializable{
     }
 
     public String loginUser() {
+        System.out.println(user.getPasswordHash());
         User buff = dbSession.createQuery("from User where username = :username and passwordHash = :password", User.class)
                 .setParameter("username", user.getUsername())
                 .setParameter("password",user.getPasswordHash())
                 .uniqueResult();
         if (buff != null){
-            userID = buff.getId();
+            user = buff;
+            loggedIn = true;
             return "main.xhtml?faces-redirect=true";
         }
         message = "Проверьте правильность логина и пароля";
@@ -62,10 +64,9 @@ public class UserBean implements Serializable{
     }
 
     public String logoutUser(){
-        userID = null;
         user = new User();
+        loggedIn = false;
         message = "Выход выполнен!";
         return "auth.xhtml?faces-redirect=true";
     }
-
 }

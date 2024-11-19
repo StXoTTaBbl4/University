@@ -5,6 +5,8 @@
 }
 
 .sidebar {
+    display: flex;
+    flex-direction: column;
     position: sticky;
     top: 0;
     width: 60px;
@@ -20,6 +22,7 @@
 }
 
 #sidebar-header--button {
+    top: 0;
     background-color: #FA8072FF;
 }
 
@@ -37,4 +40,15 @@
 
 .sidebar-button:hover, .sidebar-button__expanded:hover {
     box-shadow: 0 0 50px #FA8072FF;
+}
+
+#sid {
+    display: flex;
+    max-width: inherit;
+    align-self: flex-end;
+    overflow: hidden;
+    background: var(--background-main);
+    color: grey;
+    font-family: monospace;
+    font-size: 15px;
 }

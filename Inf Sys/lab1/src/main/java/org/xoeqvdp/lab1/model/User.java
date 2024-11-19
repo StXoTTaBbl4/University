@@ -28,7 +28,6 @@ public class User {
     @Column(nullable = false, name = "role")
     private Roles role = Roles.USER;
 
-
     public void setPasswordHash(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-384");
@@ -46,5 +45,15 @@ public class User {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-384 algorithm not found", e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

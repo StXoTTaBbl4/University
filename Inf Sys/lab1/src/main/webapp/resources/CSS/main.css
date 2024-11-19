@@ -23,6 +23,10 @@ body {
     align-items: center;
 }
 
+.hidden {
+    display: none;
+}
+
 .table-wrapper {
     display: flex;
     /*justify-content: space-around;*/
