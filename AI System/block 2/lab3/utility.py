@@ -40,7 +40,7 @@ def split_data(x: DataFrame, y: DataFrame, length_of_frame: int) -> tuple[np.nda
     # Мне нужны были массивы ndarray, так что вот такой вот костыль
     x_train = x[:split_index].to_numpy()
     x_test = x[split_index:].to_numpy()
-
+    # Не добавлять столбец единиц в return'е, вынести куда-то
     return (np.hstack((np.ones((x_train.shape[0], 1)), x_train)),
             np.hstack((np.ones((x_test.shape[0], 1)), x_test)),
             y[:split_index].to_numpy(),
