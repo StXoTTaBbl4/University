@@ -1,84 +1,97 @@
--- https://dbdiagram.io/d/673cf0a3e9daa85aca05336c
-CREATE TABLE Role (
-	id SERIAL PRIMARY KEY,
-	role VARCHAR(32) NOT NULL UNIQUE
+CREATE TYPE "BlockTypes" AS ENUM (
+  'Hardware',
+  'Software',
+  'Processes'
 );
 
-CREATE TABLE Employee (
-	id SERIAL PRIMARY KEY,
-	name VARCHAR NOT NULL,
-	email VARCHAR NOT NULL, 
-	password VARCHAR NOT NULL,
-	role VARCHAR NOT NULL REFERENCES Role(role) ON DELETE NO ACTION
+CREATE TYPE "Roles" AS ENUM (
+  'EMPLOYEE',
+  'LEADER',
+  'ADMINISTRATOR'
 );
 
-CREATE TABLE TasksDescription (
-	id SERIAL PRIMARY key,
-	task_description VARCHAR(256) NOT NULL,
-	leaderID INTEGER NOT NULL,
-	FOREIGN KEY(leaderID) REFERENCES Employee(id) ON DELETE CASCADE
+CREATE TABLE "AssignedRoles" (
+  "employeeID" INTEGER NOT NULL,
+  "role" Roles NOT NULL
 );
 
-CREATE TABLE TasksAssignment (
-	taskID INTEGER NOT NULL,
-	employeeID INTEGER NOT NULL,
-	FOREIGN KEY (taskID) REFERENCES TasksDescription(id) ON DELETE CASCADE,
-	FOREIGN KEY (employeeID) REFERENCES Employee(id) ON DELETE CASCADE
+CREATE TABLE "Employee" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR NOT NULL,
+  "email" VARCHAR NOT NULL,
+  "password" VARCHAR NOT NULL
 );
 
-CREATE TABLE Level (
-	weight INTEGER UNIQUE NOT NULL,
-	level VARCHAR(32) UNIQUE, 
-	description VARCHAR(128)
+CREATE TABLE "TasksDescription" (
+  "id" SERIAL PRIMARY KEY,
+  "task_description" VARCHAR(256) NOT NULL
 );
 
-CREATE TABLE Hardware (
-    id SERIAL PRIMARY KEY,
-    product TEXT UNIQUE NOT NULL
+CREATE TABLE "TasksAssignment" (
+  "taskID" INTEGER NOT NULL,
+  "employeeID" INTEGER NOT NULL
 );
 
-CREATE TABLE Software (
-    id SERIAL PRIMARY KEY,
-    product TEXT UNIQUE NOT NULL
+CREATE TABLE "Levels" (
+  "id" SERIAL PRIMARY KEY,
+  "weight" INTEGER UNIQUE NOT NULL,
+  "level" VARCHAR(32) UNIQUE,
+  "description" VARCHAR(128)
 );
 
-CREATE TABLE Processes (
-    id SERIAL PRIMARY KEY,
-    process TEXT UNIQUE NOT NULL
+CREATE TABLE "Products" (
+  "id" SERIAL PRIMARY KEY,
+  "product" TEXT UNIQUE NOT NULL,
+  "block_type" BlockTypes NOT NULL
 );
 
-CREATE TABLE TaskHW (
-    id SERIAL PRIMARY KEY,
-    task TEXT UNIQUE NOT NULL
+CREATE TABLE "Tasks" (
+  "id" SERIAL PRIMARY KEY,
+  "productID" INTEGER NOT NULL,
+  "task" VARCHAR(64) NOT NULL
 );
 
-CREATE TABLE TaskSW (
-    id SERIAL PRIMARY KEY,
-    task TEXT UNIQUE NOT NULL
+CREATE TABLE "EmployeeSkills" (
+  "id" SERIAL PRIMARY KEY,
+  "employeeID" INTEGER NOT NULL,
+  "taskID" INTEGER NOT NULL,
+  "levelID" INTEGER NOT NULL,
+  "creationTime" TIMESTAMP DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE SkillsHW (
-    id SERIAL PRIMARY KEY,
-    employee_id INTEGER NOT NULL REFERENCES Employee(id) ON DELETE CASCADE,
-    product TEXT NOT NULL REFERENCES Hardware(product) ON DELETE NO ACTION,
-    task TEXT NOT NULL REFERENCES TaskHW(task) ON DELETE NO ACTION,
-    level TEXT NOT NULL REFERENCES Level(level) ON DELETE NO ACTION,
-    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "CertificateCategory" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR(256) NOT NULL
 );
 
-CREATE TABLE SkillsSW (
-    id SERIAL PRIMARY KEY,
-    employee_id INTEGER NOT NULL REFERENCES Employee(id) ON DELETE CASCADE,
-    product TEXT NOT NULL REFERENCES Software(product) ON DELETE NO ACTION,
-    task TEXT NOT NULL REFERENCES TaskSW(task) ON DELETE NO ACTION,
-    level TEXT NOT NULL REFERENCES Level(level) ON DELETE NO ACTION,
-    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "CertifictateSubCategory" (
+  "id" SERIAL PRIMARY KEY,
+  "categoryID" INTEGER NOT NULL,
+  "name" VARCHAR NOT NULL
 );
 
-CREATE TABLE SkillsPR (
-    id SERIAL PRIMARY KEY,
-    employee_id INTEGER NOT NULL REFERENCES Employee(id) ON DELETE CASCADE,
-    process TEXT NOT NULL REFERENCES Processes(process) ON DELETE NO ACTION,
-    level TEXT NOT NULL REFERENCES Level(level) ON DELETE NO ACTION,
-    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "Certificates" (
+  "id" SERIAL PRIMARY KEY,
+  "employeeID" INTEGER NOT NULL,
+  "subcategoryID" INTEGER NOT NULL
 );
+
+ALTER TABLE "AssignedRoles" ADD FOREIGN KEY ("employeeID") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("taskID") REFERENCES "TasksDescription" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("employeeID") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "Tasks" ADD FOREIGN KEY ("productID") REFERENCES "Products" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "EmployeeSkills" ADD FOREIGN KEY ("employeeID") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "EmployeeSkills" ADD FOREIGN KEY ("taskID") REFERENCES "Tasks" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "EmployeeSkills" ADD FOREIGN KEY ("levelID") REFERENCES "Levels" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "CertifictateSubCategory" ADD FOREIGN KEY ("categoryID") REFERENCES "CertificateCategory" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "Certificates" ADD FOREIGN KEY ("employeeID") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "Certificates" ADD FOREIGN KEY ("subcategoryID") REFERENCES "CertifictateSubCategory" ("id") ON DELETE NO ACTION;

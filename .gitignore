@@ -12,6 +12,7 @@ compile_commands.json
 # CMake
 build/
 build-*/
+cmake-build-debug
 
 # Temporaries
 *.log
@@ -50,4 +51,4 @@ build-*/
 *.app
 
 # Other stuff
-tastFile.bin
+local_stuff
