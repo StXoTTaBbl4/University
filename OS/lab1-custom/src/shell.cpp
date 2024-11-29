@@ -24,6 +24,17 @@ vector<string> ParseCommand(const string& input) {
     return tokens;
 }
 
+bool is_waiting_for_input(HANDLE child_stdin) {
+    const char *test_input = "\n";
+    DWORD bytes_written;
+
+    if (WriteFile(child_stdin, test_input, strlen(test_input), &bytes_written, nullptr) && bytes_written > 0) {
+        // Если данные успешно записаны, программа, возможно, ждет ввода
+        return true;
+    }
+    return false;
+}
+
 bool RunCommand(LPSTR command) {
     const auto start = GetTickCount64();
     HANDLE hToken = nullptr;
@@ -71,9 +82,12 @@ bool RunCommand(LPSTR command) {
 
     // перенаправление стандартного вывода
     si.dwFlags = STARTF_USESTDHANDLES;
-    si.hStdInput = hStdInRead;
-    si.hStdOutput = hStdOutWrite;
-    si.hStdError = hStdOutWrite;
+    // si.hStdInput = hStdInRead;
+    // si.hStdOutput = hStdOutWrite;
+    // si.hStdError = hStdOutWrite;
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
     // si.wShowWindow = SW_SHOW;
 
     // токен процесса
@@ -110,15 +124,18 @@ bool RunCommand(LPSTR command) {
         cerr << "Failed to create process. Error: " << GetLastError() << endl;
         CloseHandle(hStdOutRead);
         CloseHandle(hStdOutWrite);
+        CloseHandle(hStdInRead);
+        CloseHandle(hStdInWrite);
         CloseHandle(hToken);
         CloseHandle(hDuplicateToken);
         return false;
     }
 
     cout << pi.dwProcessId << endl;
-
-    CloseHandle(hStdInRead);  // Родительский процесс не читает из stdin
-    CloseHandle(hStdOutWrite); // Родительский процесс не пишет в stdout
+    // Sleep(1500);
+    //
+    // CloseHandle(hStdInRead);  // Родительский процесс не читает из stdin
+    // CloseHandle(hStdOutWrite); // Родительский процесс не пишет в stdout
 
     // WaitForSingleObject(pi.hProcess, INFINITE);
 
@@ -126,27 +143,35 @@ bool RunCommand(LPSTR command) {
     // CloseHandle(hToken);
     // CloseHandle(hDuplicateToken);
 
-    char buffer[4096];
-    DWORD bytesRead, bytesWritten;
-    string input;
-    while (true) {
-        // Читаем вывод дочернего процесса
-        if (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr)) {
-            buffer[bytesRead] = '\0';
-            cout << "Subprocess: " << pi.dwProcessId << " output>" << buffer << endl;
-        }
-
-        cout << "Subprocess: " << pi.dwProcessId << " input>";
-        getline(cin, input);
-        if (input == "exit") {
-            break;
-        }
-
-        // Добавляем символ новой строки для завершения команды
-        input += "\n";
-        WriteFile(hStdInWrite, input.c_str(), input.size(), &bytesWritten, nullptr);
-
-    }
+    // char buffer[4096];
+    // DWORD bytesRead, bytesWritten;
+    // string input;
+    // while (true) {
+    //     // Читаем вывод дочернего процесса
+    //     while (true) {
+    //         if (PeekNamedPipe(hStdOutRead, nullptr, 0, nullptr, &bytesRead, nullptr) && bytesRead > 0) {
+    //             ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr);
+    //             buffer[bytesRead] = '\0';
+    //             cout << buffer; // Выводим всё, что получили
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    //
+    //     if (is_waiting_for_input(hStdInWrite)) {
+    //         getline(cin, input);
+    //         if (input == "exit") {
+    //             break;
+    //         }
+    //         // Добавляем символ новой строки для завершения команды
+    //         input += "\n";
+    //         WriteFile(hStdInWrite, input.c_str(), input.size(), &bytesWritten, nullptr);
+    //     } else {
+    //         break;
+    //     }
+    //
+    //     Sleep(1000);
+    // }
 
     // char buffer[4096];
     // DWORD bytesRead;
@@ -155,15 +180,15 @@ bool RunCommand(LPSTR command) {
     //     cout << buffer;
     // }
 
-    CloseHandle(hStdInWrite);
-    CloseHandle(hStdOutRead);
+    // CloseHandle(hStdInWrite);
+    // CloseHandle(hStdOutRead);
     WaitForSingleObject(pi.hProcess, INFINITE);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 
     const auto end = GetTickCount64();
 
-    cout<< "Execution time: " << end - start << " ms" << endl;
+    cout<< "Execution time: " << end - start - 1500 << " ms" << endl;
 
     return true;
 }
@@ -185,7 +210,7 @@ bool RunThreads(int number_of_threads, LPSTR command) {
 
 void RunShell() {
     SetConsoleStyle();
-    PrintLogo(R"(D:\ITMO\3-re\University\OS\lab1-custom\src\logo.txt)");
+    PrintLogo("../src/logo.txt");
     char current_directory[MAX_PATH];
 
     while (true) {

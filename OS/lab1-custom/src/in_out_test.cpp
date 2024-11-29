@@ -8,7 +8,7 @@ int main() {
     while (true) {
         string input;
         getline(cin, input);
-        if (input == "  ") {
+        if (input == "exit") {
             break;
         }
         cout << input << endl;
