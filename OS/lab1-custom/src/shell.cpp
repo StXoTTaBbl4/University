@@ -24,17 +24,6 @@ vector<string> ParseCommand(const string& input) {
     return tokens;
 }
 
-bool is_waiting_for_input(HANDLE child_stdin) {
-    const char *test_input = "\n";
-    DWORD bytes_written;
-
-    if (WriteFile(child_stdin, test_input, strlen(test_input), &bytes_written, nullptr) && bytes_written > 0) {
-        // Если данные успешно записаны, программа, возможно, ждет ввода
-        return true;
-    }
-    return false;
-}
-
 bool RunCommand(LPSTR command) {
     const auto start = GetTickCount64();
     HANDLE hToken = nullptr;
@@ -46,45 +35,42 @@ bool RunCommand(LPSTR command) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-    HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr, hStdInRead = nullptr, hStdInWrite = nullptr;;
-    SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
-
-    sa.bInheritHandle = TRUE;
-    sa.lpSecurityDescriptor = nullptr;
+    // HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr, hStdInRead = nullptr, hStdInWrite = nullptr;;
+    // SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
+    //
+    // sa.bInheritHandle = TRUE;
+    // sa.lpSecurityDescriptor = nullptr;
 
     si.cb = sizeof(STARTUPINFO);
 
-    // канал для перенаправления вывода
-    if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
-        cerr << "Failed to create hStdOutRead <==> hStdOutWrite pipe. Error: " << GetLastError() << endl;
-        return false;
-    }
-
-    if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
-        cerr << "Failed to create hStdInRead <==> hStdInWrite pipe. Error: " << GetLastError() << endl;
-        return false;
-    }
-
-    // дескрипторы как наследуемые
-    if (!SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0)) {
-        cerr << "Failed to set hStdOutRead handle information. Error: " << GetLastError() << endl;
-        CloseHandle(hStdOutRead);
-        CloseHandle(hStdOutWrite);
-        return false;
-    }
-
-    if (!SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0)) {
-        cerr << "Failed to set hStdInWrite handle information. Error: " << GetLastError() << endl;
-        CloseHandle(hStdInRead);
-        CloseHandle(hStdInWrite);
-        return false;
-    }
+    // // канал для перенаправления вывода
+    // if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
+    //     cerr << "Failed to create hStdOutRead <==> hStdOutWrite pipe. Error: " << GetLastError() << endl;
+    //     return false;
+    // }
+    //
+    // if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
+    //     cerr << "Failed to create hStdInRead <==> hStdInWrite pipe. Error: " << GetLastError() << endl;
+    //     return false;
+    // }
+    //
+    // // дескрипторы как наследуемые
+    // if (!SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0)) {
+    //     cerr << "Failed to set hStdOutRead handle information. Error: " << GetLastError() << endl;
+    //     CloseHandle(hStdOutRead);
+    //     CloseHandle(hStdOutWrite);
+    //     return false;
+    // }
+    //
+    // if (!SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0)) {
+    //     cerr << "Failed to set hStdInWrite handle information. Error: " << GetLastError() << endl;
+    //     CloseHandle(hStdInRead);
+    //     CloseHandle(hStdInWrite);
+    //     return false;
+    // }
 
     // перенаправление стандартного вывода
     si.dwFlags = STARTF_USESTDHANDLES;
-    // si.hStdInput = hStdInRead;
-    // si.hStdOutput = hStdOutWrite;
-    // si.hStdError = hStdOutWrite;
     si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
     si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
@@ -93,15 +79,15 @@ bool RunCommand(LPSTR command) {
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
         cerr << "Failed to get process token. Error: " << GetLastError() << endl;
-        CloseHandle(hStdOutRead);
-        CloseHandle(hStdOutWrite);
+        // CloseHandle(hStdOutRead);
+        // CloseHandle(hStdOutWrite);
         return false;
     }
 
     if (!DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, nullptr, SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
         cerr << "Failed to duplicate token. Error: " << GetLastError() << endl;
-        CloseHandle(hStdOutRead);
-        CloseHandle(hStdOutWrite);
+        // CloseHandle(hStdOutRead);
+        // CloseHandle(hStdOutWrite);
         CloseHandle(hToken);
         return false;
     }
@@ -113,8 +99,6 @@ bool RunCommand(LPSTR command) {
         nullptr,                    // Атрибуты безопасности процесса
         nullptr,                    // Атрибуты безопасности потока
         TRUE,                    // Унаследовать дескрипторы
-        // CREATE_NEW_CONSOLE,        // Не показывать окно
-        // CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
         0,
         nullptr,                    // Переменные окружения
         nullptr,                    // Текущий каталог
@@ -122,63 +106,16 @@ bool RunCommand(LPSTR command) {
         &pi                      // Информация о процессе
     )) {
         cerr << "Failed to create process. Error: " << GetLastError() << endl;
-        CloseHandle(hStdOutRead);
-        CloseHandle(hStdOutWrite);
-        CloseHandle(hStdInRead);
-        CloseHandle(hStdInWrite);
+        // CloseHandle(hStdOutRead);
+        // CloseHandle(hStdOutWrite);
+        // CloseHandle(hStdInRead);
+        // CloseHandle(hStdInWrite);
         CloseHandle(hToken);
         CloseHandle(hDuplicateToken);
         return false;
     }
 
     cout << pi.dwProcessId << endl;
-    // Sleep(1500);
-    //
-    // CloseHandle(hStdInRead);  // Родительский процесс не читает из stdin
-    // CloseHandle(hStdOutWrite); // Родительский процесс не пишет в stdout
-
-    // WaitForSingleObject(pi.hProcess, INFINITE);
-
-    // CloseHandle(hStdOutWrite);
-    // CloseHandle(hToken);
-    // CloseHandle(hDuplicateToken);
-
-    // char buffer[4096];
-    // DWORD bytesRead, bytesWritten;
-    // string input;
-    // while (true) {
-    //     // Читаем вывод дочернего процесса
-    //     while (true) {
-    //         if (PeekNamedPipe(hStdOutRead, nullptr, 0, nullptr, &bytesRead, nullptr) && bytesRead > 0) {
-    //             ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr);
-    //             buffer[bytesRead] = '\0';
-    //             cout << buffer; // Выводим всё, что получили
-    //         } else {
-    //             break;
-    //         }
-    //     }
-    //
-    //     if (is_waiting_for_input(hStdInWrite)) {
-    //         getline(cin, input);
-    //         if (input == "exit") {
-    //             break;
-    //         }
-    //         // Добавляем символ новой строки для завершения команды
-    //         input += "\n";
-    //         WriteFile(hStdInWrite, input.c_str(), input.size(), &bytesWritten, nullptr);
-    //     } else {
-    //         break;
-    //     }
-    //
-    //     Sleep(1000);
-    // }
-
-    // char buffer[4096];
-    // DWORD bytesRead;
-    // while (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr) && bytesRead > 0) {
-    //     buffer[bytesRead] = '\0';
-    //     cout << buffer;
-    // }
 
     // CloseHandle(hStdInWrite);
     // CloseHandle(hStdOutRead);
@@ -188,7 +125,7 @@ bool RunCommand(LPSTR command) {
 
     const auto end = GetTickCount64();
 
-    cout<< "Execution time: " << end - start - 1500 << " ms" << endl;
+    cout<< "Execution time: "<< end-start << endl;
 
     return true;
 }
