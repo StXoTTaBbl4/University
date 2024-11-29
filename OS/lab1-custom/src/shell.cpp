@@ -4,11 +4,64 @@
 #include <string>
 #include <sstream>
 #include <chrono>
+#include <fstream>
 #include <thread>
 #include <vector>
 
 
 using namespace std;
+
+void PrintLogo(const string& filePath) {
+    ifstream file(filePath);
+
+    if (!file.is_open()) {
+        cerr << "Can not open the file: " << filePath << std::endl;
+        return;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+
+    file.close();
+}
+
+bool SetConsoleStyle() {
+    SetConsoleTitle("Custom shell");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE) {
+        std::cerr << "Can not get console descriptor: " << GetLastError() << std::endl;
+        return false;
+    }
+
+    // Получаем текущую информацию о буфере
+    CONSOLE_SCREEN_BUFFER_INFOEX csbiex;
+    ZeroMemory(&csbiex, sizeof(csbiex));
+    csbiex.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+
+    if (!GetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
+        cerr << "Can not get buffer info: " << GetLastError() << std::endl;
+        return false;
+    }
+
+    // Задаем оранжевый цвет (пример: заменим индекс 6 на RGB оранжевого)
+    csbiex.ColorTable[6] = RGB(255, 165, 0); // Оранжевый
+
+    // Устанавливаем обновленные настройки
+    if (!SetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
+        cerr << "Can not set buffer info: " << GetLastError() << std::endl;
+        return false;
+    }
+
+    // Устанавливаем текст оранжевым цветом
+    if (!SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN)) {
+        cerr << "Can not set text color: " << GetLastError() << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 vector<string> ParseCommand(const string& input) {
     stringstream ss(input);
@@ -22,8 +75,6 @@ vector<string> ParseCommand(const string& input) {
     return tokens;
 }
 
-// Время выполнения тут - есть
-// вызов cmd.exe
 bool RunCommand(LPSTR command) {
     const auto start = GetTickCount64();
     HANDLE hToken = nullptr;
@@ -59,6 +110,7 @@ bool RunCommand(LPSTR command) {
     si.hStdOutput = hStdOutWrite;
     si.hStdError = hStdOutWrite;
     si.hStdInput = hStdInput;
+    si.wShowWindow = SW_SHOW;
 
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
@@ -83,7 +135,7 @@ bool RunCommand(LPSTR command) {
         nullptr,                    // Атрибуты безопасности процесса
         nullptr,                    // Атрибуты безопасности потока
         TRUE,                    // Унаследовать дескрипторы
-        CREATE_NO_WINDOW,        // Не показывать окно
+        CREATE_NEW_CONSOLE,        // Не показывать окно
         nullptr,                    // Переменные окружения
         nullptr,                    // Текущий каталог
         &si,                     // Информация о старте
@@ -96,6 +148,8 @@ bool RunCommand(LPSTR command) {
         CloseHandle(hDuplicateToken);
         return false;
     }
+
+    // WaitForSingleObject(pi.hProcess, INFINITE);
 
     CloseHandle(hStdOutWrite);
     CloseHandle(hToken);
@@ -135,8 +189,9 @@ bool RunThreads(int number_of_threads, LPSTR command) {
     return true;
 }
 
-
 void RunShell() {
+    SetConsoleStyle();
+    PrintLogo(R"(D:\ITMO\3-re\University\OS\lab1-custom\src\logo.txt)");
     char current_directory[MAX_PATH];
 
     while (true) {
@@ -199,7 +254,6 @@ void RunShell() {
 }
 
 int main() {
-    cout << "Close me and never open again!\n";
     RunShell();
     return 0;
 
