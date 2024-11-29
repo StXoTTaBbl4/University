@@ -10,7 +10,6 @@
 
 #include "./utility/shell_styles.h"
 
-
 using namespace std;
 
 vector<string> ParseCommand(const string& input) {
@@ -36,37 +35,46 @@ bool RunCommand(LPSTR command) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-    HANDLE hStdInRead = nullptr, hStdInWrite = nullptr; // Каналы для stdin
-    HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr;
+    HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr, hStdInRead = nullptr, hStdInWrite = nullptr;;
     SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
+
+    sa.bInheritHandle = TRUE;
+    sa.lpSecurityDescriptor = nullptr;
 
     si.cb = sizeof(STARTUPINFO);
 
-    if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
-        std::cerr << "Failed to create stdin pipe. Error: " << GetLastError() << std::endl;
-        return false;
-    }
-
     // канал для перенаправления вывода
     if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
-        cerr << "Failed to create stdout pipe. Error: " << GetLastError() << endl;
+        cerr << "Failed to create hStdOutRead <==> hStdOutWrite pipe. Error: " << GetLastError() << endl;
         return false;
     }
 
-    // запись в канал как не унаследованная
+    if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
+        cerr << "Failed to create hStdInRead <==> hStdInWrite pipe. Error: " << GetLastError() << endl;
+        return false;
+    }
+
+    // дескрипторы как наследуемые
     if (!SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0)) {
-        cerr << "Failed to set handle information. Error: " << GetLastError() << endl;
+        cerr << "Failed to set hStdOutRead handle information. Error: " << GetLastError() << endl;
         CloseHandle(hStdOutRead);
         CloseHandle(hStdOutWrite);
         return false;
     }
 
+    if (!SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0)) {
+        cerr << "Failed to set hStdInWrite handle information. Error: " << GetLastError() << endl;
+        CloseHandle(hStdInRead);
+        CloseHandle(hStdInWrite);
+        return false;
+    }
+
     // перенаправление стандартного вывода
     si.dwFlags = STARTF_USESTDHANDLES;
+    si.hStdInput = hStdInRead;
     si.hStdOutput = hStdOutWrite;
     si.hStdError = hStdOutWrite;
-    si.hStdInput = hStdInRead;
-    si.wShowWindow = SW_HIDE;
+    // si.wShowWindow = SW_SHOW;
 
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
@@ -91,7 +99,9 @@ bool RunCommand(LPSTR command) {
         nullptr,                    // Атрибуты безопасности процесса
         nullptr,                    // Атрибуты безопасности потока
         TRUE,                    // Унаследовать дескрипторы
-        CREATE_NEW_CONSOLE,        // Не показывать окно
+        // CREATE_NEW_CONSOLE,        // Не показывать окно
+        // CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
+        0,
         nullptr,                    // Переменные окружения
         nullptr,                    // Текущий каталог
         &si,                     // Информация о старте
@@ -105,17 +115,49 @@ bool RunCommand(LPSTR command) {
         return false;
     }
 
+    cout << pi.dwProcessId << endl;
+
+    CloseHandle(hStdInRead);  // Родительский процесс не читает из stdin
+    CloseHandle(hStdOutWrite); // Родительский процесс не пишет в stdout
+
     // WaitForSingleObject(pi.hProcess, INFINITE);
 
+    // CloseHandle(hStdOutWrite);
+    // CloseHandle(hToken);
+    // CloseHandle(hDuplicateToken);
+
     char buffer[4096];
-    DWORD bytesRead;
-    while (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr) && bytesRead > 0) {
-        buffer[bytesRead] = '\0';
-        cout << buffer;
+    DWORD bytesRead, bytesWritten;
+    string input;
+    while (true) {
+        // Читаем вывод дочернего процесса
+        if (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr)) {
+            buffer[bytesRead] = '\0';
+            cout << "Subprocess: " << pi.dwProcessId << " output>" << buffer << endl;
+        }
+
+        cout << "Subprocess: " << pi.dwProcessId << " input>";
+        getline(cin, input);
+        if (input == "exit") {
+            break;
+        }
+
+        // Добавляем символ новой строки для завершения команды
+        input += "\n";
+        WriteFile(hStdInWrite, input.c_str(), input.size(), &bytesWritten, nullptr);
+
     }
 
-    WaitForSingleObject(pi.hProcess, INFINITE);
+    // char buffer[4096];
+    // DWORD bytesRead;
+    // while (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr) && bytesRead > 0) {
+    //     buffer[bytesRead] = '\0';
+    //     cout << buffer;
+    // }
+
+    CloseHandle(hStdInWrite);
     CloseHandle(hStdOutRead);
+    WaitForSingleObject(pi.hProcess, INFINITE);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 
@@ -123,14 +165,10 @@ bool RunCommand(LPSTR command) {
 
     cout<< "Execution time: " << end - start << " ms" << endl;
 
-    CloseHandle(hStdOutWrite);
-    CloseHandle(hToken);
-    CloseHandle(hDuplicateToken);
-
     return true;
 }
 
-bool RunThreads(const int number_of_threads, LPSTR command) {
+bool RunThreads(int number_of_threads, LPSTR command) {
     vector<thread> threads;
 
     for (int i = 0; i < number_of_threads; ++i) {
@@ -148,9 +186,9 @@ bool RunThreads(const int number_of_threads, LPSTR command) {
 void RunShell() {
     SetConsoleStyle();
     PrintLogo(R"(D:\ITMO\3-re\University\OS\lab1-custom\src\logo.txt)");
+    char current_directory[MAX_PATH];
 
     while (true) {
-        char current_directory[MAX_PATH];
 
         GetCurrentDirectory(MAX_PATH, current_directory);
         cout <<"cstShell>" << current_directory << ">";
