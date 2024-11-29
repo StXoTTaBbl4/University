@@ -8,60 +8,10 @@
 #include <thread>
 #include <vector>
 
+#include "./utility/shell_styles.h"
+
 
 using namespace std;
-
-void PrintLogo(const string& filePath) {
-    ifstream file(filePath);
-
-    if (!file.is_open()) {
-        cerr << "Can not open the file: " << filePath << std::endl;
-        return;
-    }
-
-    string line;
-    while (getline(file, line)) {
-        cout << line << endl;
-    }
-
-    file.close();
-}
-
-bool SetConsoleStyle() {
-    SetConsoleTitle("Custom shell");
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hConsole == INVALID_HANDLE_VALUE) {
-        std::cerr << "Can not get console descriptor: " << GetLastError() << std::endl;
-        return false;
-    }
-
-    // Получаем текущую информацию о буфере
-    CONSOLE_SCREEN_BUFFER_INFOEX csbiex;
-    ZeroMemory(&csbiex, sizeof(csbiex));
-    csbiex.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
-
-    if (!GetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
-        cerr << "Can not get buffer info: " << GetLastError() << std::endl;
-        return false;
-    }
-
-    // Задаем оранжевый цвет (пример: заменим индекс 6 на RGB оранжевого)
-    csbiex.ColorTable[6] = RGB(255, 165, 0); // Оранжевый
-
-    // Устанавливаем обновленные настройки
-    if (!SetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
-        cerr << "Can not set buffer info: " << GetLastError() << std::endl;
-        return false;
-    }
-
-    // Устанавливаем текст оранжевым цветом
-    if (!SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN)) {
-        cerr << "Can not set text color: " << GetLastError() << std::endl;
-        return false;
-    }
-
-    return true;
-}
 
 vector<string> ParseCommand(const string& input) {
     stringstream ss(input);
@@ -86,18 +36,24 @@ bool RunCommand(LPSTR command) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-    HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr, hStdInput = nullptr;
+    HANDLE hStdInRead = nullptr, hStdInWrite = nullptr; // Каналы для stdin
+    HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr;
     SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
 
     si.cb = sizeof(STARTUPINFO);
 
-    // канал для перенаправления вывода
-    if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
-        cerr << "Failed to create pipe. Error: " << GetLastError() << endl;
+    if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
+        std::cerr << "Failed to create stdin pipe. Error: " << GetLastError() << std::endl;
         return false;
     }
 
-    // запись в канал как неунаследованная
+    // канал для перенаправления вывода
+    if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
+        cerr << "Failed to create stdout pipe. Error: " << GetLastError() << endl;
+        return false;
+    }
+
+    // запись в канал как не унаследованная
     if (!SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0)) {
         cerr << "Failed to set handle information. Error: " << GetLastError() << endl;
         CloseHandle(hStdOutRead);
@@ -109,8 +65,8 @@ bool RunCommand(LPSTR command) {
     si.dwFlags = STARTF_USESTDHANDLES;
     si.hStdOutput = hStdOutWrite;
     si.hStdError = hStdOutWrite;
-    si.hStdInput = hStdInput;
-    si.wShowWindow = SW_SHOW;
+    si.hStdInput = hStdInRead;
+    si.wShowWindow = SW_HIDE;
 
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
@@ -151,10 +107,6 @@ bool RunCommand(LPSTR command) {
 
     // WaitForSingleObject(pi.hProcess, INFINITE);
 
-    CloseHandle(hStdOutWrite);
-    CloseHandle(hToken);
-    CloseHandle(hDuplicateToken);
-
     char buffer[4096];
     DWORD bytesRead;
     while (ReadFile(hStdOutRead, buffer, sizeof(buffer) - 1, &bytesRead, nullptr) && bytesRead > 0) {
@@ -171,10 +123,14 @@ bool RunCommand(LPSTR command) {
 
     cout<< "Execution time: " << end - start << " ms" << endl;
 
+    CloseHandle(hStdOutWrite);
+    CloseHandle(hToken);
+    CloseHandle(hDuplicateToken);
+
     return true;
 }
 
-bool RunThreads(int number_of_threads, LPSTR command) {
+bool RunThreads(const int number_of_threads, LPSTR command) {
     vector<thread> threads;
 
     for (int i = 0; i < number_of_threads; ++i) {
@@ -192,9 +148,9 @@ bool RunThreads(int number_of_threads, LPSTR command) {
 void RunShell() {
     SetConsoleStyle();
     PrintLogo(R"(D:\ITMO\3-re\University\OS\lab1-custom\src\logo.txt)");
-    char current_directory[MAX_PATH];
 
     while (true) {
+        char current_directory[MAX_PATH];
 
         GetCurrentDirectory(MAX_PATH, current_directory);
         cout <<"cstShell>" << current_directory << ">";
@@ -256,6 +212,5 @@ void RunShell() {
 int main() {
     RunShell();
     return 0;
-
 }
 
