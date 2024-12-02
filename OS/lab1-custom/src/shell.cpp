@@ -7,6 +7,7 @@
 #include <fstream>
 #include <thread>
 #include <vector>
+#include "bits/stdc++.h"
 
 #include "./utility/shell_styles.h"
 
@@ -35,39 +36,7 @@ bool RunCommand(LPSTR command) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-    // HANDLE hStdOutRead = nullptr, hStdOutWrite = nullptr, hStdInRead = nullptr, hStdInWrite = nullptr;;
-    // SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
-    //
-    // sa.bInheritHandle = TRUE;
-    // sa.lpSecurityDescriptor = nullptr;
-
     si.cb = sizeof(STARTUPINFO);
-
-    // // канал для перенаправления вывода
-    // if (!CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 0)) {
-    //     cerr << "Failed to create hStdOutRead <==> hStdOutWrite pipe. Error: " << GetLastError() << endl;
-    //     return false;
-    // }
-    //
-    // if (!CreatePipe(&hStdInRead, &hStdInWrite, &sa, 0)) {
-    //     cerr << "Failed to create hStdInRead <==> hStdInWrite pipe. Error: " << GetLastError() << endl;
-    //     return false;
-    // }
-    //
-    // // дескрипторы как наследуемые
-    // if (!SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0)) {
-    //     cerr << "Failed to set hStdOutRead handle information. Error: " << GetLastError() << endl;
-    //     CloseHandle(hStdOutRead);
-    //     CloseHandle(hStdOutWrite);
-    //     return false;
-    // }
-    //
-    // if (!SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0)) {
-    //     cerr << "Failed to set hStdInWrite handle information. Error: " << GetLastError() << endl;
-    //     CloseHandle(hStdInRead);
-    //     CloseHandle(hStdInWrite);
-    //     return false;
-    // }
 
     // перенаправление стандартного вывода
     si.dwFlags = STARTF_USESTDHANDLES;
@@ -79,15 +48,11 @@ bool RunCommand(LPSTR command) {
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
         cerr << "Failed to get process token. Error: " << GetLastError() << endl;
-        // CloseHandle(hStdOutRead);
-        // CloseHandle(hStdOutWrite);
         return false;
     }
 
     if (!DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, nullptr, SecurityImpersonation, TokenPrimary, &hDuplicateToken)) {
         cerr << "Failed to duplicate token. Error: " << GetLastError() << endl;
-        // CloseHandle(hStdOutRead);
-        // CloseHandle(hStdOutWrite);
         CloseHandle(hToken);
         return false;
     }
@@ -106,10 +71,6 @@ bool RunCommand(LPSTR command) {
         &pi                      // Информация о процессе
     )) {
         cerr << "Failed to create process. Error: " << GetLastError() << endl;
-        // CloseHandle(hStdOutRead);
-        // CloseHandle(hStdOutWrite);
-        // CloseHandle(hStdInRead);
-        // CloseHandle(hStdInWrite);
         CloseHandle(hToken);
         CloseHandle(hDuplicateToken);
         return false;
@@ -117,8 +78,6 @@ bool RunCommand(LPSTR command) {
 
     cout << pi.dwProcessId << endl;
 
-    // CloseHandle(hStdInWrite);
-    // CloseHandle(hStdOutRead);
     WaitForSingleObject(pi.hProcess, INFINITE);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
@@ -130,7 +89,7 @@ bool RunCommand(LPSTR command) {
     return true;
 }
 
-bool RunThreads(int number_of_threads, LPSTR command) {
+bool RunThreads(const int number_of_threads, LPSTR command) {
     vector<thread> threads;
 
     for (int i = 0; i < number_of_threads; ++i) {
@@ -148,9 +107,9 @@ bool RunThreads(int number_of_threads, LPSTR command) {
 void RunShell() {
     SetConsoleStyle();
     PrintLogo("../src/logo.txt");
-    char current_directory[MAX_PATH];
 
     while (true) {
+        char current_directory[MAX_PATH];
 
         GetCurrentDirectory(MAX_PATH, current_directory);
         cout <<"cstShell>" << current_directory << ">";
@@ -204,6 +163,12 @@ void RunShell() {
         for (const auto& token : tokens) {
             full_command += token + " ";
         }
+
+        auto file_in = find(tokens.begin(), tokens.end(), "<<");
+        auto file_out = find(tokens.begin(), tokens.end(), ">>");
+
+        cout << "Begin: " << file_in - tokens.begin() << endl;
+        cout << "End: cm" << file_out - tokens.begin() << endl;
 
         RunCommand(&full_command[0]);
     }
