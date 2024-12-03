@@ -1,0 +1,9 @@
+<jboss-deployment-structure>
+    <deployment>
+        <exclusions>
+            <module name="javax.faces.api" />
+            <module name="com.sun.jsf-impl" />
+            <module name="org.jboss.as.jsf-injection" />
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>

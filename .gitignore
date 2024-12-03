@@ -1,6 +1,15 @@
 # IDE
 .idea
 
+### IntelliJ IDEA ###
+*.iws
+*.iml
+*.ipr
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
 # Python
 *.pyc
 .venv
@@ -52,3 +61,4 @@ cmake-build-debug
 
 # Other stuff
 local_stuff
+hibernate.cfg.xml

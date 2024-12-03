@@ -41,5 +41,4 @@ public class CoordinatesInteraction {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "coordinate_id", nullable = false)
     private Coordinates coordinate;
-
 }

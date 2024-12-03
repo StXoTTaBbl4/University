@@ -58,7 +58,13 @@
       <version>2.2.0</version>
       <scope>provided</scope>
     </dependency>
-
+    <!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
+    <dependency>
+      <groupId>org.primefaces</groupId>
+      <artifactId>primefaces</artifactId>
+      <version>14.0.8</version>
+      <classifier>jakarta</classifier>
+    </dependency>
 
 
     <dependency>

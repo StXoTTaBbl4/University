@@ -6,6 +6,7 @@ const coordinates_page_button = document.getElementById("coordinates-page--butto
 const snackbar = document.getElementById("snackbar");
 const snackbar_msg = document.getElementById("snackbar-text")
 
+const vehicle_form = document.getElementById("vehicle-form");
 const load_vehicles = document.getElementById("vehicle-form:vehicles_button");
 
 let vehicle_update_required = false
@@ -17,11 +18,13 @@ vehicle_page_button.addEventListener("click", () => {
         load_vehicles.click();
         vehicle_update_required = false
     }
+    vehicle_form.classList.remove("hidden");
 });
 
 coordinates_page_button.addEventListener("click", () => {
-    coordinates_page_button.classList.add("active-page");
+    coordinates_page_button.classList.toggle("active-page");
     vehicle_page_button.classList.remove("active-page");
+    vehicle_form.classList.add("hidden");
 });
 
 snackbar_msg.addEventListener("change", () => {
@@ -37,8 +40,13 @@ socket.onopen = function() {
 
 socket.onclose = function() {
     console.log("Соединение закрыто, переподключение через 5 секунд...");
-    setTimeout(function () { socket = connectToWebsocket()}, 5000);
+    setTimeout(function () { socket = connectToWebsocket("ws://localhost:8080/lab1-1.0-SNAPSHOT/ws/vehicles")
+    console.log(socket)}, 5000);
 };
+
+socket.onerror = function () {
+    console.log("Ошибка Websocket соединения.")
+}
 
 socket.onmessage = function(event) {
     console.log(event.data)

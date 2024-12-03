@@ -18,6 +18,7 @@ public class VehicleWebSocket {
 
     @OnOpen
     public void onOpen(Session session) {
+        session.setMaxIdleTimeout(0);
         sessions.add(session);
     }
 
@@ -26,13 +27,6 @@ public class VehicleWebSocket {
         sessions.remove(session);
         System.out.println("Session closed: " + session.getId());
     }
-//    @OnMessage
-//    public void onMessage(String message, Session session) throws IOException {
-//        // Полученное сообщение можно обработать, если нужно
-//        broadcast("update");
-//    }
-
-
 
     public static void broadcast(String message) {
         synchronized (sessions) {
@@ -41,7 +35,7 @@ public class VehicleWebSocket {
                     if (session.isOpen()) {
                         session.getBasicRemote().sendText(message);
                     } else {
-                        System.out.println("Сессия закрыта: " + session.getId());
+                        System.out.println("Session closed: " + session.getId());
                         sessions.remove(session);
                     }
                 } catch (IOException e) {

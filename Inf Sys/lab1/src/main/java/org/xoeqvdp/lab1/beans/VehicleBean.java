@@ -7,6 +7,7 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
 import org.xoeqvdp.lab1.websocket.VehicleWebSocket;
@@ -25,16 +26,26 @@ public class VehicleBean implements Serializable {
     private List<Vehicle> vehicles = null;
     private String message;
 
+    private int page = 1;
+    private boolean lastPage = false;
+    private final int itemsPerPage = 10;
+
+
     private final Session session = HibernateUtil.getSessionFactory().openSession();
 
     @Inject
     private UserBean userBean;
 
-
     @PostConstruct
     public void init(){
-        loadAllVehicles();
+        loadPage();
     }
+
+
+//    @PostConstruct
+//    public void init(){
+//        loadAllVehicles();
+//    }
 
     public String createVehicle() {
         if (userBean.getUser() == null || userBean.getUser().getId() == null) {
@@ -91,5 +102,27 @@ public class VehicleBean implements Serializable {
         vehicle1.setFuelType(FuelType.NUCLEAR);
 
         return vehicle1;
+    }
+
+    public void loadPage() {
+        Query<Vehicle> query = session.createQuery("FROM Vehicle ", Vehicle.class);
+        query.setFirstResult((page - 1) * itemsPerPage);
+        query.setMaxResults(itemsPerPage);
+        vehicles = query.getResultList();
+        lastPage = vehicles.size() < itemsPerPage;
+    }
+
+    public void nextPage() {
+        if (!lastPage) {
+            page++;
+            loadPage();
+        }
+    }
+
+    public void previousPage(){
+        if (page > 1){
+            page--;
+            loadPage();
+        }
     }
 }

@@ -15,21 +15,18 @@
 </h:head>
 <h:body>
     <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
-    <div class="table-wrapper">
-        <div id="snackbar-wrapper">
-            <div id="snackbar">
+    <h:panelGroup layout="block" a:class="table-wrapper">
+        <h:panelGroup layout="block" id="snackbar-wrapper">
+            <h:panelGroup layout="block" id="snackbar">
                 <h:outputText id="snackbar-text" value="#{vehicleBean.message}"/>
-            </div>
-        </div>
-        <div class="tab-header">
+            </h:panelGroup>
+        </h:panelGroup>
+        <h:panelGroup layout="block" a:class="tab-header">
             <button class="tab-header--button active-page" id="vehicle-page--button">Vehicles</button>
             <button class="tab-header--button" id="coordinates-page--button">Coordinates</button>
-        </div>
-
-        <h:commandButton value="Click Me" action="#{vehicleBean.testVehicleAdd}"/>
-
+        </h:panelGroup>
         <h:form id="vehicle-form">
-            <h:commandButton a:class="hidden load-vehicles" id="vehicles_button" action="#{vehicleBean.loadAllVehicles}">
+            <h:commandButton a:class="hidden" id="vehicles_button" action="#{vehicleBean.loadPage}">
                 <f:ajax render="vehicle-table" />
             </h:commandButton>
             <h:dataTable id="vehicle-table" value="#{vehicleBean.vehicles}" var="vehicle" a:calss="table vehicle-table">
@@ -50,14 +47,25 @@
                     #{vehicle.fuelType}
                 </h:column>
             </h:dataTable>
+            <h:panelGroup layout="block" a:class="vehicle-form__nav-wrapper">
+                <h:panelGroup layout="block" a:class="vehicle-form__nav">
+                    <h:commandButton id="vehicle-table_previos" a:class="vehicle-form__nav-button" value="prev." action="#{vehicleBean.previousPage}" disabled="#{vehicleBean.page == 1}">
+                        <f:ajax render="vehicle-table"/>
+                        <f:ajax render="vehicle_page_counter"/>
+                        <f:ajax render="vehicle-table_next"/>
+                        <f:ajax render="vehicle-table_previos"/>
+                    </h:commandButton>
+                    <h:outputText id="vehicle_page_counter" a:class="page_counter" value="#{vehicleBean.page}"/>
+                    <h:commandButton id="vehicle-table_next" a:class="vehicle-form__nav-button" value="next" action="#{vehicleBean.nextPage}" disabled="#{vehicleBean.lastPage}">
+                        <f:ajax render="vehicle-table"/>
+                        <f:ajax render="vehicle_page_counter"/>
+                        <f:ajax render="vehicle-table_next"/>
+                        <f:ajax render="vehicle-table_previos"/>
+                    </h:commandButton>
+                </h:panelGroup>
+            </h:panelGroup>
         </h:form>
-
-        <h:form id="add-vehicle">
-            <h:commandButton id="add" value="123" action="#{vehicleBean.createVehicle}">
-                <f:ajax render="snackbar-text"/>
-            </h:commandButton>
-        </h:form>
-    </div>
+    </h:panelGroup>
 </h:body>
 <h:outputScript name="sidebar.js" library="JS"/>
 <h:outputScript name="main.js" library="JS"/>
