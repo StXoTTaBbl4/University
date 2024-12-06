@@ -3,7 +3,6 @@
 #include <wtsapi32.h>
 #include <string>
 #include <sstream>
-#include <chrono>
 #include <fstream>
 #include <thread>
 #include <vector>
@@ -13,7 +12,14 @@
 
 using namespace std;
 
-vector<string> ParseCommand(const string& input) {
+struct ParsedCommand {
+    string full_command;
+    string redirectKey;
+    string filepath;
+    boolean valid = false;
+};
+
+vector<string> ParseInput(const string& input) {
     stringstream ss(input);
     string segment;
     vector<string> tokens;
@@ -24,6 +30,51 @@ vector<string> ParseCommand(const string& input) {
 
     return tokens;
 }
+
+
+ParsedCommand parseCommand(const vector<string>& input) {
+    ParsedCommand result;
+    size_t input_size = input.size();
+
+    if (input_size == 0) {
+        cout << "Input command is empty" << endl;
+        return result;
+    }
+
+    for (size_t i = 0; i < input_size; ++i) {
+        const std::string& token = input[i];
+
+        if (token == ">>" || token == "<<") {
+            result.redirectKey = token;
+
+            if (i + 1 < input_size) {
+                result.filepath = input[i + 1];
+                break;
+            } else {
+                cout <<  "File path is missing after redirection operator" << endl;
+                return result;
+            }
+        }
+
+        if (!result.redirectKey.empty()) {
+            break;
+        }
+
+        if (!result.full_command.empty()) {
+            result.full_command += " ";
+        }
+        result.full_command += token;
+    }
+
+    if (!result.redirectKey.empty() && result.filepath.empty()) {
+        cout << "Redirection operator found without a file path" << endl;
+        return result;
+    }
+
+    result.valid = true;
+    return result;
+}
+
 
 bool RunCommand(LPSTR command) {
     const auto start = GetTickCount64();
@@ -76,7 +127,7 @@ bool RunCommand(LPSTR command) {
         return false;
     }
 
-    cout << pi.dwProcessId << endl;
+    cout << "PID: " << pi.dwProcessId << endl;
 
     WaitForSingleObject(pi.hProcess, INFINITE);
     CloseHandle(pi.hProcess);
@@ -117,7 +168,7 @@ void RunShell() {
         string input;
         getline(cin, input);
 
-        vector<string> tokens = ParseCommand(input);
+        vector<string> tokens = ParseInput(input);
         if (tokens.empty()) { continue;}
 
         string command = tokens[0];
@@ -159,18 +210,22 @@ void RunShell() {
             continue;
         }
 
-        string full_command;
-        for (const auto& token : tokens) {
-            full_command += token + " ";
+        ParsedCommand result = parseCommand(tokens);
+
+        if (result.valid == false) {
+            // RunCommand()
+            cout << "nope" << endl;
         }
 
-        auto file_in = find(tokens.begin(), tokens.end(), "<<");
-        auto file_out = find(tokens.begin(), tokens.end(), ">>");
 
-        cout << "Begin: " << file_in - tokens.begin() << endl;
-        cout << "End: cm" << file_out - tokens.begin() << endl;
+        // for (const auto& token : tokens) {
+        //     full_command += token + " ";
+        // }
 
-        RunCommand(&full_command[0]);
+        cout << "Key" << result.redirectKey << '\n';
+        cout << "path" << result.filepath << '\n';
+
+        // RunCommand(&full_command[0], redirectKey, filepath);
     }
 }
 
