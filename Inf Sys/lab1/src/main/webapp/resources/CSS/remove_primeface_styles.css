@@ -1,0 +1,4 @@
+/* Для сноса дефолтных стилей PrimeFaces. Через web.xml уже они сносят мне. Но не стили, а память ; _ ; */
+.ui-button, .ui-widget, .ui-state-default, .ui-corner-all, .ui-button-text-only, .ui-state-disabled {
+    all: unset;
+}
