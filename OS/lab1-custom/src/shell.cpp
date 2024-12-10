@@ -17,6 +17,7 @@ struct ParsedCommand {
     string redirectKey;
     string filepath;
     boolean valid = false;
+    boolean redirected = false;
 };
 
 vector<string> ParseInput(const string& input) {
@@ -32,7 +33,7 @@ vector<string> ParseInput(const string& input) {
 }
 
 
-ParsedCommand parseCommand(const vector<string>& input) {
+ParsedCommand ParseCommand(const vector<string>& input) {
     ParsedCommand result;
     size_t input_size = input.size();
 
@@ -42,13 +43,14 @@ ParsedCommand parseCommand(const vector<string>& input) {
     }
 
     for (size_t i = 0; i < input_size; ++i) {
-        const std::string& token = input[i];
+        const string& token = input[i];
 
         if (token == ">>" || token == "<<") {
             result.redirectKey = token;
 
             if (i + 1 < input_size) {
                 result.filepath = input[i + 1];
+                result.redirected = true;
                 break;
             } else {
                 cout <<  "File path is missing after redirection operator" << endl;
@@ -76,7 +78,8 @@ ParsedCommand parseCommand(const vector<string>& input) {
 }
 
 
-bool RunCommand(LPSTR command) {
+bool RunCommand(const ParsedCommand& parsed_command) {
+
     const auto start = GetTickCount64();
     HANDLE hToken = nullptr;
     HANDLE hDuplicateToken = nullptr;
@@ -88,13 +91,38 @@ bool RunCommand(LPSTR command) {
     ZeroMemory(&pi, sizeof(pi));
 
     si.cb = sizeof(STARTUPINFO);
-
-    // перенаправление стандартного вывода
     si.dwFlags = STARTF_USESTDHANDLES;
-    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-    // si.wShowWindow = SW_SHOW;
+
+
+    if (parsed_command.redirected == true) {
+        if(parsed_command.redirectKey == "<<") {
+            HANDLE hInput = CreateFile(parsed_command.filepath.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+            if (hInput == INVALID_HANDLE_VALUE) {
+                cerr << "Failed to open file for redirection: " << parsed_command.filepath << endl;
+                return false;
+            }
+            si.hStdInput = hInput;
+            si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+        }
+        if (parsed_command.redirectKey == ">>") {
+            HANDLE hOutput = CreateFile(parsed_command.filepath.c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+            if (hOutput == INVALID_HANDLE_VALUE) {
+                cerr << "Failed to open file for redirection." << parsed_command.filepath << endl;
+                return false;
+            }
+            si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+            si.hStdOutput = hOutput;
+            si.hStdError = hOutput;
+        }
+    } else {
+        si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+        si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+        si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+        // si.wShowWindow = SW_SHOW;
+    }
+
+    auto command = const_cast<LPSTR>(parsed_command.full_command.c_str());
 
     // токен процесса
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &hToken)) {
@@ -133,6 +161,14 @@ bool RunCommand(LPSTR command) {
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 
+    if (parsed_command.redirectKey == ">>") {
+        CloseHandle(si.hStdOutput);
+        CloseHandle(si.hStdError);
+    }
+    if (parsed_command.redirectKey == "<<") {
+        CloseHandle(si.hStdInput);
+    }
+
     const auto end = GetTickCount64();
 
     cout<< "Execution time: "<< end-start << endl;
@@ -140,11 +176,16 @@ bool RunCommand(LPSTR command) {
     return true;
 }
 
-bool RunThreads(const int number_of_threads, LPSTR command) {
+bool RunThreads(const int number_of_threads, const string& command) {
     vector<thread> threads;
+    ParsedCommand parsed_command = ParseCommand(ParseInput(command));
+
+    if (parsed_command.valid == false) {
+        return false;
+    }
 
     for (int i = 0; i < number_of_threads; ++i) {
-        threads.emplace_back(RunCommand, command);
+        threads.emplace_back(RunCommand, parsed_command);
     }
 
     for (auto& thread : threads) {
@@ -171,7 +212,7 @@ void RunShell() {
         vector<string> tokens = ParseInput(input);
         if (tokens.empty()) { continue;}
 
-        string command = tokens[0];
+        const string& command = tokens[0];
 
         if (command == "exit") {
             break;
@@ -202,30 +243,19 @@ void RunShell() {
                     target_command += tokens[i] + " ";
                 }
 
-                RunThreads(value, &target_command[0]);
+                RunThreads(value, target_command);
             } else {
                 cerr << "Usage: threads amount<integer> command" << '\n';
             }
-
             continue;
         }
 
-        ParsedCommand result = parseCommand(tokens);
+        ParsedCommand parsed_command = ParseCommand(tokens);
 
-        if (result.valid == false) {
-            // RunCommand()
-            cout << "nope" << endl;
+        if (parsed_command.valid == true) {
+            RunCommand(parsed_command);
         }
 
-
-        // for (const auto& token : tokens) {
-        //     full_command += token + " ";
-        // }
-
-        cout << "Key" << result.redirectKey << '\n';
-        cout << "path" << result.filepath << '\n';
-
-        // RunCommand(&full_command[0], redirectKey, filepath);
     }
 }
 
