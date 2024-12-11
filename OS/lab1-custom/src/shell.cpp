@@ -16,6 +16,8 @@ struct ParsedCommand {
     string full_command;
     string redirectKey;
     string filepath;
+    size_t thread_count = 0;
+    boolean threads = false;
     boolean valid = false;
     boolean redirected = false;
 };
@@ -90,37 +92,12 @@ bool RunCommand(const ParsedCommand& parsed_command) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
+
     si.cb = sizeof(STARTUPINFO);
     si.dwFlags = STARTF_USESTDHANDLES;
-
-
-    if (parsed_command.redirected == true) {
-        if(parsed_command.redirectKey == "<<") {
-            HANDLE hInput = CreateFile(parsed_command.filepath.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-            if (hInput == INVALID_HANDLE_VALUE) {
-                cerr << "Failed to open file for redirection: " << parsed_command.filepath << endl;
-                return false;
-            }
-            si.hStdInput = hInput;
-            si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-        }
-        if (parsed_command.redirectKey == ">>") {
-            HANDLE hOutput = CreateFile(parsed_command.filepath.c_str(), GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-            if (hOutput == INVALID_HANDLE_VALUE) {
-                cerr << "Failed to open file for redirection." << parsed_command.filepath << endl;
-                return false;
-            }
-            si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-            si.hStdOutput = hOutput;
-            si.hStdError = hOutput;
-        }
-    } else {
-        si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-        si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-        si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-        // si.wShowWindow = SW_SHOW;
-    }
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
 
     auto command = const_cast<LPSTR>(parsed_command.full_command.c_str());
 
@@ -160,14 +137,6 @@ bool RunCommand(const ParsedCommand& parsed_command) {
     WaitForSingleObject(pi.hProcess, INFINITE);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
-
-    if (parsed_command.redirectKey == ">>") {
-        CloseHandle(si.hStdOutput);
-        CloseHandle(si.hStdError);
-    }
-    if (parsed_command.redirectKey == "<<") {
-        CloseHandle(si.hStdInput);
-    }
 
     const auto end = GetTickCount64();
 
@@ -239,7 +208,7 @@ void RunShell() {
                 }
 
                 string target_command;
-                for (int i = 2; i < tokens.size() ; i++ ) {
+                for (size_t i = 2; i < tokens.size() ; i++ ) {
                     target_command += tokens[i] + " ";
                 }
 
@@ -253,6 +222,25 @@ void RunShell() {
         ParsedCommand parsed_command = ParseCommand(tokens);
 
         if (parsed_command.valid == true) {
+            if (parsed_command.redirected == true) {
+                if (parsed_command.redirectKey == ">>" && freopen(parsed_command.filepath.c_str(), "r", stdin) == nullptr) {
+                    cerr << "Ошибка при открытии файла для ввода\n";
+                    RunCommand(parsed_command);
+                    freopen("CONIN$", "r", stdin);
+                    continue;
+                }
+
+                if (parsed_command.redirectKey == "<<" && freopen(parsed_command.filepath.c_str(), "w", stdout) == nullptr) {
+                    cerr << "Ошибка при открытии файла для вывода\n";
+                    RunCommand(parsed_command);
+                    freopen("CONOUT$", "r", stdout);
+                    continue;
+                }
+
+                cerr << "You are not supposed to be here T_T-> This is wrong redirectKey: " << parsed_command.redirectKey << endl;
+                continue;
+            }
+
             RunCommand(parsed_command);
         }
 
