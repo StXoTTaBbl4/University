@@ -12,16 +12,34 @@
 
 using namespace std;
 
+/**
+ * Структура, описывающая обработанную команду, с выставленными флагами перенаправления вывода и дублирования потоков
+ */
 struct ParsedCommand {
+    /// Команда, которою нужновыполнить
     string full_command;
+    /// Символ перенаправления `<<` | `>>` (ввод | вывод)
     string redirectKey;
+    /// Путь до файла перенаправления IO
     string filepath;
+    /// Количество потоков для создания (если используется)
     size_t thread_count = 0;
+    /// Флаг использования потоков
     boolean threads = false;
-    boolean valid = false;
+    /// Флаг присутсвия перенаправления
     boolean redirected = false;
+    /// Флаг корректности переданной функции
+    boolean valid = false;
 };
 
+mutex write_mutex;
+
+/**
+ *
+ *
+ * @param input
+ * @return
+ */
 vector<string> ParseInput(const string& input) {
     stringstream ss(input);
     string segment;
@@ -34,17 +52,40 @@ vector<string> ParseInput(const string& input) {
     return tokens;
 }
 
-
+/**
+ *
+ * @param input
+ * @return
+ */
 ParsedCommand ParseCommand(const vector<string>& input) {
     ParsedCommand result;
-    size_t input_size = input.size();
+    const size_t input_size = input.size();
 
     if (input_size == 0) {
         cout << "Input command is empty" << endl;
         return result;
     }
 
-    for (size_t i = 0; i < input_size; ++i) {
+    size_t i = 0;
+
+    if (input[i] == "threads") {
+        result.threads = true;
+        if (input_size >= 3) {
+            char* end;
+            const int value = strtol(input[i+1].c_str(), &end, 10);
+            if (*end != '\0' || value <= 1 || value > INT_MAX) {
+                cerr << "Error: thread count must be more than 1 and less than INT_MAX\n";
+                return result;
+            }
+            i = 2;
+            result.thread_count = value;
+        } else {
+            cout <<  "No command to run specified" << endl;
+            return result;
+        }
+    }
+
+    for (;i < input_size; ++i) {
         const string& token = input[i];
 
         if (token == ">>" || token == "<<") {
@@ -60,14 +101,7 @@ ParsedCommand ParseCommand(const vector<string>& input) {
             }
         }
 
-        if (!result.redirectKey.empty()) {
-            break;
-        }
-
-        if (!result.full_command.empty()) {
-            result.full_command += " ";
-        }
-        result.full_command += token;
+        result.full_command += token + " ";
     }
 
     if (!result.redirectKey.empty() && result.filepath.empty()) {
@@ -79,25 +113,70 @@ ParsedCommand ParseCommand(const vector<string>& input) {
     return result;
 }
 
+/**
+ *
+ * @param filePath
+ * @param buffer
+ */
+void SynchronizedWriteToFile(const string& filePath, const vector<char>& buffer) {
+    lock_guard lock(write_mutex);
 
+    ofstream file(filePath, ios::binary | ios::app);
+    if (!file.is_open()) {
+        throw runtime_error("Unable to open file: " + filePath);
+    }
+
+    file.write(buffer.data(), static_cast<long long>(buffer.size()));
+
+    if (!file) {
+        throw runtime_error("Error writing to file: " + filePath);
+    }
+
+}
+
+/**
+ *
+ * @param parsed_command
+ * @return
+ */
 bool RunCommand(const ParsedCommand& parsed_command) {
 
     const auto start = GetTickCount64();
     HANDLE hToken = nullptr;
     HANDLE hDuplicateToken = nullptr;
+    HANDLE hReadPipe, hWritePipe;
 
+    SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE };
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-
     si.cb = sizeof(STARTUPINFO);
     si.dwFlags = STARTF_USESTDHANDLES;
     si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
     si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+
+
+    if (parsed_command.redirected && parsed_command.redirectKey == ">>") {
+        if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0)) {
+            cerr << "Failed to create pipe.\n";
+            return false;
+        }
+
+        if (!SetHandleInformation(hWritePipe, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT)) {
+            cerr << "Failed to set handle information.\n";
+            CloseHandle(hReadPipe);
+            CloseHandle(hWritePipe);
+            return false;
+        }
+
+        si.hStdOutput = hWritePipe;
+    } else {
+        si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    }
 
     auto command = const_cast<LPSTR>(parsed_command.full_command.c_str());
 
@@ -135,25 +214,54 @@ bool RunCommand(const ParsedCommand& parsed_command) {
     cout << "PID: " << pi.dwProcessId << endl;
 
     WaitForSingleObject(pi.hProcess, INFINITE);
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
+    TerminateProcess(pi.hProcess, 0);
 
     const auto end = GetTickCount64();
 
     cout<< "Execution time: "<< end-start << endl;
 
+    if (parsed_command.redirected) {
+        if (!CloseHandle(hWritePipe)) {
+            cerr << "Failed to close pipe. Error: " << GetLastError() << endl;
+            return false;
+        }
+
+        DWORD bytesAvailable = 0;
+        vector<char> buffer(bytesAvailable);
+        DWORD bytesRead;
+
+        if (!PeekNamedPipe(hReadPipe, nullptr, 0, nullptr, &bytesAvailable, nullptr)) {
+            cerr << "Failed to peek into pipe. Error: " << GetLastError() << "\n";
+        }
+
+        if (bytesAvailable > 0) {
+            buffer.resize(bytesAvailable);
+            if (ReadFile(hReadPipe, buffer.data(), bytesAvailable, &bytesRead, nullptr) && bytesRead > 0) {
+                SynchronizedWriteToFile(parsed_command.filepath, vector<char>(buffer.begin(), buffer.begin() + bytesRead));
+            }
+        }
+    }
+
+    CloseHandle(hReadPipe);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
     return true;
 }
 
-bool RunThreads(const int number_of_threads, const string& command) {
+/**
+ *
+ * @param parsed_command
+ * @return
+ */
+bool RunThreads(const ParsedCommand& parsed_command) {
     vector<thread> threads;
-    ParsedCommand parsed_command = ParseCommand(ParseInput(command));
 
-    if (parsed_command.valid == false) {
+    if (!parsed_command.valid) {
         return false;
     }
 
-    for (int i = 0; i < number_of_threads; ++i) {
+    for (size_t i = 0; i < parsed_command.thread_count; ++i) {
         threads.emplace_back(RunCommand, parsed_command);
     }
 
@@ -161,10 +269,14 @@ bool RunThreads(const int number_of_threads, const string& command) {
         thread.join();
     }
 
-    std::cout << "All threads have finished.\n";
+    cout << "All threads have finished.\n";
     return true;
 }
 
+/**
+ * Метод отвечает за работу окна командной строки, обрабатывая пользовательский ввод до тех пор,
+ * пока не будет введена команда `exit`
+ */
 void RunShell() {
     SetConsoleStyle();
     PrintLogo("../src/logo.txt");
@@ -198,55 +310,32 @@ void RunShell() {
             continue;
         }
 
-        if (command == "threads") {
-            if (tokens.size() >= 3) {
-                char* end;
-                const int value = strtol(tokens[1].c_str(), &end, 10);
-                if (*end != '\0' || value <= 0 || value > INT_MAX) {
-                    cerr << "Error: value must be more than 0 and less than INT_MAX\n";
-                    continue;
-                }
-
-                string target_command;
-                for (size_t i = 2; i < tokens.size() ; i++ ) {
-                    target_command += tokens[i] + " ";
-                }
-
-                RunThreads(value, target_command);
-            } else {
-                cerr << "Usage: threads amount<integer> command" << '\n';
-            }
-            continue;
-        }
-
         ParsedCommand parsed_command = ParseCommand(tokens);
 
-        if (parsed_command.valid == true) {
-            if (parsed_command.redirected == true) {
-                if (parsed_command.redirectKey == ">>" && freopen(parsed_command.filepath.c_str(), "r", stdin) == nullptr) {
-                    cerr << "Ошибка при открытии файла для ввода\n";
-                    RunCommand(parsed_command);
+        if (parsed_command.valid) {
+            if (parsed_command.redirected && parsed_command.redirectKey == "<<") {
+                if (freopen(parsed_command.filepath.c_str(), "r", stdin) != nullptr) {
                     freopen("CONIN$", "r", stdin);
                     continue;
                 }
-
-                if (parsed_command.redirectKey == "<<" && freopen(parsed_command.filepath.c_str(), "w", stdout) == nullptr) {
-                    cerr << "Ошибка при открытии файла для вывода\n";
-                    RunCommand(parsed_command);
-                    freopen("CONOUT$", "r", stdout);
-                    continue;
-                }
-
-                cerr << "You are not supposed to be here T_T-> This is wrong redirectKey: " << parsed_command.redirectKey << endl;
+                cerr << "Ошибка при открытии файла для ввода\n";
                 continue;
             }
 
+            if (parsed_command.threads) {
+                RunThreads(parsed_command);
+            }
             RunCommand(parsed_command);
         }
 
     }
 }
 
+/**
+ * Метод запускает шелл
+ *
+ * @return Код завершения
+ */
 int main() {
     RunShell();
     return 0;
