@@ -45,16 +45,3 @@ int Factorial(const int number, const int repetitions) {
   cout << "Duration: " << end - start << "milliseconds" << endl;
   return 0;
 }
-
-int main(const int argc, char* argv[]) {
-  long value;
-  long repetitions;
-
-  if (const auto validatedArgs = ValidateArguments(argc, argv, value, repetitions); !validatedArgs) {
-    return 1;
-  }
-
-  Factorial(value, repetitions);
-
-  return 0;
-}

@@ -35,10 +35,9 @@ struct ParsedCommand {
 mutex write_mutex;
 
 /**
- *
- *
- * @param input
- * @return
+ * Функция для обработки команды
+ * @param input Команда
+ * @return Команда в виде массива
  */
 vector<string> ParseInput(const string& input) {
     stringstream ss(input);
@@ -53,9 +52,9 @@ vector<string> ParseInput(const string& input) {
 }
 
 /**
- *
- * @param input
- * @return
+ * Функция возвращает команду в виде структуры с проставленными флагами и параметрами
+ * @param input Команда в виде массива
+ * @return Структура `ParsedCommand` с командой
  */
 ParsedCommand ParseCommand(const vector<string>& input) {
     ParsedCommand result;
@@ -114,9 +113,9 @@ ParsedCommand ParseCommand(const vector<string>& input) {
 }
 
 /**
- *
- * @param filePath
- * @param buffer
+ * Функция для записи вывода программ в файл
+ * @param filePath Путь к файлу для записи
+ * @param buffer Буфер с данными
  */
 void SynchronizedWriteToFile(const string& filePath, const vector<char>& buffer) {
     lock_guard lock(write_mutex);
@@ -135,9 +134,9 @@ void SynchronizedWriteToFile(const string& filePath, const vector<char>& buffer)
 }
 
 /**
- *
- * @param parsed_command
- * @return
+ * Функция для запуска программы с помощью `CreateProcessAsUser`
+ * @param parsed_command Структура `ParsedCommand` с командой
+ * @return true в случае успешного запуска программы, иначе - false
  */
 bool RunCommand(const ParsedCommand& parsed_command) {
 
@@ -250,9 +249,9 @@ bool RunCommand(const ParsedCommand& parsed_command) {
 }
 
 /**
- *
- * @param parsed_command
- * @return
+ * Функция для запуска нескольких экземпляров программы с помощью `CreateProcessAsUser`
+ * @param parsed_command Структура `ParsedCommand` с командой
+ * @return true в случае успешного запуска потоков, иначе - false
  */
 bool RunThreads(const ParsedCommand& parsed_command) {
     vector<thread> threads;
@@ -333,7 +332,6 @@ void RunShell() {
 
 /**
  * Метод запускает шелл
- *
  * @return Код завершения
  */
 int main() {

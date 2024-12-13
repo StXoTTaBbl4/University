@@ -15,7 +15,7 @@ void PrintLogo(const string& filePath) {
     ifstream file(filePath);
 
     if (!file.is_open()) {
-        cerr << "Can not open the file: " << filePath << std::endl;
+        cerr << "Can not open the file: " << filePath << endl;
         return;
     }
 
@@ -31,7 +31,7 @@ bool SetConsoleStyle() {
     SetConsoleTitle("Custom shell");
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hConsole == INVALID_HANDLE_VALUE) {
-        std::cerr << "Can not get console descriptor: " << GetLastError() << std::endl;
+        cerr << "Can not get console descriptor: " << GetLastError() << endl;
         return false;
     }
 
@@ -40,19 +40,19 @@ bool SetConsoleStyle() {
     csbiex.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
 
     if (!GetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
-        cerr << "Can not get buffer info: " << GetLastError() << std::endl;
+        cerr << "Can not get buffer info: " << GetLastError() << endl;
         return false;
     }
 
     csbiex.ColorTable[6] = RGB(255, 165, 0);
 
     if (!SetConsoleScreenBufferInfoEx(hConsole, &csbiex)) {
-        cerr << "Can not set buffer info: " << GetLastError() << std::endl;
+        cerr << "Can not set buffer info: " << GetLastError() << endl;
         return false;
     }
 
     if (!SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN)) {
-        cerr << "Can not set text color: " << GetLastError() << std::endl;
+        cerr << "Can not set text color: " << GetLastError() << endl;
         return false;
     }
 

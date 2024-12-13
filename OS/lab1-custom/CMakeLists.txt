@@ -22,5 +22,5 @@ add_library(cpu_bench_lib ${SRC_DIR}/benchmarks/cpu_benchmark.cpp)
 
 add_executable(shell ${SRC_DIR}/shell.cpp ${SRC_DIR}/utility/shell_styles.cpp)
 add_executable(io_benchmark ${SRC_DIR}/benchmarks/io_benchmark.cpp)
-add_executable(cpu_benchmark ${SRC_DIR}/benchmarks/cpu_benchmark.cpp)
+add_executable(cpu_benchmark ${SRC_DIR}/benchmarks/cpu_benchmark_main.cpp)
 add_executable(in_out ${SRC_DIR}/in_out_test.cpp)

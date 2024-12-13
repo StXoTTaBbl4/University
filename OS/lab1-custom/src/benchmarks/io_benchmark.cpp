@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <string>
 #include "io_benchmark.h"
 
@@ -9,7 +8,6 @@
 using namespace std;
 
 constexpr DWORD BLOCK_SIZE = 2048; // 2K block size
-constexpr DWORD alignment = 512;         // Размер сектора диска (выравнивание)
 
 bool validateArguments(const int argc, char* argv[], int& repetitions, string& filePath) {
     if (argc < 3) {
@@ -90,13 +88,6 @@ int readFileByBlocks(const int iterations, const string& filePath) {
 
     if (file == INVALID_HANDLE_VALUE) {
         std::cerr << "Не удалось открыть файл: " << GetLastError() << std::endl;
-        return 1;
-    }
-
-    // Проверка кратности размера буфера размеру сектора
-    if (BLOCK_SIZE % alignment != 0) {
-        cerr << "Размер буфера должен быть кратен размеру сектора диска (" << alignment << " байт)." << std::endl;
-        CloseHandle(file);
         return 1;
     }
 
