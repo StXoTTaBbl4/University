@@ -87,14 +87,14 @@ int readFileByBlocks(const int iterations, const string& filePath) {
     );
 
     if (file == INVALID_HANDLE_VALUE) {
-        std::cerr << "Не удалось открыть файл: " << GetLastError() << std::endl;
+        cerr << "Can not open file: " << GetLastError() << endl;
         return 1;
     }
 
     // Выделение выровненного буфера с помощью VirtualAlloc
     void* buffer = VirtualAlloc(nullptr, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     if (!buffer) {
-        std::cerr << "Не удалось выделить буфер: " << GetLastError() << std::endl;
+        cerr << "Can not allocate buffer: " << GetLastError() << endl;
         CloseHandle(file);
         return 1;
     }
@@ -105,7 +105,7 @@ int readFileByBlocks(const int iterations, const string& filePath) {
     for (int iteration = 0; iteration < iterations; ++iteration) {
         // Сброс указателя файла в начало
         if (SetFilePointer(file, 0, nullptr, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
-            std::cerr << "Не удалось переместить указатель файла: " << GetLastError() << std::endl;
+            cerr << "Failed to move file pointer: " << GetLastError() << endl;
             VirtualFree(buffer, 0, MEM_RELEASE);
             CloseHandle(file);
             return 1;
@@ -114,22 +114,19 @@ int readFileByBlocks(const int iterations, const string& filePath) {
         DWORD bytesRead;
         DWORD64 totalBytesRead = 0;
 
-        // Измерение времени чтения
         QueryPerformanceCounter(&startTime);
 
-        // Чтение файла блоками
         while (ReadFile(file, buffer, BLOCK_SIZE, &bytesRead, nullptr) && bytesRead > 0) {
             totalBytesRead += bytesRead;
         }
 
         QueryPerformanceCounter(&endTime);
 
-        // Вычисление времени чтения
         double elapsedTime = static_cast<double>(endTime.QuadPart - startTime.QuadPart) / frequency.QuadPart;
 
-        std::cout << "Iteration " << (iteration + 1) << ":\n";
-        std::cout << "  Bytes read: " << totalBytesRead << std::endl;
-        std::cout << "  Time: " << elapsedTime << " seconds" << std::endl;
+        cout << "Iteration " << (iteration + 1) << ":\n";
+        cout << "  Bytes read: " << totalBytesRead << endl;
+        cout << "  Time: " << elapsedTime << " seconds" << endl;
     }
 
     // Очистка ресурсов
