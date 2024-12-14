@@ -1,4 +1,0 @@
-D:/ITMO/3-re/OS/lab1-benchmarks/cmake-build-debug/CMakeFiles/lab1_benchmarks_cpu.dir
-D:/ITMO/3-re/OS/lab1-benchmarks/cmake-build-debug/CMakeFiles/lab1_benchmarks_memory.dir
-D:/ITMO/3-re/OS/lab1-benchmarks/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/ITMO/3-re/OS/lab1-benchmarks/cmake-build-debug/CMakeFiles/rebuild_cache.dir
