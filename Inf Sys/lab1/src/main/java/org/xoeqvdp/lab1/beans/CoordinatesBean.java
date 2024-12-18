@@ -41,10 +41,6 @@ public class CoordinatesBean implements Serializable {
         loadPage();
     }
 
-    public Vehicle getVehicleById(Long id) {
-        return session.createQuery("from Vehicle where id = :id", Vehicle.class).setParameter("id", id).uniqueResult();
-    }
-
 
     public void loadPage() {
         Query<Coordinates> query = session.createQuery("FROM Coordinates ", Coordinates.class);

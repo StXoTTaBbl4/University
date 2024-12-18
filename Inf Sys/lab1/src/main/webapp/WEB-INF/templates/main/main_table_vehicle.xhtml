@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form id="vehicle-form">
+        <h:commandButton a:class="hidden" id="vehicles_button" action="#{vehicleBean.loadPage}">
+            <f:ajax render="vehicle-table" />
+        </h:commandButton>
+        <h:dataTable id="vehicle-table" value="#{vehicleBean.vehicles}" var="coordinate" a:calss="table vehicle-table">
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                #{coordinate.id}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Name</f:facet>
+                #{coordinate.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Type</f:facet>
+                #{coordinate.type}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Fuel type</f:facet>
+                #{coordinate.fuelType}
+            </h:column>
+        </h:dataTable>
+        <h:panelGroup layout="block" a:class="form__nav-wrapper">
+            <h:panelGroup layout="block" a:class="form__nav">
+                <p:commandButton type="button" id="vehicle-table_previos" styleClass="form__nav-button" value="prev." action="#{vehicleBean.previousPage}" disabled="#{vehicleBean.page == 1}">
+                    <f:ajax render="vehicle-table"/>
+                    <f:ajax render="vehicle_page_counter"/>
+                    <f:ajax render="vehicle-table_next"/>
+                    <f:ajax render="vehicle-table_previos"/>
+                </p:commandButton>
+                <h:outputText id="vehicle_page_counter" a:class="page_counter" value="#{vehicleBean.page}"/>
+                <p:commandButton type="button" id="vehicle-table_next" styleClass="" class="form__nav-button" value="next" action="#{vehicleBean.nextPage}" disabled="#{vehicleBean.lastPage}">
+                    <f:ajax render="vehicle-table"/>
+                    <f:ajax render="vehicle_page_counter"/>
+                    <f:ajax render="vehicle-table_next"/>
+                    <f:ajax render="vehicle-table_previos"/>
+                </p:commandButton>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</ui:composition>

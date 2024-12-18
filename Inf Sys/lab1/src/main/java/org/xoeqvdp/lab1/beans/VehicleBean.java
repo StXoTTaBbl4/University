@@ -15,6 +15,7 @@ import org.xoeqvdp.lab1.websocket.VehicleWebSocket;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 @Named("vehicleBean")
@@ -30,7 +31,6 @@ public class VehicleBean implements Serializable {
     private boolean lastPage = false;
     private final int itemsPerPage = 10;
 
-
     private final Session session = HibernateUtil.getSessionFactory().openSession();
 
     @Inject
@@ -42,11 +42,6 @@ public class VehicleBean implements Serializable {
     }
 
 
-//    @PostConstruct
-//    public void init(){
-//        loadAllVehicles();
-//    }
-
     public String createVehicle() {
         if (userBean.getUser() == null || userBean.getUser().getId() == null) {
             message = "Только авторизованные пользователи могут вносить изменения!";
@@ -55,7 +50,6 @@ public class VehicleBean implements Serializable {
 
         VehicleInteraction vehicleInteraction = new VehicleInteraction();
 
-        vehicle = testVehicleAdd();
         vehicleInteraction.setVehicle(vehicle);
         vehicleInteraction.setCreator(userBean.getUser());
         vehicleInteraction.setModifier(userBean.getUser());
@@ -124,5 +118,17 @@ public class VehicleBean implements Serializable {
             page--;
             loadPage();
         }
+    }
+
+    public List<VehicleType> getVehicleTypes() {
+        return Arrays.asList(VehicleType.values());
+    }
+
+    public List<FuelType> getFuelTypes() {
+        return Arrays.asList(FuelType.values());
+    }
+
+    public void resetVehicle() {
+        vehicle = new Vehicle();
     }
 }

@@ -9,15 +9,15 @@ import lombok.Setter;
 @Table(name = "coordinates")
 @Getter
 @Setter
-public class Coordinates {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public class Coordinates {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(nullable = false)
-    @Min(-694)
-    private Long x;
+        @Column(nullable = false)
+        @Min(-694)
+        private Long x;
 
-    @Column(nullable = false)
-    private long y;
-}
+        @Column(nullable = false)
+        private long y;
+    }

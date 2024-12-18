@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:panelGroup layout="bloock" class="add-entity-slider">
+        <button class="add-entity-slider--vehicle">Машина</button>
+        <button class="add-entity-slider--coordinates">Координаты</button>
+    </h:panelGroup>
+    <h:form id="add-new-vehicle-form">
+        <!-- Name -->
+        <h:outputLabel for="name" value="Name: " />
+        <h:inputText id="name" value="#{vehicleBean.vehicle.name}" required="true" />
+        <h:message for="name" style="color: red;" />
+        <br/>
+
+        <!-- Coordinates -->
+        <h:outputLabel for="coordinates" value="Coordinates (ID): " />
+        <h:inputText id="coordinates" value="#{vehicleBean.vehicle.coordinates.id}" />
+        <h:message for="coordinates" style="color: red;" />
+        <br/>
+
+        <!-- Vehicle Type -->
+        <h:outputLabel for="type" value="Vehicle Type: " />
+        <h:selectOneMenu id="type" value="#{vehicleBean.vehicle.type}">
+            <f:selectItems value="#{vehicleBean.vehicleTypes}"/>
+        </h:selectOneMenu>
+        <h:message for="type" style="color: red;" />
+        <br/>
+
+        <!-- Engine Power -->
+        <h:outputLabel for="enginePower" value="Engine Power: " />
+        <h:inputText id="enginePower" value="#{vehicleBean.vehicle.enginePower}" required="true">
+            <f:validateDoubleRange minimum="1" />
+        </h:inputText>
+        <h:message for="enginePower" style="color: red;" />
+        <br/>
+
+        <!-- Number of Wheels -->
+        <h:outputLabel for="numberOfWheels" value="Number of Wheels: " />
+        <h:inputText id="numberOfWheels" value="#{vehicleBean.vehicle.numberOfWheels}">
+            <f:validateLongRange minimum="1" />
+        </h:inputText>
+        <h:message for="numberOfWheels" style="color: red;" />
+        <br/>
+
+        <!-- Capacity -->
+        <h:outputLabel for="capacity" value="Capacity: " />
+        <h:inputText id="capacity" value="#{vehicleBean.vehicle.capacity}">
+            <f:validateLongRange minimum="1" />
+        </h:inputText>
+        <h:message for="capacity" style="color: red;" />
+        <br/>
+
+        <!-- Distance Travelled -->
+        <h:outputLabel for="distanceTravelled" value="Distance Travelled: " />
+        <h:inputText id="distanceTravelled" value="#{vehicleBean.vehicle.distanceTravelled}" required="true">
+            <f:validateLongRange minimum="1" />
+        </h:inputText>
+        <h:message for="distanceTravelled" style="color: red;" />
+        <br/>
+
+        <!-- Fuel Consumption -->
+        <h:outputLabel for="fuelConsumption" value="Fuel Consumption: " />
+        <h:inputText id="fuelConsumption" value="#{vehicleBean.vehicle.fuelConsumption}">
+            <f:validateLongRange minimum="1" />
+        </h:inputText>
+        <h:message for="fuelConsumption" style="color: red;" />
+        <br/>
+
+        <!-- Fuel Type -->
+        <h:outputLabel for="fuelType" value="Fuel Type: " />
+        <h:selectOneMenu id="fuelType" value="#{vehicleBean.vehicle.fuelType}">
+            <f:selectItems value="#{vehicleBean.fuelTypes}" />
+        </h:selectOneMenu>
+        <h:message for="fuelType" style="color: red;" />
+        <br/>
+
+        <!-- Buttons -->
+        <h:commandButton value="Save">
+            <f:ajax execute="@form" render="@form" listener="#{vehicleBean.createVehicle}"/>
+        </h:commandButton>
+        <h:commandButton value="Reset" action="#{vehicleBean.resetVehicle}" type="reset" />
+    </h:form>
+    <h:form id="add-new-coordinates-form" a:class="hidden">
+
+    </h:form>
+</ui:composition>

@@ -21,14 +21,14 @@ public class Vehicle {
 
     @OneToOne
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_vehicle_coordinates"))
-    private Coordinates coordinates;
+    private Coordinates coordinates = null;
 
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")
-    private VehicleType type;
+    private VehicleType type = null;
 
     @Column(name = "engine_power", nullable = false)
     @Min(1)
@@ -36,11 +36,11 @@ public class Vehicle {
 
     @Column(name = "number_of_wheels")
     @Min(1)
-    private Long numberOfWheels;
+    private Long numberOfWheels = null;
 
     @Column(name = "capacity")
     @Min(1)
-    private Long capacity;
+    private Long capacity = null;
 
     @Column(name = "distance_travelled", nullable = false)
     @Min(1)
@@ -48,7 +48,7 @@ public class Vehicle {
 
     @Column(name = "fuel_consumption")
     @Min(1)
-    private Long fuelConsumption;
+    private Long fuelConsumption = null;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "fuel_type", nullable = false)

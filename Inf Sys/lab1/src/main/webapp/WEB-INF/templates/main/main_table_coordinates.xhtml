@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+   <h:form id="coordinates-form" a:class="hidden">
+      <h:commandButton a:class="hidden" id="coordinates_button" action="#{coordinatesBean.loadPage}">
+         <f:ajax render="coordinates-table" />
+      </h:commandButton>
+      <h:dataTable id="coordinates-table" value="#{coordinatesBean.allCoordinates}" var="coordinate" a:calss="table coordinates-table">
+         <h:column>
+            <f:facet name="header">ID</f:facet>
+            #{coordinate.id}
+         </h:column>
+         <h:column>
+            <f:facet name="header">X</f:facet>
+            #{coordinate.x}
+         </h:column>
+         <h:column>
+            <f:facet name="header">Y</f:facet>
+            #{coordinate.y}
+         </h:column>
+      </h:dataTable>
+      <h:panelGroup layout="block" a:class="form__nav-wrapper">
+         <h:panelGroup layout="block" a:class="form__nav">
+            <p:commandButton type="button" id="coordinates-table_previos" styleClass="form__nav-button" value="prev." action="#{coordinatesBean.previousPage}" disabled="#{coordinatesBean.page == 1}">
+               <f:ajax render="coordinates-table"/>
+               <f:ajax render="coordinates_page_counter"/>
+               <f:ajax render="coordinates-table_next"/>
+               <f:ajax render="coordinates-table_previos"/>
+            </p:commandButton>
+            <h:outputText id="coordinates_page_counter" a:class="page_counter" value="#{coordinatesBean.page}"/>
+            <p:commandButton type="button" id="table_next" styleClass="" class="form__nav-button" value="next" action="#{coordinatesBean.nextPage}" disabled="#{coordinatesBean.lastPage}">
+               <f:ajax render="coordinates-table"/>
+               <f:ajax render="coordinates_page_counter"/>
+               <f:ajax render="coordinates-table_next"/>
+               <f:ajax render="coordinates-table_previos"/>
+            </p:commandButton>
+         </h:panelGroup>
+      </h:panelGroup>
+   </h:form>
+</ui:composition>

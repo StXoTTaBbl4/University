@@ -28,12 +28,12 @@ re_reg_password.addEventListener("keyup", ()=>{
 
 window.addEventListener("load", () => {
     signup_button.disabled = false;
-
     if(message.textContent !== "") {
         snackbar.classList.toggle("show")
         setTimeout(function () {
             snackbar.classList.toggle("show");
         }, 3000);
+        message.textContent = "";
     }
 });
 
