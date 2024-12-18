@@ -26,6 +26,7 @@ public class VehicleBean implements Serializable {
     private Vehicle vehicle = new Vehicle();
     private List<Vehicle> vehicles = null;
     private String message;
+    Long coordinatesId = null;
 
     private int page = 1;
     private boolean lastPage = false;
@@ -48,12 +49,23 @@ public class VehicleBean implements Serializable {
             return null;
         }
 
+        if (coordinatesId != null) {
+            Coordinates c = session.find(Coordinates.class, coordinatesId);
+            if (c != null) {
+                vehicle.setCoordinates(c);
+            } else {
+                message = "Записи Coordinates с таким ID не существует";
+                return null;
+            }
+        }
+
         VehicleInteraction vehicleInteraction = new VehicleInteraction();
 
         vehicleInteraction.setVehicle(vehicle);
         vehicleInteraction.setCreator(userBean.getUser());
         vehicleInteraction.setModifier(userBean.getUser());
         vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+
 
         Transaction transaction = session.beginTransaction();
         session.persist(vehicle);

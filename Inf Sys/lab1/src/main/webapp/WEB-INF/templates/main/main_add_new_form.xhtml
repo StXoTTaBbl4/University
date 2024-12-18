@@ -17,7 +17,7 @@
 
         <!-- Coordinates -->
         <h:outputLabel for="coordinates" value="Coordinates (ID): " />
-        <h:inputText id="coordinates" value="#{vehicleBean.vehicle.coordinates.id}" />
+        <h:inputText id="coordinates" value="#{vehicleBean.coordinatesId}" />
         <h:message for="coordinates" style="color: red;" />
         <br/>
 
@@ -79,7 +79,7 @@
 
         <!-- Buttons -->
         <h:commandButton value="Save">
-            <f:ajax execute="@form" render="@form" listener="#{vehicleBean.createVehicle}"/>
+            <f:ajax execute="@form" render="snackbar-text" listener="#{vehicleBean.createVehicle}"/>
         </h:commandButton>
         <h:commandButton value="Reset" action="#{vehicleBean.resetVehicle}" type="reset" />
     </h:form>
