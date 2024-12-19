@@ -314,6 +314,11 @@ void RunShell() {
         if (parsed_command.valid) {
             if (parsed_command.redirected && parsed_command.redirectKey == "<<") {
                 if (freopen(parsed_command.filepath.c_str(), "r", stdin) != nullptr) {
+                    if (parsed_command.threads) {
+                        RunThreads(parsed_command);
+                    }
+
+                    RunCommand(parsed_command);
                     freopen("CONIN$", "r", stdin);
                     continue;
                 }

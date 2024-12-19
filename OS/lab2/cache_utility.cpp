@@ -9,38 +9,50 @@
 
 using namespace std;
 
-CachedPage* BlockCache::getPage(const string &filePath) {
-    lock_guard<mutex> lock(cacheMutex);
-    return &cacheMap[filePath];
+BlockCache::BlockCache(const size_t pageSize, const size_t maxPages)
+    : pageSize(pageSize), maxPages(maxPages) {}
+
+uint64_t BlockCache::GetFileID(HANDLE fileHandle) {
+    BY_HANDLE_FILE_INFORMATION fileInfo;
+
+    if (GetFileInformationByHandle(fileHandle, &fileInfo)) {
+        const uint64_t fileId = static_cast<uint64_t>(fileInfo.nFileIndexHigh) << 32 | fileInfo.nFileIndexLow;
+        return fileId;
+    }
+    cerr << "Failed to get file information. Error: " << GetLastError() << endl;
+    return -1;
 }
 
-
-
-// Removes the most recently used page from the cache
-bool BlockCache::putPage(const string &filePath, CachedPage &page) {
+bool BlockCache::putPage(const CachedPage& page) {
     lock_guard<mutex> lock(cacheMutex);
     if (cacheMap.size() < maxPages) {
-        if (!cacheMap.contains(filePath)) {
-            cacheMap[filePath] = page;
+        if (const string fileId = to_string(GetFileID(page.fileHandle)); !cacheMap.contains(fileId)) {
+            cacheMap[fileId] = page;
             return true;
         }
-    } else {
-        cout << "Cache is full, remove something first." << endl;
     }
+    cout << "Cache is full, remove something first." << endl;
     return false;
 }
 
-// Writes a page to the file
-bool BlockCache::removePage(const string &filePath) {
+bool BlockCache::getPage(const string &fileID, CachedPage &page) {
     lock_guard<mutex> lock(cacheMutex);
-    if (!cacheMap.contains(filePath)) {
-        cacheMap.erase(filePath);
+    if (const auto it = cacheMap.find(fileID); it != cacheMap.end()) {
+        page = it->second;
         return true;
     }
     return false;
 }
 
-// Synchronizes all dirty pages for a specific file
+bool BlockCache::removePage(const string& fileID) {
+    lock_guard<mutex> lock(cacheMutex);
+    if (!cacheMap.contains(fileID)) {
+        cacheMap.erase(fileID);
+        return true;
+    }
+    return false;
+}
+
 void BlockCache::clearCache() {
     lock_guard<mutex> lock(cacheMutex);
     cacheMap.clear();
