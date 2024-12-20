@@ -14,31 +14,20 @@ struct CachedPage {
     vector<char> data;
 };
 
-enum class FileStatus {
-    OK = 0,
-    INVALID_HANDLE = -1,
-    FILE_TOO_BIG = -2,
-    READ_FAILURE = -3,
-    WRITE_FAILURE = -4,
-    CACHE_FULL = -5,
-    CANT_ADD_TO_CACHE = -6,
-    NOT_FOUND_IN_CACHE = -7
-};
-
 class BlockCache {
 public:
     explicit BlockCache(const size_t pageSize, const size_t maxPages);
 
-    bool getPage(const string &fileID, CachedPage &page);
+    bool getPage(const uint64_t &fileID, CachedPage &page);
     bool putPage(const CachedPage& page);
-    bool removePage(const string& fileID);
+    bool removePage(const uint64_t &fileID);
     void clearCache();
     uint64_t GetFileID(HANDLE fileHandle);
 
     size_t pageSize;
     size_t maxPages;
 private:
-    unordered_map<string, CachedPage> cacheMap;
+    unordered_map<uint64_t, CachedPage> cacheMap;
     mutex cacheMutex;
 };
 

@@ -68,7 +68,7 @@ uint64_t lab2_open(const char *path) {
     return 0;
 }
 
-int lab2_close(const string &fileId) {
+int lab2_close(const uint64_t &fileId) {
     CachedPage page;
     if (!cache.getPage(fileId, page)) {
         cout << "File " << fileId << " not found in cache" << endl;
@@ -80,7 +80,7 @@ int lab2_close(const string &fileId) {
     return 0;
 }
 
-ssize_t lab2_read(const string &fileId, size_t count, void* buf ) {
+ssize_t lab2_read(const uint64_t &fileId, size_t count, void* buf ) {
     CachedPage page;
     if (cache.getPage(fileId, page)) {
         if (!page.data.empty()) {
@@ -99,41 +99,69 @@ ssize_t lab2_read(const string &fileId, size_t count, void* buf ) {
     return -1;
 }
 
-ssize_t lab2_write(const string &fileId, size_t count, const void* buf) {
+ssize_t lab2_write(const uint64_t &fileId, size_t count, const void* buf) {
     CachedPage page;
     if (cache.getPage(fileId, page)) {
-        if (!page.data.empty()) {
-            if (page.data.size() <= count && count > cache.pageSize ) {
-                return -1;
-            }
-            if ( page.data.size() <= count && count <= cache.pageSize ) {
-                LARGE_INTEGER fileSize;
-                GetFileSizeEx(page.fileHandle, &fileSize);
-                const DWORD alignedFileSize = static_cast<DWORD>((fileSize.QuadPart + (SECTOR_SIZE - 1)) / SECTOR_SIZE) * SECTOR_SIZE;
-                page.data.resize(alignedFileSize);
-            }
-
-            return page.data.size();
+        if (!count <= cache.pageSize ) {
+            return -1;
         }
-        cerr << "Cached file is smaller than requested: " << page.data.size() << " vs " << count << endl;
-        return -1;
+
+        if (page.data.size() <= count || page.data.size() > count) {
+			page.data.resize(count);
+        }
+
+        memcpy(page.data.data(), buf, count);
+		return count;
+        
     }
+	cerr << "Cached file is smaller than requested: " << page.data.size() << " vs " << count << endl;
+    return -1;
 }
 
-// off_t lab2_lseek(int fd, off_t offset, int whence) {
-//
-// }
-//
-// int lab2_fsync(int fd) {
-//
-// }
+off_t lab2_lseek(const uint64_t &fileId, off_t offset, int whence) {
+    CachedPage page;
+    if (!cache.getPage(fileId, page)) {
+        cout << "File " << fileId << " not found in cache" << endl;
+        return -1;
+    }
+    if (!page.data.size() < offset) {
+        return -1;
+    }
+
+    LARGE_INTEGER newPointer;
+    LARGE_INTEGER liOffset;
+    liOffset.QuadPart = static_cast<LONGLONG>(offset);
+    if (!SetFilePointerEx(page.fileHandle, liOffset, &newPointer, whence)) {
+        cerr << "Error setting file pointer" << endl;
+        return -1;
+    }
+
+    return newPointer.QuadPart;
+}
+
+int lab2_fsync(const uint64_t &fileId) {
+    CachedPage page;
+    if (!cache.getPage(fileId, page)) {
+        cout << "File " << fileId << " not found in cache" << endl;
+        return -1;
+    }
+
+    DWORD bytesWritten;
+    if (!WriteFile(page.fileHandle, page.data.data(), page.data.size(), &bytesWritten, nullptr)) {
+        cerr << "Error writing file" << endl;
+        return -1;
+    }
+
+    cache.removePage(fileId);
+    return 0;
+}
 
 int main(int argc, char** argv) {
     uint64_t fd = lab2_open("D:\\lab2_test.txt");
     char buf[512];
-    lab2_read(to_string(fd), 512, buf);
+    lab2_read(fd, 512, buf);
     cout << buf << endl;
 
-    lab2_close(to_string(fd));
+    lab2_close(fd);
 }
 

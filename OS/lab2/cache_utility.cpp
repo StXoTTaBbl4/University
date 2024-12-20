@@ -26,7 +26,7 @@ uint64_t BlockCache::GetFileID(HANDLE fileHandle) {
 bool BlockCache::putPage(const CachedPage& page) {
     lock_guard<mutex> lock(cacheMutex);
     if (cacheMap.size() < maxPages) {
-        if (const string fileId = to_string(GetFileID(page.fileHandle)); !cacheMap.contains(fileId)) {
+        if (const uint64_t fileId = GetFileID(page.fileHandle); !cacheMap.contains(fileId)) {
             cacheMap[fileId] = page;
             return true;
         }
@@ -35,7 +35,7 @@ bool BlockCache::putPage(const CachedPage& page) {
     return false;
 }
 
-bool BlockCache::getPage(const string &fileID, CachedPage &page) {
+bool BlockCache::getPage(const uint64_t &fileID, CachedPage &page) {
     lock_guard<mutex> lock(cacheMutex);
     if (const auto it = cacheMap.find(fileID); it != cacheMap.end()) {
         page = it->second;
@@ -44,10 +44,10 @@ bool BlockCache::getPage(const string &fileID, CachedPage &page) {
     return false;
 }
 
-bool BlockCache::removePage(const string& fileID) {
+bool BlockCache::removePage(const uint64_t &fileID) {
     lock_guard<mutex> lock(cacheMutex);
     if (!cacheMap.contains(fileID)) {
-        cacheMap.erase(fileID);
+        cacheMap.extract(fileID);
         return true;
     }
     return false;
