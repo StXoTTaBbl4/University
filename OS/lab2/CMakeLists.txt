@@ -3,4 +3,5 @@ project(lab2)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(lab2 main.cpp cache_utility.cpp)
+add_library(lab2 SHARED library.cpp)
+add_executable(la2_ex library.cpp)
