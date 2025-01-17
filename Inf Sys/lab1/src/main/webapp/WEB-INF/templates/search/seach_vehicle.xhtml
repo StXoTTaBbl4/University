@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+   <h:panelGroup id="search-vehicle-wrapper" layout="block">
+      <h:form id="search-vehicle">
+         <h:panelGroup id="search-vehicle--fields" styleClass="search-vehicle--fields">
+            <!-- Name -->
+            <h:outputLabel for="name" value="Name: " />
+            <h:inputText id="name" value="#{searchBean.vehicle.name}"/>
+            <h:message for="name" style="color: red;" />
+            <br/>
+
+            <!-- Vehicle Type -->
+            <h:outputLabel for="type" value="Vehicle Type: " />
+            <h:selectOneMenu id="type" value="#{searchBean.vehicle_type}">
+               <f:selectItems value="#{searchBean.vehicleTypes}"/>
+            </h:selectOneMenu>
+            <h:message for="type" style="color: red;" />
+            <br/>
+
+            <!-- Engine Power -->
+            <h:outputLabel for="enginePower" value="Engine Power: " />
+            <h:inputText id="enginePower" value="#{searchBean.vehicle.enginePower}">
+               <f:validateDoubleRange minimum="1" />
+            </h:inputText>
+            <h:message for="enginePower" style="color: red;" />
+            <br/>
+
+            <!-- Number of Wheels -->
+            <h:outputLabel for="numberOfWheels" value="Number of Wheels: " />
+            <h:inputText id="numberOfWheels" value="#{searchBean.vehicle.numberOfWheels}">
+               <f:validateLongRange minimum="1" />
+            </h:inputText>
+            <h:message for="numberOfWheels" style="color: red;" />
+            <br/>
+
+            <!-- Capacity -->
+            <h:outputLabel for="capacity" value="Capacity: " />
+            <h:inputText id="capacity" value="#{searchBean.vehicle.capacity}">
+               <f:validateLongRange minimum="1" />
+            </h:inputText>
+            <h:message for="capacity" style="color: red;" />
+            <br/>
+
+            <!-- Distance Travelled -->
+            <h:outputLabel for="distanceTravelled" value="Distance Travelled: " />
+            <h:inputText id="distanceTravelled" value="#{searchBean.vehicle.distanceTravelled}">
+               <f:validateLongRange minimum="1" />
+            </h:inputText>
+            <h:message for="distanceTravelled" style="color: red;" />
+            <br/>
+
+            <!-- Fuel Consumption -->
+            <h:outputLabel for="fuelConsumption" value="Fuel Consumption: " />
+            <h:inputText id="fuelConsumption" value="#{searchBean.vehicle.fuelConsumption}">
+               <f:validateLongRange minimum="1" />
+            </h:inputText>
+            <h:message for="fuelConsumption" style="color: red;" />
+            <br/>
+
+            <!-- Fuel Type -->
+            <h:outputLabel for="fuelType" value="Fuel Type: " />
+            <h:selectOneMenu id="fuelType" value="#{searchBean.fuel_type}">
+               <f:selectItems value="#{searchBean.fuelTypes}"/>
+            </h:selectOneMenu>
+            <h:message for="type" style="color: red;" />
+            <br/>
+
+            <!-- Buttons -->
+            <h:commandButton value="Найти">
+               <f:ajax execute="@form" render="search-vehcile--table" listener="#{searchBean.findVehicles}"/>
+            </h:commandButton>
+            <h:commandButton value="Очистить" action="#{searchBean.resetVehicle}" onclick="this.form.reset()"/>
+         </h:panelGroup>
+
+         <h:panelGroup id="search-vehcile--table-wrapper">
+            <h:dataTable id="search-vehcile--table" value="#{searchBean.found_vehicles}" var="vehicle" a:calss="table vehicle-table">
+               <h:column>
+                  <f:facet name="header">ID</f:facet>
+                  #{vehicle.id}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Name</f:facet>
+                  #{vehicle.name}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Coordinates ID</f:facet>
+                  #{vehicle.coordinates.id}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Creation Date</f:facet>
+                  #{vehicle.creationDate}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Type</f:facet>
+                  #{vehicle.type}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Engine Power</f:facet>
+                  #{vehicle.enginePower}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Wheelse</f:facet>
+                  #{vehicle.numberOfWheels}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Capacity</f:facet>
+                  #{vehicle.capacity}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Dist. travelled</f:facet>
+                  #{vehicle.distanceTravelled}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Fuel cons.</f:facet>
+                  #{vehicle.fuelConsumption}
+               </h:column>
+               <h:column>
+                  <f:facet name="header">Fuel type</f:facet>
+                  #{vehicle.fuelType}
+               </h:column>
+            </h:dataTable>
+         </h:panelGroup>
+      </h:form>
+   </h:panelGroup>
+</ui:composition>

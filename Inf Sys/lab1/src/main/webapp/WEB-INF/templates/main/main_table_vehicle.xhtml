@@ -4,42 +4,80 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <h:form id="vehicle-form">
+        <h:inputText id="inputVehicleField" value="#{vehicleBean.selectedId}" style="display: none"/>
+        <h:commandButton id="hiddenVehicleButton" action="#{vehicleBean.redirectToEntityPage()}" style="display:none;" />
         <h:commandButton a:class="hidden" id="vehicles_button" action="#{vehicleBean.loadPage}">
             <f:ajax render="vehicle-table" />
         </h:commandButton>
-        <h:dataTable id="vehicle-table" value="#{vehicleBean.vehicles}" var="coordinate" a:calss="table vehicle-table">
+
+        <h:inputText type="text" id="searchVehicleInput" placeholder="Введите фильтры, напр. 'Type:NUCLEAR, Eng.power:30'" style="width: 100%; margin-bottom: 10px; padding: 10px;"/>
+        <h:dataTable id="vehicle-table" value="#{vehicleBean.vehicles}" var="vehicle" a:calss="table vehicle-table">
             <h:column>
                 <f:facet name="header">ID</f:facet>
-                #{coordinate.id}
+                #{vehicle.id}
             </h:column>
             <h:column>
                 <f:facet name="header">Name</f:facet>
-                #{coordinate.name}
+                #{vehicle.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Coordinates ID</f:facet>
+                #{vehicle.coordinatesID}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Creation Date</f:facet>
+                #{vehicle.creationDate}
             </h:column>
             <h:column>
                 <f:facet name="header">Type</f:facet>
-                #{coordinate.type}
+                #{vehicle.type}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Eng.power</f:facet>
+                #{vehicle.enginePower}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Wheels</f:facet>
+                #{vehicle.numberOfWheels}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Capatity</f:facet>
+                #{vehicle.capacity}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Mileage</f:facet>
+                #{vehicle.distanceTravelled}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Consumption</f:facet>
+                #{vehicle.fuelConsumption}
             </h:column>
             <h:column>
                 <f:facet name="header">Fuel type</f:facet>
-                #{coordinate.fuelType}
+                #{vehicle.fuelType}
             </h:column>
         </h:dataTable>
         <h:panelGroup layout="block" a:class="form__nav-wrapper">
             <h:panelGroup layout="block" a:class="form__nav">
-                <p:commandButton type="button" id="vehicle-table_previos" styleClass="form__nav-button" value="prev." action="#{vehicleBean.previousPage}" disabled="#{vehicleBean.page == 1}">
-                    <f:ajax render="vehicle-table"/>
-                    <f:ajax render="vehicle_page_counter"/>
-                    <f:ajax render="vehicle-table_next"/>
-                    <f:ajax render="vehicle-table_previos"/>
-                </p:commandButton>
+                <p:commandButton
+                        id="vehicle-table_previous"
+                        styleClass="form__nav-button"
+                        value="prev."
+                        action="#{vehicleBean.previousPage}"
+                        disabled="#{vehicleBean.page == 1}"
+                        update="vehicle-table vehicle_page_counter vehicle-table_next vehicle-table_previous"
+                        oncomplete="reattachHandlers('vehicle-form:vehicle-table', 'vehicle-form:inputVehicleField', 'vehicle-form:hiddenVehicleButton', 'vehicle-form:searchVehicleInput');"
+                />
                 <h:outputText id="vehicle_page_counter" a:class="page_counter" value="#{vehicleBean.page}"/>
-                <p:commandButton type="button" id="vehicle-table_next" styleClass="" class="form__nav-button" value="next" action="#{vehicleBean.nextPage}" disabled="#{vehicleBean.lastPage}">
-                    <f:ajax render="vehicle-table"/>
-                    <f:ajax render="vehicle_page_counter"/>
-                    <f:ajax render="vehicle-table_next"/>
-                    <f:ajax render="vehicle-table_previos"/>
-                </p:commandButton>
+                <p:commandButton
+                        id="vehicle-table_next"
+                        styleClass="form__nav-button"
+                        value="next"
+                        action="#{vehicleBean.nextPage}"
+                        disabled="#{vehicleBean.lastPage}"
+                        update="vehicle-table vehicle_page_counter vehicle-table_next vehicle-table_previous"
+                        oncomplete="reattachHandlers('vehicle-form:vehicle-table', 'vehicle-form:inputVehicleField', 'vehicle-form:hiddenVehicleButton', 'vehicle-form:searchVehicleInput');"
+                />
             </h:panelGroup>
         </h:panelGroup>
     </h:form>

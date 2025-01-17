@@ -5,12 +5,13 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
-import org.xoeqvdp.lab1.websocket.VehicleWebSocket;
+import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -21,12 +22,16 @@ import java.util.List;
 @Named("vehicleBean")
 @RequestScoped
 @Getter
+@Setter
 public class VehicleBean implements Serializable {
 
     private Vehicle vehicle = new Vehicle();
     private List<Vehicle> vehicles = null;
     private String message;
+    private Long selectedId;
+
     Long coordinatesId = null;
+
 
     private int page = 1;
     private boolean lastPage = false;
@@ -66,15 +71,21 @@ public class VehicleBean implements Serializable {
         vehicleInteraction.setModifier(userBean.getUser());
         vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
 
-
-        Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
+        try {
+        transaction = session.beginTransaction();
         session.persist(vehicle);
         session.persist(vehicleInteraction);
         transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
 
-        vehicle = new Vehicle();
-        loadAllVehicles();
-        VehicleWebSocket.broadcast("update-vehicle");
+        resetVehicle();
+        NotificationWebSocket.broadcast("update-vehicle");
         message = "Successful";
         return null;
     }
@@ -86,28 +97,12 @@ public class VehicleBean implements Serializable {
     public boolean updateVehicle(Long userId) {
         session.beginTransaction();
         session.merge(vehicle);
-        VehicleWebSocket.broadcast("update-vehicle");
+        NotificationWebSocket.broadcast("update-vehicle");
         return true;
     }
 
     public void loadAllVehicles() {
         vehicles = session.createQuery("from Vehicle", Vehicle.class).getResultList();
-    }
-
-    public Vehicle testVehicleAdd(){
-        System.out.println("Test Invoked");
-        Vehicle vehicle1 = new Vehicle();
-        vehicle1.setName("TestCar");
-        vehicle1.setCoordinates(null);
-        vehicle1.setType(VehicleType.CAR);
-        vehicle1.setEnginePower(50);
-        vehicle1.setNumberOfWheels(4L);
-        vehicle1.setCapacity(600L);
-        vehicle1.setDistanceTravelled(40000L);
-        vehicle1.setFuelConsumption(20L);
-        vehicle1.setFuelType(FuelType.NUCLEAR);
-
-        return vehicle1;
     }
 
     public void loadPage() {
@@ -143,4 +138,14 @@ public class VehicleBean implements Serializable {
     public void resetVehicle() {
         vehicle = new Vehicle();
     }
+
+    public String redirectToEntityPage() {
+        System.out.println(selectedId);
+        if (selectedId != null) {
+            return "/info.xhtml?faces-redirect=true&entityId=" + selectedId + "&key=v";
+        }
+        return null;
+    }
+
+
 }

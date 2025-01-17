@@ -4,38 +4,47 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
    <h:form id="coordinates-form" a:class="hidden">
+      <h:inputText id="inputCoordinatesField" value="#{coordinatesBean.selectedId}" style="display: none"/>
+      <h:commandButton id="hiddenCoordinatesButton" action="#{coordinatesBean.redirectToEntityPage()}" style="display:none;" />
+
       <h:commandButton a:class="hidden" id="coordinates_button" action="#{coordinatesBean.loadPage}">
          <f:ajax render="coordinates-table" />
       </h:commandButton>
-      <h:dataTable id="coordinates-table" value="#{coordinatesBean.allCoordinates}" var="coordinate" a:calss="table coordinates-table">
+
+      <h:inputText type="text" id="searchCoordinatesInput" a:placeholder="Введите фильтры, напр. 'X:5, Y:30'" style="width: 100%; margin-bottom: 10px; padding: 10px;"/>
+      <h:dataTable id="coordinates-table" value="#{coordinatesBean.allCoordinates}" var="vehicle" a:calss="table coordinates-table">
          <h:column>
             <f:facet name="header">ID</f:facet>
-            #{coordinate.id}
+            #{vehicle.id}
          </h:column>
          <h:column>
             <f:facet name="header">X</f:facet>
-            #{coordinate.x}
+            #{vehicle.x}
          </h:column>
          <h:column>
             <f:facet name="header">Y</f:facet>
-            #{coordinate.y}
+            #{vehicle.y}
          </h:column>
       </h:dataTable>
       <h:panelGroup layout="block" a:class="form__nav-wrapper">
          <h:panelGroup layout="block" a:class="form__nav">
-            <p:commandButton type="button" id="coordinates-table_previos" styleClass="form__nav-button" value="prev." action="#{coordinatesBean.previousPage}" disabled="#{coordinatesBean.page == 1}">
-               <f:ajax render="coordinates-table"/>
-               <f:ajax render="coordinates_page_counter"/>
-               <f:ajax render="coordinates-table_next"/>
-               <f:ajax render="coordinates-table_previos"/>
-            </p:commandButton>
-            <h:outputText id="coordinates_page_counter" a:class="page_counter" value="#{coordinatesBean.page}"/>
-            <p:commandButton type="button" id="table_next" styleClass="" class="form__nav-button" value="next" action="#{coordinatesBean.nextPage}" disabled="#{coordinatesBean.lastPage}">
-               <f:ajax render="coordinates-table"/>
-               <f:ajax render="coordinates_page_counter"/>
-               <f:ajax render="coordinates-table_next"/>
-               <f:ajax render="coordinates-table_previos"/>
-            </p:commandButton>
+            <p:commandButton id="coordinates-table_previos"
+                             styleClass="form__nav-button"
+                             value="prev."
+                             action="#{coordinatesBean.previousPage}"
+                             disabled="#{coordinatesBean.page == 1}"
+                             update="coordinates-table coordinates_page_counter coordinates-table_next coordinates-table_previos"
+                             oncomplete="reattachHandlers('coordinates-form:coordinates-table', 'coordinates-form:inputCoordinatesField', 'coordinates-form:hiddenCoordinatesButton', 'coordinates-form:searchCoordinatesInput');"
+            />
+            <h:outputText id="coordinates_page_counter1" a:class="page_counter" value="#{coordinatesBean.page}"/>
+            <p:commandButton id="coordinates_page_counter"
+                             styleClass="form__nav-button"
+                             value="next"
+                             action="#{coordinatesBean.nextPage}"
+                             disabled="#{coordinatesBean.lastPage}"
+                             update="coordinates-table coordinates_page_counter coordinates-table_next coordinates-table_previos"
+                             oncomplete="reattachHandlers('coordinates-form:coordinates-table', 'coordinates-form:inputCoordinatesField', 'coordinates-form:hiddenCoordinatesButton','coordinates-form:searchCoordinatesInput');"
+            />
          </h:panelGroup>
       </h:panelGroup>
    </h:form>

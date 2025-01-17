@@ -16,3 +16,4 @@ coordinates_page_button.addEventListener("click", () => {
     coordinates_form.classList.remove("hidden");
 });
 
+reattachHandlers("coordinates-form:coordinates-table", "coordinates-form:inputCoordinatesField", "coordinates-form:hiddenCoordinatesButton", "coordinates-form:searchCoordinatesInput");

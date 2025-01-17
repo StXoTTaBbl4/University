@@ -8,7 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -29,7 +29,7 @@ public class CoordinatesInteraction {
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "modified_date", nullable = false)
-    private Instant modifiedDate;
+    private Timestamp modifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)

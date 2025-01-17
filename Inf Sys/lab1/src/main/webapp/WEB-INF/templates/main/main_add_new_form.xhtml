@@ -78,12 +78,26 @@
         <br/>
 
         <!-- Buttons -->
-        <h:commandButton value="Save">
+        <h:commandButton value="Сохранить">
             <f:ajax execute="@form" render="snackbar-text" listener="#{vehicleBean.createVehicle}"/>
         </h:commandButton>
-        <h:commandButton value="Reset" action="#{vehicleBean.resetVehicle}" type="reset" />
+        <h:commandButton value="Очистить" action="#{vehicleBean.resetVehicle}" type="reset" />
     </h:form>
     <h:form id="add-new-coordinates-form" a:class="hidden">
+        <h:outputLabel for="x" value="X axis: " />
+        <h:inputText id="x" value="#{coordinatesBean.coordinates.x}" required="true">
+            <f:validateLongRange minimum="-694" />
+        </h:inputText>
+        <h:message for="x" style="color: red;" />
+        <br/>
+        <h:outputLabel for="y" value="Y axis: " />
+        <h:inputText id="y" value="#{coordinatesBean.coordinates.y}" required="true"/>
+        <h:message for="y" style="color: red;" />
+        <br/>
 
+        <h:commandButton value="Сохранить">
+            <f:ajax execute="@form" render="snackbar-text" listener="#{coordinatesBean.createCoordinates}"/>
+        </h:commandButton>
+        <h:commandButton value="Очистить" action="#{coordinatesBean.resetCoordinates}" type="reset" />
     </h:form>
 </ui:composition>

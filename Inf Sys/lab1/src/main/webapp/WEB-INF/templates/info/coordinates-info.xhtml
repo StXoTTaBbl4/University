@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:panelGroup id="coordinates-info" layout="block">
+        <h:form>
+            <h3>Coordinates Information</h3>
+
+            <!-- Coordinates ID -->
+            <h:outputLabel for="id" value="ID:" />
+            <h:outputText id="id" value="#{coordinatesInfo.coordinates.id}"/>
+
+            <!-- X -->
+            <h:outputLabel value="X:" />
+            <h:inputText id="x" value="#{coordinatesInfo.coordinates.x}" disabled="#{!coordinatesInfo.editable}">
+                <f:validateLongRange minimum="-694" />
+            </h:inputText>
+            <h:message for="x" style="color: red;" />
+
+            <!-- Y -->
+            <h:outputLabel value="Y:" />
+            <h:inputText value="#{coordinatesInfo.coordinates.y}" disabled="#{!coordinatesInfo.editable}"/>
+
+            <h:commandButton value="Сохранить" type="submit" action="#{coordinatesInfo.update}" disabled="#{!coordinatesInfo.editable}"/>
+            <h:commandButton value="Сбросить" action="#{coordinatesInfo.reset}" disabled="#{!coordinatesInfo.editable}"/>
+            <h:commandButton value="Удалить" action="#{coordinatesInfo.delete}" disabled="#{!coordinatesInfo.editable}"/>
+        </h:form>
+    </h:panelGroup>
+</ui:composition>

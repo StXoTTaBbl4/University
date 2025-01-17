@@ -32,7 +32,7 @@ public class Vehicle {
 
     @Column(name = "engine_power", nullable = false)
     @Min(1)
-    private double enginePower;
+    private Double enginePower;
 
     @Column(name = "number_of_wheels")
     @Min(1)
@@ -44,7 +44,7 @@ public class Vehicle {
 
     @Column(name = "distance_travelled", nullable = false)
     @Min(1)
-    private long distanceTravelled;
+    private Long distanceTravelled;
 
     @Column(name = "fuel_consumption")
     @Min(1)
@@ -69,6 +69,13 @@ public class Vehicle {
                 ", fuelConsumption=" + fuelConsumption +
                 ", fuelType=" + fuelType +
                 '}';
+    }
+
+    public Long getCoordinatesID(){
+        if (coordinates != null){
+            return coordinates.getId();
+        }
+        return null;
     }
 }
 

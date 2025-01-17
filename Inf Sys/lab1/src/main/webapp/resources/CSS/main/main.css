@@ -26,7 +26,11 @@ body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+/* из-за того, что в кнопки svg-картинки вставляются через object, on-click ивент кнопок не запускается */
+object {
+    pointer-events: none;
 }
 
 /* Навигация между таблицами */
@@ -94,7 +98,6 @@ body {
     }
 }
 
-
 .active-page {
     color: #fff;
     animation: flicker 2.5s infinite alternate;
@@ -117,7 +120,6 @@ body {
 
 .add-entity-button {
     padding: 15px;
-
     background-color: transparent;
     color: white;
     font-size: 2.5rem;
@@ -282,4 +284,17 @@ tbody tr:hover {
 
 .page_counter {
     padding: 10px;
+}
+
+/* Боковое меню создания сущностей */
+#add-new-vehicle-form, #add-new-coordinates-form {
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+#add-new-vehicle-form input, #add-new-coordinates-form input {
+    margin-top: 10px;
 }

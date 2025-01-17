@@ -1,6 +1,19 @@
-const sidebar = document.getElementById("sidebar");
-const sidebar_extend = document.getElementById("sidebar-header--button");
+const sidebar_logout = document.getElementById("sidebar-logout");
+const sidebar_logout_button = document.getElementById("sidebar-logout-form:logout-button");
 
-sidebar_extend.addEventListener("click", () => {
-    sidebar.classList.toggle("sidebar__extended");
-});
+if (sidebar_logout != null && sidebar_logout_button != null) {
+    sidebar_logout.addEventListener("click", (evt)=> {
+        evt.preventDefault();
+        sidebar_logout_button.click();
+    });
+}
+
+const sidebar_adreq = document.getElementById("sidebar-admin-request");
+const sidebar_adreq_button = document.getElementById("sidebar-adreq-form:adreq-button");
+
+if (sidebar_adreq != null && sidebar_adreq_button != null) {
+    sidebar_adreq.addEventListener("click", (evt)=> {
+        evt.preventDefault();
+        sidebar_adreq_button.click();
+    });
+}

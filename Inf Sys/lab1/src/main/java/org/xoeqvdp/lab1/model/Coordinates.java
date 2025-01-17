@@ -19,5 +19,5 @@ import lombok.Setter;
         private Long x;
 
         @Column(nullable = false)
-        private long y;
+        private Long y;
     }

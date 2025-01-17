@@ -15,7 +15,9 @@ socket.onerror = function () {
 }
 
 socket.onmessage = function(event) {
-    console.log(event.data)
+    let date  = new Date();
+    console.log(date + "::Data received: " + event.data);
+
     if (event.data === "update-vehicle") {
         if (vehicle_page_button.classList.contains("active-page")){
             load_vehicles.click();
@@ -25,7 +27,7 @@ socket.onmessage = function(event) {
     }
      else if (event.data === "update-coordinates") {
         if (coordinates_page_button.classList.contains("active-page")){
-            load_vehicles.click();
+            load_coordinates.click();
         } else {
             coordinates_update_required= true
         }

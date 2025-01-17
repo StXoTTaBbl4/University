@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:panelGroup id="search-coordinates-wrapper" layout="block">
+        <h:form id="search-coordinates">
+            <h:panelGroup id="search-coordinates--fields" styleClass="search-coordinates--fields">
+                <!-- X-->
+                <h:outputLabel for="x" value="X: " />
+                <h:inputText id="x" value="#{searchBean.coordinates.x}"/>
+                <h:message for="x" style="color: red;" />
+                <br/>
+
+                <!-- Y -->
+                <h:outputLabel for="y" value="Y: " />
+                <h:inputText id="y" value="#{searchBean.coordinates.y}"/>
+                <h:message for="y" style="color: red;" />
+                <br/>
+
+                <!-- Buttons -->
+                <h:commandButton value="Найти">
+                    <f:ajax execute="@form" render="search-coordinates--table" listener="#{searchBean.findCoordinates}"/>
+                </h:commandButton>
+                <h:commandButton value="Очистить" action="#{searchBean.resetCoordinates}"/>
+
+            </h:panelGroup>
+
+            <h:panelGroup id="search-coordinates--table-wrapper">
+                <h:dataTable id="search-coordinates--table" value="#{searchBean.found_coordinates}" var="coordinates" a:calss="table coordinates-table">
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        #{coordinates.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">X</f:facet>
+                        #{coordinates.x}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Y</f:facet>
+                        #{coordinates.y}
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </h:form>
+    </h:panelGroup>
+</ui:composition>

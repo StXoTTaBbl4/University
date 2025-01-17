@@ -11,10 +11,10 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "vehicle_interactions")
+@Getter
+@Setter
 public class VehicleInteraction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+   <h:panelGroup id="vehicle-info" layout="block">
+      <h:panelGroup id="vehicle-info--message">
+         <h:outputText value="#{vehicleInfo.message}"/>
+      </h:panelGroup>
+      <h:form id="vehicle-form">
+         <h3>Vehicle Information</h3>
+         <!-- ID (readonly) -->
+         <h:outputLabel value="ID:" />
+         <h:outputText value="#{vehicleInfo.vehicle.id}"/>
+
+         <!-- Name -->
+         <h:outputLabel value="Name:" />
+         <h:inputText value="#{vehicleInfo.vehicle.name}" disabled="#{!vehicleInfo.editable}"/>
+
+         <!-- Coordinates ID -->
+         <h:outputLabel value="Coordinates ID:" />
+         <h:inputText value="#{vehicleInfo.coordinatesID}" disabled="#{!vehicleInfo.editable}"/>
+         <h:commandButton action="#{vehicleInfo.goToCoordinates}" disabled="#{vehicleInfo.coordinatesID == null}" value="Перейти к координатам"/>
+
+         <!-- Creation Date (readonly) -->
+         <h:outputLabel value="Creation Date:" />
+         <h:outputText value="#{vehicleInfo.vehicle.creationDate}" />
+
+         <!-- Vehicle Type -->
+         <h:outputLabel value="Vehicle Type:" />
+         <h:selectOneMenu value="#{vehicleInfo.vehicle.type}" disabled="#{!vehicleInfo.editable}">
+            <f:selectItems value="#{vehicleInfo.vehicleTypes}" />
+         </h:selectOneMenu>
+
+         <!-- Engine Power -->
+         <h:outputLabel for="engine-power" value="Engine Power:" />
+         <h:inputText id="engine-power" value="#{vehicleInfo.vehicle.enginePower}" disabled="#{!vehicleInfo.editable}">
+            <f:validateLongRange minimum="1" />
+         </h:inputText>
+         <h:message for="engine-power" style="color: red;" />
+
+         <!-- Number of Wheels -->
+         <h:outputLabel for="wheelse" value="Number of Wheels:" />
+         <h:inputText id="wheelse" value="#{vehicleInfo.vehicle.numberOfWheels}" disabled="#{!vehicleInfo.editable}">
+            <f:validateLongRange minimum="1"/>
+         </h:inputText>
+         <h:message for="wheelse" style="color: red;" />
+
+         <!-- Capacity -->
+         <h:outputLabel for="capacity" value="Capacity:" />
+         <h:inputText id="capacity" value="#{vehicleInfo.vehicle.capacity}" disabled="#{!vehicleInfo.editable}">
+            <f:validateLongRange minimum="1"/>
+         </h:inputText>
+         <h:message for="capacity" style="color: red;" />
+
+         <!-- Distance Travelled -->
+         <h:outputLabel for="distance" value="Distance Travelled:" />
+         <h:inputText id="distance" value="#{vehicleInfo.vehicle.distanceTravelled}" disabled="#{!vehicleInfo.editable}">
+            <f:validateLongRange minimum="1"/>
+         </h:inputText>
+         <h:message for="distance" style="color: red;" />
+
+         <!-- Fuel Consumption -->
+         <h:outputLabel for="consumption" value="Fuel Consumption:" />
+         <h:inputText id="consumption" value="#{vehicleInfo.vehicle.fuelConsumption}" disabled="#{!vehicleInfo.editable}">
+            <f:validateLongRange minimum="1"/>
+         </h:inputText>
+         <h:message for="consumption" style="color: red;" />
+
+         <!-- Fuel Type -->
+         <h:outputLabel value="Fuel Type:" />
+         <h:selectOneMenu value="#{vehicleInfo.vehicle.fuelType}" disabled="#{!vehicleInfo.editable}">
+            <f:selectItems value="#{vehicleInfo.fuelTypes}" />
+         </h:selectOneMenu>
+
+         <h:commandButton value="Сохранить" type="submit" action="#{vehicleInfo.update}" disabled="#{!vehicleInfo.editable}"/>
+         <h:commandButton value="Сбросить" action="#{vehicleInfo.init}" disabled="#{!vehicleInfo.editable}">
+            <f:ajax render="@form"/>
+         </h:commandButton>
+         <h:commandButton value="Удалить" action="#{vehicleInfo.delete}" disabled="#{!vehicleInfo.editable}"/>
+      </h:form>
+   </h:panelGroup>
+</ui:composition>
