@@ -29,6 +29,7 @@ public class User {
     private Roles role = Roles.USER;
 
     public void setPasswordHash(String password) {
+        System.out.println("\n\nPASSWORD FROM USER:" + password + "\n\n");
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-384");
 
@@ -40,7 +41,6 @@ public class User {
                 if (hex.length() == 1) hexString.append('0');
                 hexString.append(hex);
             }
-
             this.passwordHash =  hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-384 algorithm not found", e);

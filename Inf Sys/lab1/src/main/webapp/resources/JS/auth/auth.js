@@ -38,12 +38,7 @@ window.addEventListener("load", () => {
 });
 
 function validatePassword() {
-    if (reg_password.value !== re_reg_password.value){
-        signup_button.disabled = true;
-        reg_pwd.value = reg_password.value;
-    } else {
-        signup_button.disabled = false;
-    }
+    signup_button.disabled = reg_password.value !== re_reg_password.value;
 }
 
 

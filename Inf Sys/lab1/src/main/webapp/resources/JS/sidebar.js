@@ -3,7 +3,6 @@ const sidebar_logout_button = document.getElementById("sidebar-logout-form:logou
 
 if (sidebar_logout != null && sidebar_logout_button != null) {
     sidebar_logout.addEventListener("click", (evt)=> {
-        evt.preventDefault();
         sidebar_logout_button.click();
     });
 }
@@ -13,7 +12,6 @@ const sidebar_adreq_button = document.getElementById("sidebar-adreq-form:adreq-b
 
 if (sidebar_adreq != null && sidebar_adreq_button != null) {
     sidebar_adreq.addEventListener("click", (evt)=> {
-        evt.preventDefault();
         sidebar_adreq_button.click();
     });
 }

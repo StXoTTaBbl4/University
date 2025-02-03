@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
    <div class="sidebar" id="sidebar">
       <h:panelGroup layout="block" id="sidebar-header" rendered="#{userBean.loggedIn}">
          <img alt="SBR" src="#{resource['Images/menu.png']}"/>
@@ -11,32 +11,32 @@
             <img alt="OPI" src="#{resource['Images/main.png']}"/>
             <span class="menu-text">Главная</span>
          </h:link>
-         <h:link outcome="opi.xhtml" styleClass="menu-item">
+         <h:link outcome="separateUserInterface.xhtml" styleClass="menu-item">
             <img alt="OPI" src="#{resource['Images/preferences.png']}"/>
             <span class="menu-text">ОПИ</span>
          </h:link>
          <h:link outcome="admin.xhtml" styleClass="menu-item" rendered="#{userBean.admin}">
             <img alt="ADM" src="#{resource['Images/admin.png']}"/>
-            <span class="menu-text">Админ. панель</span>
+            <span class="menu-text">Админ. панель(#{adminBean.adminRequests})</span>
          </h:link>
-         <h:link id="sidebar-admin-request" styleClass="menu-item"  rendered="#{!userBean.admin && userBean.loggedIn}">
+         <h:panelGroup id="sidebar-admin-request" styleClass="menu-item"  rendered="#{!userBean.admin and userBean.loggedIn}">
             <img alt="ADREQ" src="#{resource['Images/raise-hand.png']}"/>
             <span class="menu-text">Хочью админку</span>
             <h:form id="sidebar-adreq-form" style="display: none">
                <h:commandButton id="adreq-button"  action="#{userBean.sendAdminRequest}"/>
             </h:form>
-         </h:link>
+         </h:panelGroup>
          <h:link outcome="auth.xhtml" styleClass="menu-item" rendered="#{!userBean.loggedIn}">
             <img alt="ENT" src="#{resource['Images/login.svg']}"/>
             <span class="menu-text">Войти</span>
          </h:link>
-         <h:link id="sidebar-logout" styleClass="menu-item"  rendered="#{userBean.loggedIn}">
-            <img alt="OPI" src="#{resource['Images/logout.png']}"/>
+         <h:panelGroup id="sidebar-logout" styleClass="menu-item"  rendered="#{userBean.loggedIn}">
+            <img alt="EXT" src="#{resource['Images/logout.png']}"/>
             <span class="menu-text">Выйти</span>
             <h:form id="sidebar-logout-form" style="display: none">
                <h:commandButton id="logout-button" action="#{userBean.logoutUser}"/>
             </h:form>
-         </h:link>
+         </h:panelGroup>
       </div>
    </div>
 </ui:composition>

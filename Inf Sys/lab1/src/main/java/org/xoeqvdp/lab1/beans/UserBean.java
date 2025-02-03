@@ -1,6 +1,6 @@
 package org.xoeqvdp.lab1.beans;
 
-import jakarta.enterprise.context.BeforeDestroyed;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
@@ -12,7 +12,8 @@ import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.AdminRequest;
 import org.xoeqvdp.lab1.model.Roles;
 import org.xoeqvdp.lab1.model.User;
-import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
+
+
 
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -21,10 +22,11 @@ import java.util.logging.Logger;
 @Getter
 @Named("userBean")
 @SessionScoped
-public class UserBean implements Serializable{
+public class UserBean implements Serializable {
     private static final Logger logger = Logger.getLogger(UserBean.class.getName());
 
     private User user = new User();
+    private User new_user = new User();
     private String message = "";
     private boolean loggedIn = false;
 
@@ -32,42 +34,60 @@ public class UserBean implements Serializable{
     HttpSession session = (HttpSession) fCtx.getExternalContext().getSession(false);
     String sessionID = session.getId();
 
-    private final Session dbSession = HibernateUtil.getSessionFactory().openSession();
+    public String  registerUser() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                if (session.createQuery("from User where username = :username", User.class).setParameter("username", new_user.getUsername()).uniqueResult() != null){
+                    message = "Такой пользователь уже существует!";
+                    return null;
+                }
 
-    public String registerUser() {
-
-        User buff = dbSession.createQuery("from User where username = :username", User.class).setParameter("username", user.getUsername()).uniqueResult();
-
-        if (buff != null){
-            message = "Пользователь с таким именем уже существует!";
-            return null;
+                session.persist(new_user);
+                session.flush();
+                transaction.commit();
+                message = "Пользователь добавлен, выполните вход";
+            } catch (Exception e){
+                transaction.rollback();
+                logger.log(Level.SEVERE, "Error adding entity to database", e);
+                message = "Ошибка при создании пользователя";
+            }
+        } catch (Exception e){
+            logger.log(Level.SEVERE, "Error managing Hibernate session", e);
+            message = "Ошибка при попытке подключения к БД";
         }
 
-        buff = dbSession.createQuery("from User where passwordHash = :pwd", User.class).setParameter("pwd", user.getPasswordHash()).uniqueResult();
-        if (buff != null) {
-            message = "Пользователь с таким паролем уже существует!";
-            return null;
-        }
-
-        Transaction transaction = dbSession.beginTransaction();
-        dbSession.persist(user);
-        transaction.commit();
-        message = "Пользователь добавлен, выполните вход";
+        new_user = new User();
         return null;
     }
 
     public String loginUser() {
-        user = dbSession.createQuery("from User where username = :username and passwordHash = :password", User.class)
-                .setParameter("username", user.getUsername())
-                .setParameter("password",user.getPasswordHash())
-                .uniqueResult();
-        if (user != null){
-            System.out.println(user);
-            loggedIn = true;
-            return "main.xhtml?faces-redirect=true";
+        System.out.println(user);
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                user = session.createQuery("from User where username = :username and passwordHash = :password", User.class)
+                        .setParameter("username", user.getUsername())
+                        .setParameter("password",user.getPasswordHash())
+                        .uniqueResult();
+                if (user == null) {
+                    message = "Проверьте логин или пароль";
+                    user = new User();
+                    return "";
+                }
+                System.out.println(user);
+                loggedIn = true;
+                return "main.xhtml?faces-redirect=true";
+            } catch (Exception e){
+                transaction.rollback();
+                logger.log(Level.SEVERE, "Error adding entity to database", e);
+                message = "Ошибка при поиске пользователя";
+            }
+        } catch (Exception e){
+            logger.log(Level.SEVERE, "Error managing Hibernate session", e);
+            message = "Ошибка при попытке подключения к БД";
         }
-        message = "Проверьте правильность логина и пароля";
-        return null;
+        return "";
     }
 
     public String logoutUser() {
@@ -85,13 +105,17 @@ public class UserBean implements Serializable{
     }
 
     public void sendAdminRequest() {
-        if (user.getId() != null) {
+        System.out.println("INVOKED ADMIN REQUEST\n\n\n");
+        if (user.getId() != null && user.getRole() != Roles.ADMIN) {
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 Transaction transaction = session.beginTransaction();
                 try {
+                    if (!session.createQuery("FROM AdminRequest where user = :user", AdminRequest.class).setParameter("user", user).getResultList().isEmpty()) {
+                        return;
+                    }
                     AdminRequest adminRequest = new AdminRequest();
                     adminRequest.setUser(user);
-                    session.merge(adminRequest);
+                    session.persist(adminRequest);
                     session.flush();
                     transaction.commit();
                 } catch (Exception e) {

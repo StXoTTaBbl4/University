@@ -159,6 +159,16 @@ object {
 }
 
 /* Таблицы */
+
+/* Потому что на мелком экране всё не уместишь T_T */
+@media screen and (max-width: 1920px){
+    #vehicle-form {
+        max-width: 1000px;
+        padding: 15px;
+        overflow-x: scroll;
+    }
+}
+
 .table-outer-wrapper {
     display: flex;
     /*justify-content: space-around;*/
@@ -193,6 +203,8 @@ object {
 }
 
 table {
+    overflow-x: scroll;
+    max-width: 750px;
     border-radius: 15px;
     padding: 10px;
     background-color: transparent;

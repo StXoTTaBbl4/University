@@ -8,7 +8,7 @@
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <title>Main page</title>
+    <title>Admin page</title>
     <h:outputStylesheet name="remove_primeface_styles.css" library="CSS"/>
     <h:outputStylesheet name="admin/admin.css" library="CSS"/>
     <h:outputStylesheet name="sidebar.css" library="CSS"/>
@@ -18,20 +18,27 @@
     <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
     <h:panelGroup layout="block" a:class="outer-wrapper">
         <h:panelGroup layout="block" a:class="inner-wrapper">
-            <h:dataTable id="coordinates-table" value="#{adminBean.requests}" var="vehicle" a:calss="table coordinates-table">
-                <h:column>
-                    <f:facet name="header">ID</f:facet>
-                    #{vehicle.id}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">X</f:facet>
-                    #{vehicle.x}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Y</f:facet>
-                    #{vehicle.y}
-                </h:column>
-            </h:dataTable>
+            <h:form id="requests" rendered="#{userBean.admin}">
+                <h:dataTable id="users" value="#{adminBean.requests}" var="req">
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        #{req.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">User ID</f:facet>
+                        #{req.user.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Actions</f:facet>
+                        <h:commandButton value="Accept" action="#{adminBean.acceptRequest(req.user.id)}" />
+                        <h:commandButton value="Reject" action="#{adminBean.rejectRequest(req.id)}" />
+                    </h:column>
+                </h:dataTable>
+                <h:commandButton styleClass="hidden" id="update">
+                    <f:ajax render="requests"/>
+                </h:commandButton>
+            </h:form>
+            <h:outputText value="Ты не админ так что фиг тебе а не данные" rendered="#{!userBean.admin}"/>
         </h:panelGroup>
     </h:panelGroup>
 </h:body>
