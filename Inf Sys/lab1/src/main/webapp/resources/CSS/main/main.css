@@ -154,6 +154,11 @@ object {
     height: 100%;
 }
 
+.add-button-page img {
+    max-height: 256px;
+    max-width: 256px;
+}
+
 .add_entity_form {
     height: 100%;
 }
@@ -310,3 +315,41 @@ tbody tr:hover {
 #add-new-vehicle-form input, #add-new-coordinates-form input {
     margin-top: 10px;
 }
+
+.add-new-form input {
+    font-size: 1.3rem;
+    background-color: transparent;
+    border-width: 0 0 2px 0;
+    color: white;
+}
+
+.add-entity-slider {
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.add-entity-slider .select-entity-button {
+    width: fit-content;
+    height: 30px;
+    color: #FFFFFF;
+    background-color: transparent;
+    padding: 0 10px;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    border: 0 solid #f3eaff;
+    border-bottom-width: 3px;
+}
+
+.select-entity-button--active {
+    border-color: salmon !important;
+}
+
+.add-new-form--button {
+    width: fit-content;
+    padding: 5px 10px !important;
+    margin: 5px;
+}
+

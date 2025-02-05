@@ -1,43 +1,45 @@
-const snackbar = document.getElementById("snackbar");
-const snackbar_msg = document.getElementById("snackbar-text");
-
 const add_button = document.querySelector(".add-entity-button");
 const add_wrapper = document.querySelector(".add-entity-inner-wrapper");
 
 const add_vehicle = document.querySelector(".add-entity-slider--vehicle");
 const add_coordinates = document.querySelector(".add-entity-slider--coordinates");
 
-const add_vehicle_form = document.getElementById("add-new-vehicle-form");
-const add_coordinates_form = document.getElementById("add-new-coordinates-form");
+let add_vehicle_form = document.getElementById("add-new-vehicle-form");
+let add_coordinates_form = document.getElementById("add-new-coordinates-form");
 
 const coordinates_table = document.getElementById("coordinates-form:coordinates-table");
-
 const coordinates_table_headers = coordinates_table.querySelectorAll("thead > tr > th");
 
-snackbar_msg.addEventListener("change", () => {
-    snackbar.classList.toggle("show");
-    setTimeout(function () {
-        snackbar.classList.toggle("show");
-    }, 3000);
-});
-
-add_button.addEventListener("click", ()=>{
-    add_wrapper.classList.toggle("add-wrapper__active");
-});
-
-add_vehicle.addEventListener("click", ()=>{
-    add_vehicle_form.classList.remove("hidden");
+window.onload = function() {
     add_coordinates_form.classList.add("hidden");
-})
 
-add_coordinates.addEventListener("click", ()=>{
-    add_vehicle_form.classList.add("hidden");
-    add_coordinates_form.classList.remove("hidden");
-})
+    add_button.addEventListener("click", ()=>{
+        add_wrapper.classList.toggle("add-wrapper__active");
+    });
 
-coordinates_table_headers.forEach((header, index) => {
-    header.addEventListener("click", () => sortTable(index, coordinates_table));
-});
+    add_vehicle.addEventListener("click", ()=>{
+        add_coordinates_form = document.getElementById("add-new-coordinates-form");
+        add_vehicle_form = document.getElementById("add-new-vehicle-form");
+        add_vehicle_form.classList.remove("hidden");
+        add_coordinates_form.classList.add("hidden");
+        add_vehicle.classList.add("select-entity-button--active");
+        add_coordinates.classList.remove("select-entity-button--active");
+
+    });
+
+    add_coordinates.addEventListener("click", ()=>{
+        add_vehicle_form = document.getElementById("add-new-vehicle-form");
+        add_coordinates_form = document.getElementById("add-new-coordinates-form");
+        add_vehicle_form.classList.add("hidden");
+        add_coordinates_form.classList.remove("hidden");
+        add_vehicle.classList.remove("select-entity-button--active");
+        add_coordinates.classList.add("select-entity-button--active");
+    });
+
+    coordinates_table_headers.forEach((header, index) => {
+        header.addEventListener("click", () => sortTable(index, coordinates_table));
+    });
+};
 
 function sortTable(columnIndex, table) {
 
@@ -89,7 +91,6 @@ function filterTable(filters, rows, headers) {
 
 function reattachHandlers(table_id, inputField_id, button_id, search_input) {
     let table = document.getElementById(table_id);
-    console.log(table)
     let table_headers = table.querySelectorAll("thead > tr > th");
 
     table.querySelectorAll("tbody > tr").forEach(function (row) {

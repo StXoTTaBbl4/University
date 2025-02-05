@@ -18,12 +18,14 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Named("vehicleBean")
 @RequestScoped
 @Getter
 @Setter
 public class VehicleBean implements Serializable {
+    private static final Logger logger = Logger.getLogger(VehicleBean.class.getName());
 
     private Vehicle vehicle = new Vehicle();
     private List<Vehicle> vehicles = null;
@@ -31,7 +33,6 @@ public class VehicleBean implements Serializable {
     private Long selectedId;
 
     Long coordinatesId = null;
-
 
     private int page = 1;
     private boolean lastPage = false;
@@ -47,8 +48,8 @@ public class VehicleBean implements Serializable {
         loadPage();
     }
 
-
     public String createVehicle() {
+        System.out.println("111");
         if (userBean.getUser() == null || userBean.getUser().getId() == null) {
             message = "Только авторизованные пользователи могут вносить изменения!";
             return null;
@@ -90,21 +91,6 @@ public class VehicleBean implements Serializable {
         return null;
     }
 
-    public Vehicle getVehicleById(Long id) {
-        return session.createQuery("from Vehicle where id = :id", Vehicle.class).setParameter("id", id).uniqueResult();
-    }
-
-    public boolean updateVehicle(Long userId) {
-        session.beginTransaction();
-        session.merge(vehicle);
-        NotificationWebSocket.broadcast("update-vehicle");
-        return true;
-    }
-
-    public void loadAllVehicles() {
-        vehicles = session.createQuery("from Vehicle", Vehicle.class).getResultList();
-    }
-
     public void loadPage() {
         Query<Vehicle> query = session.createQuery("FROM Vehicle ", Vehicle.class);
         query.setFirstResult((page - 1) * itemsPerPage);
@@ -136,7 +122,9 @@ public class VehicleBean implements Serializable {
     }
 
     public void resetVehicle() {
+        System.out.println("МАшина очищена");
         vehicle = new Vehicle();
+        message = "Форма сброшена";
     }
 
     public String redirectToEntityPage() {

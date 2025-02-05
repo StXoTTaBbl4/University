@@ -35,7 +35,7 @@
             <h:panelGroup layout="block" styleClass="add-entity-inner-wrapper">
                 <div class="add-button-page add-wrapper">
                     <button class="add-entity-button">
-                        <object type="image/svg+xml" class="add-image" data="#{resource['Images/add.svg']}"/>
+                        <img alt="ADD_NEW" src="#{resource['Images/add.png']}"/>
                         <div class="add-entity-button__text">Новая запись</div>
                     </button>
                 </div>
@@ -47,6 +47,7 @@
     </h:panelGroup>
 </h:body>
 <h:outputScript name="sidebar.js" library="JS"/>
+<h:outputScript name="snackbar.js" library="JS"/>
 <h:outputScript name="main/main_websocket.js" library="JS"/>
 <h:outputScript name="main/main.js" library="JS"/>
 <h:outputScript name="main/main_vehicle.js" library="JS"/>

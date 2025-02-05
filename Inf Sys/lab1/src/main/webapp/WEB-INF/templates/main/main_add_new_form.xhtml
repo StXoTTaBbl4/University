@@ -1,53 +1,65 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
 
     <h:panelGroup layout="bloock" class="add-entity-slider">
-        <button class="add-entity-slider--vehicle">Машина</button>
-        <button class="add-entity-slider--coordinates">Координаты</button>
+        <button class="add-entity-slider--vehicle  select-entity-button select-entity-button--active">Машина</button>
+        <button class="add-entity-slider--coordinates select-entity-button">Координаты</button>
     </h:panelGroup>
-    <h:form id="add-new-vehicle-form">
+    <h:form id="add-new-vehicle-form" styleClass="add-new-form">
         <!-- Name -->
         <h:outputLabel for="name" value="Name: " />
-        <h:inputText id="name" value="#{vehicleBean.vehicle.name}" required="true" />
+        <h:inputText id="name" value="#{vehicleBean.vehicle.name}"
+                     required="true"
+                     requiredMessage="Имя забыл, а голову нет?"
+                     a:placeholder="Название авто"
+                    />
+        <!-- Name Error-->
         <h:message for="name" style="color: red;" />
         <br/>
 
         <!-- Coordinates -->
         <h:outputLabel for="coordinates" value="Coordinates (ID): " />
-        <h:inputText id="coordinates" value="#{vehicleBean.coordinatesId}" />
-        <h:message for="coordinates" style="color: red;" />
+        <h:inputText id="coordinates" value="#{vehicleBean.coordinatesId}" a:placeholder="ID координат"/>
         <br/>
 
         <!-- Vehicle Type -->
-        <h:outputLabel for="type" value="Vehicle Type: " />
+        <h:outputLabel for="type" value="Vehicle Type: "/>
         <h:selectOneMenu id="type" value="#{vehicleBean.vehicle.type}">
             <f:selectItems value="#{vehicleBean.vehicleTypes}"/>
         </h:selectOneMenu>
-        <h:message for="type" style="color: red;" />
         <br/>
 
         <!-- Engine Power -->
         <h:outputLabel for="enginePower" value="Engine Power: " />
-        <h:inputText id="enginePower" value="#{vehicleBean.vehicle.enginePower}" required="true">
+        <h:inputText id="enginePower" value="#{vehicleBean.vehicle.enginePower}"
+                     required="true"
+                     requiredMessage="Машина без мощности двигателя, м? Мощно."
+                     validatorMessage="Да, двигатель определенно может иметь меньше 1 л.с., ага"
+                     a:placeholder="Мощность двигателя">
             <f:validateDoubleRange minimum="1" />
         </h:inputText>
         <h:message for="enginePower" style="color: red;" />
         <br/>
 
         <!-- Number of Wheels -->
-        <h:outputLabel for="numberOfWheels" value="Number of Wheels: " />
-        <h:inputText id="numberOfWheels" value="#{vehicleBean.vehicle.numberOfWheels}">
+        <h:outputLabel for="numberOfWheels" value="Number of Wheels: "/>
+        <h:inputText id="numberOfWheels" value="#{vehicleBean.vehicle.numberOfWheels}"
+                     validatorMessage="Начальник сказал что хотя бы одно колесо должно быть. Даже если это лодка. Да."
+                     a:placeholder="Количество колёс">
             <f:validateLongRange minimum="1" />
         </h:inputText>
         <h:message for="numberOfWheels" style="color: red;" />
         <br/>
 
         <!-- Capacity -->
-        <h:outputLabel for="capacity" value="Capacity: " />
-        <h:inputText id="capacity" value="#{vehicleBean.vehicle.capacity}">
+        <h:outputLabel for="capacity" value="Capacity: "/>
+        <h:inputText id="capacity" value="#{vehicleBean.vehicle.capacity}"
+                     validatorMessage="На ёмкости меньше 1 далеко не уедешь, переделывай."
+                     a:placeholder="Ёмкость">
             <f:validateLongRange minimum="1" />
         </h:inputText>
         <h:message for="capacity" style="color: red;" />
@@ -55,7 +67,11 @@
 
         <!-- Distance Travelled -->
         <h:outputLabel for="distanceTravelled" value="Distance Travelled: " />
-        <h:inputText id="distanceTravelled" value="#{vehicleBean.vehicle.distanceTravelled}" required="true">
+        <h:inputText id="distanceTravelled" value="#{vehicleBean.vehicle.distanceTravelled}"
+                     required="true"
+                     requiredMessage="Машина без пробега не машна -_-."
+                     validatorMessage="Машна с пробегом меньше 1 не машина -_-."
+                     a:placeholder="Пробег">
             <f:validateLongRange minimum="1" />
         </h:inputText>
         <h:message for="distanceTravelled" style="color: red;" />
@@ -63,7 +79,9 @@
 
         <!-- Fuel Consumption -->
         <h:outputLabel for="fuelConsumption" value="Fuel Consumption: " />
-        <h:inputText id="fuelConsumption" value="#{vehicleBean.vehicle.fuelConsumption}">
+        <h:inputText id="fuelConsumption" value="#{vehicleBean.vehicle.fuelConsumption}"
+                     validatorMessage="Потребление меньше 1? Отпусти тех кто тянет машину, а?"
+                     a:placeholder="Расход топлива">
             <f:validateLongRange minimum="1" />
         </h:inputText>
         <h:message for="fuelConsumption" style="color: red;" />
@@ -78,26 +96,58 @@
         <br/>
 
         <!-- Buttons -->
-        <h:commandButton value="Сохранить">
-            <f:ajax execute="@form" render="snackbar-text" listener="#{vehicleBean.createVehicle}"/>
-        </h:commandButton>
-        <h:commandButton value="Очистить" action="#{vehicleBean.resetVehicle}" type="reset" />
+        <p:commandButton
+                styleClass="add-new-form--button form__nav-button"
+                value="Сохранить"
+                action="#{vehicleBean.createVehicle}"
+                update="add-new-vehicle-form snackbar-text"
+                oncomplete="if (!args.validationFailed) showSnackbar();"
+        />
+        <p:commandButton
+                styleClass="add-new-form--button form__nav-button"
+                value="Очистить"
+                action="#{vehicleBean.resetVehicle}"
+                update="add-new-vehicle-form snackbar-text"
+                oncomplete="showSnackbar();"
+                immediate="true"
+        >
+            <p:resetInput target="add-new-vehicle-form"/>
+        </p:commandButton>
     </h:form>
-    <h:form id="add-new-coordinates-form" a:class="hidden">
+    <h:form id="add-new-coordinates-form" styleClass="add-new-form">
         <h:outputLabel for="x" value="X axis: " />
-        <h:inputText id="x" value="#{coordinatesBean.coordinates.x}" required="true">
+        <h:inputText id="x" value="#{coordinatesBean.coordinates.x}"
+                     required="true"
+                     requiredMessage="Координата X обязательна."
+                     validatorMessage="Минимальное значение: -694"
+                     a:placeholder="Координата X">
             <f:validateLongRange minimum="-694" />
         </h:inputText>
         <h:message for="x" style="color: red;" />
         <br/>
         <h:outputLabel for="y" value="Y axis: " />
-        <h:inputText id="y" value="#{coordinatesBean.coordinates.y}" required="true"/>
+        <h:inputText id="y" value="#{coordinatesBean.coordinates.y}"
+                     required="true"
+                     requiredMessage="Координата Y обязательна."
+                     a:placeholder="Координата Y"/>
         <h:message for="y" style="color: red;" />
         <br/>
-
-        <h:commandButton value="Сохранить">
-            <f:ajax execute="@form" render="snackbar-text" listener="#{coordinatesBean.createCoordinates}"/>
-        </h:commandButton>
-        <h:commandButton value="Очистить" action="#{coordinatesBean.resetCoordinates}" type="reset" />
+        <p:commandButton
+                styleClass="add-new-form--button form__nav-button"
+                value="Сохранить"
+                action="#{coordinatesBean.createCoordinates}"
+                update="add-new-coordinates-form snackbar-text"
+                oncomplete="if (!args.validationFailed) showSnackbar();"
+        />
+        <p:commandButton
+                styleClass="add-new-form--button form__nav-button"
+                value="Очистить"
+                action="#{coordinatesBean.resetCoordinates}"
+                update="add-new-coordinates-form snackbar-text"
+                oncomplete="showSnackbar();"
+                immediate="true"
+        >
+            <p:resetInput target="add-new-coordinates-form"/>
+        </p:commandButton>
     </h:form>
 </ui:composition>

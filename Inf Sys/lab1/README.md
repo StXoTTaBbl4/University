@@ -26,14 +26,14 @@ public enum VehicleType {
     PLANE,
     BOAT,
     BICYCLE,
-    MOTORCYCLE;
+    MOTORCYCLE
 }
 public enum FuelType {
     ELECTRICITY,
     DIESEL,
     ALCOHOL,
     MANPOWER,
-    NUCLEAR;
+    NUCLEAR
 }
 ```
 ## Разработанная система должна удовлетворять следующим требованиям:
