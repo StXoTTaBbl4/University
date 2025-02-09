@@ -4,67 +4,140 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:a="http://java.sun.com/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough" xmlns:p="primefaces">
+<h:head>
+    <title>SPI page</title>
+    <h:outputStylesheet name="remove_primeface_styles.css" library="CSS"/>
+    <h:outputStylesheet name="spi/spi.css" library="CSS"/>
+    <h:outputStylesheet name="snackbar.css" library="CSS"/>
+    <h:outputStylesheet name="sidebar.css" library="CSS"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</h:head>
 <f:view>
-    <h:outputText id="info" value="#{separateUserInterface.message}"/>
-    <h:panelGroup layout="block" id="first">
-        <h:form>
-            <h:outputText value=" Удалить все объекты, значение поля fuelType которого эквивалентно заданному."/>
-            <h:outputLabel value="Fuel Type:" />
-            <h:selectOneMenu value="#{separateUserInterface.fuelType}">
-                <f:selectItems value="#{separateUserInterface.fuelTypes}" />
-            </h:selectOneMenu>
-            <h:commandButton action="#{separateUserInterface.first}" value="Тык">
-                <f:ajax render="info"/>
-            </h:commandButton>
-        </h:form>
+    <h:panelGroup layout="block" id="snackbar-wrapper">
+        <h:panelGroup layout="block" id="snackbar">
+            <h:messages globalOnly="true" id="snackbar-text" />
+        </h:panelGroup>
     </h:panelGroup>
-    <h:panelGroup layout="block" id="second">
-        <h:form>
-            <h:outputText value="Вернуть один (любой) объект, значение поля name которого является максимальным."/>
-            <h:commandButton action="#{separateUserInterface.second}" value="Тык">
-                <f:ajax render="info"/>
-            </h:commandButton>
-        </h:form>
+    <h:panelGroup layout="block" a:class="outer-wrapper">
+        <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
+        <h:panelGroup layout="block" styleClass="inner-wrapper">
+            <h:panelGroup layout="block" styleClass="taskblock">
+                <h:form id="first">
+                    <h:outputText value=" Удалить все объекты, значение поля fuelType которого эквивалентно заданному."/>
+                    <br/>
+
+                    <h:outputLabel value="Fuel Type:" />
+                    <h:selectOneMenu value="#{separateUserInterface.fuelType}">
+                        <f:selectItems value="#{separateUserInterface.fuelTypes}" />
+                    </h:selectOneMenu>
+                    <br/>
+
+                    <p:commandButton action="#{separateUserInterface.first}"
+                                     value="Тык"
+                                     update="snackbar-text"
+                                     oncomplete="showSnackbar();"
+                                     />
+                </h:form>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="taskblock">
+                <h:form id="second">
+                    <h:outputText value="Вернуть один (любой) объект, значение поля name которого является максимальным."/>
+                    <br/>
+
+                    <p:commandButton action="#{separateUserInterface.second}"
+                                     value="Тык"
+                                     update="snackbar-text"
+                                     oncomplete="showSnackbar()"
+                                     />
+                </h:form>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="taskblock">
+                <h:form id="third">
+                    <h:outputText value="Вернуть массив объектов, значение поля fuelConsumption которых больше заданного."/>
+                    <br/>
+
+                    <h:inputText id="fuelConsumption"
+                                 value="#{separateUserInterface.fuelConsumption}"
+                                 required="true"
+                                 requiredMessage="Необходимо ввести знаечние."
+                                 validatorMessage="Значение должно быть больше 0"
+                                 a:placeholder="Потребление топлива">
+                        <f:validateLongRange minimum="1" />
+                    </h:inputText>
+                    <h:message for="fuelConsumption" style="color: red;" />
+                    <br/>
+
+                    <p:commandButton process="third"
+                                     action="#{separateUserInterface.third}"
+                                     value="Тык"
+                                     update="third snackbar-text"
+                                     oncomplete="if (!args.validationFailed) showSnackbar()"
+                                     />
+                </h:form>
+            </h:panelGroup>
+            <h:panelGroup layout="block"  styleClass="taskblock">
+                <h:form id="fourth">
+                    <h:outputText value="'Скрутить' счётчик пробега транспортного средства с заданным id до нуля."/>
+                    <br/>
+                    <h:inputText id="distanceTravaled" value="#{separateUserInterface.fourth_id}"
+                                 required="true"
+                                 requiredMessage="Ну и у чего мне пробег скручивать?"
+                                 validatorMessage="ID с 1 начинаются так то."
+                                 a:placeholder="id сюда">
+                        <f:validateLongRange minimum="0"/>
+                    </h:inputText>
+                    <h:message for="distanceTravaled" style="color: red;" />
+                    <br/>
+                    <p:commandButton process="fourth"
+                                     action="#{separateUserInterface.fourth}"
+                                     value="Тык"
+                                     update="fourth snackbar-text"
+                                     oncomplete="if (!args.validationFailed) showSnackbar()"
+                                     />
+                </h:form>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="taskblock">
+                <h:form id="fifth">
+                    <h:outputText value="Добавить транспортному средству с заданным id указанное число колёс."/>
+                    <br/>
+
+                    <h:outputLabel for="fifth-id" value="id:"/>
+                    <h:inputText id="fifth-id"
+                                 value="#{separateUserInterface.fifth_id}"
+                                 required="true"
+                                 requiredMessage="И к чему мне их прибавлять?"
+                                 validatorMessage="ID с 1 начинаются так то."
+                                 a:placeholder="id сюда тоже можно">
+                        <f:validateLongRange minimum="1"/>
+                    </h:inputText>
+                    <h:message for="fifth-id" style="color: red;" />
+                    <br/>
+
+                    <h:outputLabel for="fifth-wheels" value="Number of wheels"/>
+                    <h:inputText id="fifth-wheels"
+                                 value="#{separateUserInterface.numberOfWheels}"
+                                 required="true"
+                                 requiredMessage="Без колёс не улетишь."
+                                 validatorMessage="Добавить, а не убрать -_-."
+                                 a:placeholder="Колёса сюда"
+                                 >
+                        <f:validateLongRange minimum="0"/>
+                    </h:inputText>
+                    <h:message for="fifth-wheels" style="color: red;" />
+                    <br/>
+                    <p:commandButton process="fifth"
+                                     action="#{separateUserInterface.fifth}"
+                                     value="Тык"
+                                     update="fifth snackbar-text"
+                                     oncomplete="if (!args.validationFailed) showSnackbar()"
+                                     />
+                </h:form>
+            </h:panelGroup>
+        </h:panelGroup>
     </h:panelGroup>
-    <h:panelGroup layout="block" id="third">
-        <h:form>
-            <h:outputText value="Вернуть массив объектов, значение поля fuelConsumption которых больше заданного."/>
-            <h:inputText id="fuelConsumption" value="#{separateUserInterface.fuelConsumption}">
-                <f:validateLongRange minimum="1" />
-            </h:inputText>
-            <h:message for="fuelConsumption" style="color: red;" />
-            <h:commandButton action="#{separateUserInterface.third}" value="Тык">
-                <f:ajax render="info"/>
-            </h:commandButton>
-        </h:form>
-    </h:panelGroup>
-    <h:panelGroup layout="block" id="fourth">
-        <h:form>
-            <h:outputText value="'Скрутить' счётчик пробега транспортного средства с заданным id до нуля."/>
-            <h:inputText value="#{separateUserInterface.fourth_id}">
-                <f:validateLongRange minimum="0"/>
-            </h:inputText>
-            <h:commandButton action="#{separateUserInterface.fourth}" value="Тык">
-                <f:ajax render="info"/>
-            </h:commandButton>
-        </h:form>
-    </h:panelGroup>
-    <h:panelGroup layout="block" id="fifth">
-        <h:form>
-            <h:outputText value="Добавить транспортному средству с заданным id указанное число колёс."/>
-            <h:outputLabel for="fifth-id" value="id:"/>
-            <h:inputText id="fifth-id" value="#{separateUserInterface.fifth_id}">
-                <f:validateLongRange minimum="1"/>
-            </h:inputText>
-            <h:outputLabel for="fifth-wheels" value="Number of wheels"/>
-            <h:inputText id="fifth-wheels" value="#{separateUserInterface.numberOfWheels}">
-                <f:validateLongRange minimum="1"/>
-            </h:inputText>
-            <h:commandButton action="#{separateUserInterface.fifth}" value="Тык">
-                <f:ajax render="info"/>
-            </h:commandButton>
-        </h:form>
-    </h:panelGroup>
+    <h:outputScript name="sidebar.js" library="JS"/>
+    <h:outputScript name="snackbar.js" library="JS"/>
 </f:view>
 </html>

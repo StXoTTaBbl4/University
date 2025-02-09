@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.xoeqvdp.lab1.database.RoleConverter;
 
 @Entity
 @Table(name = "users")
@@ -22,7 +21,7 @@ public class User {
     private String username;
 
     @Column(nullable = false, unique = true, name = "password_hash")
-    private String passwordHash; // Пароль будет хэшироваться SHA-384 перед сохранением
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "role")

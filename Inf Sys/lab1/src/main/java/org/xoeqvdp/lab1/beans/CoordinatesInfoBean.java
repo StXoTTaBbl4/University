@@ -5,12 +5,13 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
-import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
+import org.xoeqvdp.lab1.services.CoordinatesInfoService;
+import org.xoeqvdp.lab1.services.ServiceResult;
+import org.xoeqvdp.lab1.utils.Utility;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -30,6 +31,9 @@ public class CoordinatesInfoBean implements Serializable {
 
     @Inject
     private InfoBean infoBean;
+
+    @Inject
+    CoordinatesInfoService coordinatesInfoService;
 
     private Coordinates original_coordinates;
     private Coordinates coordinates;
@@ -70,19 +74,8 @@ public class CoordinatesInfoBean implements Serializable {
     }
 
     public void update() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.merge(coordinates);
-                transaction.commit();
-                NotificationWebSocket.broadcast("update-coordinates");
-            } catch (Exception e) {
-                transaction.rollback();
-                logger.log(Level.SEVERE, "Error updating entity to database", e);
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error managing Hibernate session", e);
-        }
+        ServiceResult<Coordinates> result = coordinatesInfoService.update(coordinates);
+        Utility.sendMessage(result.getMessage());
     }
 
     public void reset() {
@@ -90,22 +83,10 @@ public class CoordinatesInfoBean implements Serializable {
     }
 
     public String delete(){
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.remove(coordinates);
-                session.flush();
-                transaction.commit();
-                NotificationWebSocket.broadcast("update-coordinates");
-                return "/main.xhtml?faces-redirect=true";
-            } catch (Exception e) {
-                transaction.rollback();
-                logger.log(Level.SEVERE, "Error deleting entity from database", e);
-                return null;
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error managing Hibernate session", e);
-            return null;
+        ServiceResult<String> result = coordinatesInfoService.delete(coordinates);
+        if (result.isSuccess()){
+            return result.getResult();
         }
+        return null;
     }
 }

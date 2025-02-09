@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
+import org.xoeqvdp.lab1.utils.Utility;
 import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
 
 import java.io.Serializable;
@@ -42,7 +43,6 @@ public class VehicleInfoBean implements Serializable {
     private Long coordinatesID = null;
     private Long original_coordinatesID = null;
     private boolean isEditable = false;
-    private String message;
 
     @PostConstruct
     public void init(){
@@ -66,7 +66,7 @@ public class VehicleInfoBean implements Serializable {
                     }
                 } else {
                     logger.log(Level.WARNING,"Vehicle with id " + infoBean.getId() + " not found.");
-                    message = "Vehicle с id " + infoBean.getId() + " не найден.";
+                    Utility.sendMessage("Vehicle с id " + infoBean.getId() + " не найден.");
                     transaction.rollback();
                     return;
                 }
@@ -76,15 +76,15 @@ public class VehicleInfoBean implements Serializable {
                     transaction.rollback();
                 }
                 logger.log(Level.SEVERE,"Error loading Vehicle data: " + e);
-                message = "Ошибка при загрузке данных Vehicle";
+                Utility.sendMessage("Ошибка при загрузке данных Vehicle");
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE,"Failed to process request: " + e);
-            message = "Не удалось обработать запрос";
+            Utility.sendMessage("Не удалось обработать запрос");
         }
 
         if (userBean.getUser() == null || vehicleInteraction == null) {
-            message = "Вы не выполнили вход или у записи отсутствуют данные vehicleInteraction";
+            Utility.sendMessage( "Вы не выполнили вход или у записи отсутствуют данные vehicleInteraction");
             return;
         }
 
@@ -116,7 +116,7 @@ public class VehicleInfoBean implements Serializable {
                     if (coordinates != null) {
                         vehicle.setCoordinates(coordinates);
                     } else {
-                        message = "Записи Coordinates с ID " + coordinatesID + " не найдена!";
+                        Utility.sendMessage("Записи Coordinates с ID " + coordinatesID + " не найдена!");
                         logger.log(Level.WARNING, "Coordinates records with ID " + coordinatesID + " not found!");
                         transaction.rollback();
                         return;
@@ -138,11 +138,11 @@ public class VehicleInfoBean implements Serializable {
                     transaction.rollback();
                 }
                 logger.severe("Error updating Vehicle data: " + e.getMessage());
-                message = "Ошибка при обновлении данных Vehicle";
+                Utility.sendMessage("Ошибка при обновлении данных Vehicle");
             }
         } catch (Exception e) {
             logger.severe("Failed to update Vehicle data: " + e.getMessage());
-            message = "Не удалось обновить данные Vehicle";
+            Utility.sendMessage("Не удалось обновить данные Vehicle");
         }
     }
 

@@ -7,10 +7,11 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
+import org.xoeqvdp.lab1.services.ServiceResult;
+import org.xoeqvdp.lab1.services.CoordinatesService;
+import org.xoeqvdp.lab1.utils.Utility;
 import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
 
 import java.io.Serializable;
@@ -26,7 +27,6 @@ public class CoordinatesBean implements Serializable {
 
     private Coordinates coordinates = new Coordinates();
     private List<Coordinates> allCoordinates = null;
-    private String message;
     private Long selectedId;
 
     private int page = 1;
@@ -38,15 +38,18 @@ public class CoordinatesBean implements Serializable {
     @Inject
     private UserBean userBean;
 
+    @Inject
+    CoordinatesService coordinatesService;
+
     @PostConstruct
     public void init(){
         loadPage();
     }
 
-    public String createCoordinates(){
+    public void createCoordinates(){
         if (userBean.getUser() == null || userBean.getUser().getId() == null) {
-            message = "Только авторизованные пользователи могут вносить изменения!";
-            return null;
+            Utility.sendMessage("Только авторизованные пользователи могут вносить изменения!");
+            return;
         }
 
         CoordinatesInteraction interaction = new CoordinatesInteraction();
@@ -55,23 +58,14 @@ public class CoordinatesBean implements Serializable {
         interaction.setModifier(userBean.getUser());
         interaction.setModifiedDate(Timestamp.from(Instant.now()));
 
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            session.persist(coordinates);
-            session.persist(interaction);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
+        ServiceResult<Coordinates> result = coordinatesService.createCoordinates(coordinates, interaction);
 
-        resetCoordinates();
-        message = "Successful";
-        NotificationWebSocket.broadcast("update-coordinates");
-        return null;
+        if (result.isSuccess()) {
+            NotificationWebSocket.broadcast("update-coordinates");
+            resetCoordinates();
+        }
+        Utility.sendMessage(result.getMessage());
+
     }
 
     public void resetCoordinates() {
@@ -79,10 +73,10 @@ public class CoordinatesBean implements Serializable {
     }
 
     public void loadPage() {
-        Query<Coordinates> query = session.createQuery("FROM Coordinates ", Coordinates.class);
-        query.setFirstResult((page - 1) * itemsPerPage);
-        query.setMaxResults(itemsPerPage);
-        allCoordinates = query.getResultList();
+        ServiceResult<List<Coordinates>> result = coordinatesService.loadPage(page, itemsPerPage);
+        if (result.isSuccess()){
+            allCoordinates = result.getResult();
+        }
         lastPage = allCoordinates.size() < itemsPerPage;
     }
 

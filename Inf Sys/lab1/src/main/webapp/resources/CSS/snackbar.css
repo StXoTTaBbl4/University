@@ -33,3 +33,7 @@
     from {top: 30px; opacity: 1;}
     to {top: 0; opacity: 0;}
 }
+
+#snackbar-text li {
+    list-style-type: none;
+}

@@ -7,11 +7,11 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
-import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
+import org.xoeqvdp.lab1.services.ServiceResult;
+import org.xoeqvdp.lab1.services.VehicleService;
+import org.xoeqvdp.lab1.utils.Utility;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -29,7 +29,6 @@ public class VehicleBean implements Serializable {
 
     private Vehicle vehicle = new Vehicle();
     private List<Vehicle> vehicles = null;
-    private String message;
     private Long selectedId;
 
     Long coordinatesId = null;
@@ -43,26 +42,18 @@ public class VehicleBean implements Serializable {
     @Inject
     private UserBean userBean;
 
+    @Inject
+    VehicleService vehicleService;
+
     @PostConstruct
     public void init(){
         loadPage();
     }
 
     public String createVehicle() {
-        System.out.println("111");
         if (userBean.getUser() == null || userBean.getUser().getId() == null) {
-            message = "Только авторизованные пользователи могут вносить изменения!";
+            Utility.sendMessage("Только авторизованные пользователи могут вносить изменения!");
             return null;
-        }
-
-        if (coordinatesId != null) {
-            Coordinates c = session.find(Coordinates.class, coordinatesId);
-            if (c != null) {
-                vehicle.setCoordinates(c);
-            } else {
-                message = "Записи Coordinates с таким ID не существует";
-                return null;
-            }
         }
 
         VehicleInteraction vehicleInteraction = new VehicleInteraction();
@@ -72,31 +63,25 @@ public class VehicleBean implements Serializable {
         vehicleInteraction.setModifier(userBean.getUser());
         vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
 
-        Transaction transaction = null;
-        try {
-        transaction = session.beginTransaction();
-        session.persist(vehicle);
-        session.persist(vehicleInteraction);
-        transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+        ServiceResult<Vehicle> result = vehicleService.createVehicle(vehicle, vehicleInteraction, coordinatesId);
+
+        if (result.isSuccess()) {
+            resetVehicle();
+            Utility.sendMessage("Запись успешно сохранена.");
+            return null;
         }
 
-        resetVehicle();
-        NotificationWebSocket.broadcast("update-vehicle");
-        message = "Successful";
+        Utility.sendMessage(result.getMessage());
         return null;
     }
 
     public void loadPage() {
-        Query<Vehicle> query = session.createQuery("FROM Vehicle ", Vehicle.class);
-        query.setFirstResult((page - 1) * itemsPerPage);
-        query.setMaxResults(itemsPerPage);
-        vehicles = query.getResultList();
+        ServiceResult<List<Vehicle>> result = vehicleService.loadPage(page, itemsPerPage);
+        if (result.isSuccess()){
+            vehicles = result.getResult();
+        }
         lastPage = vehicles.size() < itemsPerPage;
+        Utility.sendMessage(result.getMessage());
     }
 
     public void nextPage() {
@@ -122,13 +107,11 @@ public class VehicleBean implements Serializable {
     }
 
     public void resetVehicle() {
-        System.out.println("МАшина очищена");
         vehicle = new Vehicle();
-        message = "Форма сброшена";
+        Utility.sendMessage("Форма сброшена");
     }
 
     public String redirectToEntityPage() {
-        System.out.println(selectedId);
         if (selectedId != null) {
             return "/info.xhtml?faces-redirect=true&entityId=" + selectedId + "&key=v";
         }

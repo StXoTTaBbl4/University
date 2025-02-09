@@ -60,13 +60,19 @@ a {
 
 /* Основной стиль меню */
 .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    user-select: none;
+    left: 0;
     width: 60px; /* ширина в свернутом состоянии */
     transition: width 0.3s;
     overflow: hidden;
     white-space: nowrap;
     background-color: #333;
     color: white;
-    height: 100vh; /* высота на весь экран */
 }
 
 img {

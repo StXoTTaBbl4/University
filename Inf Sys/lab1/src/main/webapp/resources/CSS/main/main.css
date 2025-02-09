@@ -28,6 +28,25 @@ body {
 .hidden {
     display: none !important;
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
 /* из-за того, что в кнопки svg-картинки вставляются через object, on-click ивент кнопок не запускается */
 object {
     pointer-events: none;
@@ -42,26 +61,6 @@ object {
     height: 60px;
     width: 100%;
 }
-
-/* .tab-header--button {
-    width: 200px;
-    height: 100%;
-
-    border: none;
-    border-radius: 30px;
-    box-sizing: content-box;
-
-    background-color: #404040;
-    color: #FFFFFF;
-
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-
-    font-size: 2.25rem;
-}
-
-.tab-header--button:hover {
-    background-color: #202020;
-} */
 
 .tab-header--button {
     width: 200px;
@@ -155,12 +154,14 @@ object {
 }
 
 .add-button-page img {
-    max-height: 256px;
-    max-width: 256px;
+    max-height: 128px;
+    max-width: 128px;
 }
 
 .add_entity_form {
     height: 100%;
+    max-height: 1000px;
+    overflow-y:scroll;
 }
 
 /* Таблицы */
@@ -176,9 +177,6 @@ object {
 
 .table-outer-wrapper {
     display: flex;
-    /*justify-content: space-around;*/
-    /* align-items: center;
-    flex-direction: column; */
     width: 100%;
     height: 100%;
     max-height: 95vh;
@@ -210,7 +208,7 @@ object {
 table {
     overflow-x: scroll;
     max-width: 750px;
-    border-radius: 15px;
+    border-radius: 5px;
     padding: 10px;
     background-color: transparent;
     border-color: transparent;
@@ -222,7 +220,7 @@ table {
 th {
     font-size: 2rem;
     color: white;
-    padding: 20px;
+    padding: 5px;
 }
 
 tbody tr {
@@ -352,4 +350,3 @@ tbody tr:hover {
     padding: 5px 10px !important;
     margin: 5px;
 }
-

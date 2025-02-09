@@ -4,7 +4,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:panelGroup id="search-coordinates-wrapper" layout="block">
         <h:form id="search-coordinates">
-            <h:panelGroup id="search-coordinates--fields" styleClass="search-coordinates--fields">
+            <h:panelGroup id="search-coordinates--fields" styleClass="search-coordinates--fields hidden">
                 <!-- X-->
                 <h:outputLabel for="x" value="X: " />
                 <h:inputText id="x" value="#{searchBean.coordinates.x}"/>
@@ -19,7 +19,7 @@
 
                 <!-- Buttons -->
                 <h:commandButton value="Найти">
-                    <f:ajax execute="@form" render="search-coordinates--table" listener="#{searchBean.findCoordinates}"/>
+                    <f:ajax execute="search-coordinates" render="search-coordinates--table" listener="#{searchBean.findCoordinates}"/>
                 </h:commandButton>
                 <h:commandButton value="Очистить" action="#{searchBean.resetCoordinates}"/>
 

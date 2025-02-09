@@ -12,12 +12,18 @@
     <h:outputStylesheet name="remove_primeface_styles.css" library="CSS"/>
     <h:outputStylesheet name="admin/admin.css" library="CSS"/>
     <h:outputStylesheet name="sidebar.css" library="CSS"/>
+    <h:outputStylesheet name="snackbar.css" library="CSS"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </h:head>
 <h:body>
     <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
     <h:panelGroup layout="block" a:class="outer-wrapper">
         <h:panelGroup layout="block" a:class="inner-wrapper">
+            <h:panelGroup layout="block" id="snackbar-wrapper">
+                <h:panelGroup layout="block" id="snackbar">
+                    <h:messages globalOnly="true" id="snackbar-text" />
+                </h:panelGroup>
+            </h:panelGroup>
             <h:form id="requests" rendered="#{userBean.admin}">
                 <h:dataTable id="users" value="#{adminBean.requests}" var="req">
                     <h:column>
@@ -30,8 +36,16 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header">Actions</f:facet>
-                        <h:commandButton value="Accept" action="#{adminBean.acceptRequest(req.user.id)}" />
-                        <h:commandButton value="Reject" action="#{adminBean.rejectRequest(req.id)}" />
+                        <p:commandButton value="Accept"
+                                         action="#{adminBean.acceptRequest(req.id)}"
+                                         update="requests users snackbar-text"
+                                         oncomplete="showSnackbar();"
+                                         />
+                        <p:commandButton value="Reject"
+                                         action="#{adminBean.rejectRequest(req.id)}"
+                                         update="requests users snackbar-text"
+                                         oncomplete="showSnackbar();"
+                                         />
                     </h:column>
                 </h:dataTable>
                 <h:commandButton styleClass="hidden" id="update">
@@ -43,4 +57,5 @@
     </h:panelGroup>
 </h:body>
 <h:outputScript name="sidebar.js" library="JS"/>
+<h:outputScript name="snackbar.js" library="JS"/>
 </html>

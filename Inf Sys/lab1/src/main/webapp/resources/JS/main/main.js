@@ -10,7 +10,6 @@ let add_coordinates_form = document.getElementById("add-new-coordinates-form");
 const coordinates_table = document.getElementById("coordinates-form:coordinates-table");
 const coordinates_table_headers = coordinates_table.querySelectorAll("thead > tr > th");
 
-window.onload = function() {
     add_coordinates_form.classList.add("hidden");
 
     add_button.addEventListener("click", ()=>{
@@ -36,13 +35,11 @@ window.onload = function() {
         add_coordinates.classList.add("select-entity-button--active");
     });
 
-    coordinates_table_headers.forEach((header, index) => {
-        header.addEventListener("click", () => sortTable(index, coordinates_table));
-    });
-};
+    // coordinates_table_headers.forEach((header, index) => {
+    //     header.addEventListener("click", () => sortTable(index, coordinates_table));
+    // });
 
 function sortTable(columnIndex, table) {
-
     const rows = Array.from(table.rows).slice(1);
     let ascending = table.dataset.sortOrder !== "asc";
 
@@ -113,7 +110,6 @@ function reattachHandlers(table_id, inputField_id, button_id, search_input) {
     let rows = Array.from(table.querySelectorAll('tbody tr'));
 
     input.addEventListener('input', () => {
-        console.log("type")
         const filters = parseFilters(input.value);
         filterTable(filters, rows, headers);
     });

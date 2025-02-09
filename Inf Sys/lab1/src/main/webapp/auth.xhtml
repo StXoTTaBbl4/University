@@ -4,7 +4,6 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:p="http://primefaces.org/ui">
@@ -18,7 +17,7 @@
     <div class="wrapper">
         <div id="snackbar-wrapper">
             <div id="snackbar">
-                <h:outputText id="info-text" value="#{userBean.message}"/>
+                <h:messages globalOnly="true" id="snackbar-text" />
             </div>
         </div>
         <div class="form-wrapper sign-in">
@@ -34,7 +33,7 @@
                         styleClass="com-button"
                         value="Войти"
                         action="#{userBean.loginUser}"
-                        update="info-text"
+                        update="snackbar-text"
                         oncomplete="showSnackbar();"
                 />
                 <div class="signUp-link">
@@ -58,7 +57,7 @@
                         styleClass="com-button signup-button"
                         value="Зарегистрироваться"
                         action="#{userBean.registerUser}"
-                        update="info-text"
+                        update="snackbar-text"
                         oncomplete="showSnackbar();"
                 />
                 <div class="signUp-link">
