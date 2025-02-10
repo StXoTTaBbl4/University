@@ -1,0 +1,15 @@
+.question {
+  padding: 0 20px;
+
+  border: 3px none salmon;
+  border-left-style: solid;
+}
+
+.question_answered {
+  border-color: transparent;
+}
+
+.questions-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}

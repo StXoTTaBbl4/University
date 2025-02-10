@@ -1,0 +1,14 @@
+<div *ngFor="let section of questions" class="block__discipline">
+  <h2>{{ section.title }}</h2>
+  <div class="questions-wrapper">
+    <div *ngFor="let question of section.items" class="question">
+      <h2>{{question.name}}</h2>
+      <div *ngFor="let option of question.options" class="block__discipline__question">
+        <label>
+          {{option}}
+          <input type="radio" name="{{question.name}}" value="{{option}}">
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

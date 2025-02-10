@@ -1,0 +1,27 @@
+.inner-wrapper {
+
+}
+
+.block {
+  display: block;
+}
+
+.assessment_navigation__button {
+  margin: 0 5px;
+  background-color: transparent;
+  width: 170px;
+  height: 45px;
+  color: var(--default-bright);
+
+  font-size: 2rem;
+
+  border: 3px none var(--default-bright);
+  border-bottom-style: solid;
+}
+
+.assessment_navigation__button:hover {
+  border: 3px none salmon;
+  border-bottom-style: solid;
+}
+
+

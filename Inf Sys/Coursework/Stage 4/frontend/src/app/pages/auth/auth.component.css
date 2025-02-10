@@ -1,0 +1,130 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: radial-gradient(circle at 180% ,var(--default-bright), var(--default-dark));
+}
+
+.auth {
+  width: 20%;
+  height: 55%;
+
+  padding: 10px;
+
+  border: solid var(--default-bright) 2px;
+  border-radius: 15px;
+
+  overflow: hidden;
+
+  transition: 1s ease-in-out;
+
+
+}
+
+.auth__form {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+  transition: 1s ease-in-out;
+}
+
+.auth__form__field-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 10px;
+}
+
+.auth__form_active {
+  transform: translateY(-100%);
+}
+
+.auth__form h2 {
+  margin: 20px 0;
+
+  display: flex;
+  justify-content: center;
+
+  font-size: 3rem;
+}
+
+.auth__form label {
+  font-size: 2rem;
+
+  padding: 10px 0;
+}
+
+.auth__form_data {
+  background-color: transparent;
+  color: white;
+  scale: 1.5;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid var(--default-bright);
+}
+
+.auth__form_data:focus {
+  outline: 2px salmon solid;
+}
+
+.auth__form_submit-button {
+  width: fit-content;
+  font-size: 1.5rem;
+  border-radius: 15px;
+  padding: 5px 20px;
+
+  background-color: transparent;
+
+  border: 2px solid var(--default-bright);
+
+  color: inherit;
+
+  user-select: none;
+}
+
+.auth__form_submit-button:hover {
+  border: 2px solid salmon;
+}
+
+.auth__form_submit-button:disabled {
+  background-color: grey;
+}
+
+.auth__form_submit-button:disabled:hover {
+  border: 2px solid var(--default-bright);
+}
+
+.auth__form_nav-link {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 2px solid var(--default-bright);
+}
+
+.auth__form_nav-link:hover {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 2px solid salmon;
+
+  user-select: none;
+  cursor: pointer;
+}
+
+.auth__form_hidden {
+  display: none;
+}
+
+

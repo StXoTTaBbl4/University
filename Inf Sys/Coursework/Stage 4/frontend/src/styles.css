@@ -1,11 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
-:root {
+/* Использовать BEM(Block-Element-Mod-ModVal)  для наименований*/
+:root  {
+  /* Шрифты */
   --system-ui: system-ui, "Helvetica Neue", Arial, sans-serif;
+
+  /* Общие цвета */
+  --default-dark: #07000B;
+  --default-bright: #F8F7ED;
+
 }
 
-html{
-  height: 100%;
-  width: 100%;
+html {
+  height: 100vh;
+  width: 100vw;
+
+  /* Граница идёт в счёт размеров элемента */
+  box-sizing: border-box;
+
+  overflow: hidden;
 }
 
 body {
@@ -17,6 +28,69 @@ body {
 
   font-family: var(--system-ui), serif;
   font-size: 14px;
-
   background-color: black;
+
+  color: white;
 }
+
+/* Для экранов с шириной до 1280px*/
+@media screen and (max-width: 1279px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Для экранов с шириной 1280px до 1919px (ноутбуки и Full HD) */
+@media screen and (min-width: 1280px) and (max-width: 1919px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+/* Для экранов с шириной 1920px до 2559px (Full HD) */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+  body {
+    font-size: 20px;
+  }
+}
+
+/* Для экранов с шириной 2560px до 3839px (2K) */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+  body {
+    font-size: 22px;
+  }
+}
+
+/* Для экранов с шириной 3840px и больше (4K) */
+@media screen and (min-width: 3840px) {
+  body {
+    font-size: 24px;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.outer-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  background: radial-gradient(circle at 80% ,#468578, var(--default-dark));
+}
+
+.inner-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  overflow-y: scroll;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,46 @@
+<snackbar></snackbar>
+<div class="wrapper">
+  <div class="auth">
+    <form #login #loginForm="ngForm" id="login" class="auth__form" (ngSubmit)="loginUser(loginForm)">
+      <h2>Вход</h2>
+      <div class="auth__form__field-wrapper">
+        <label for="auth-login">Логин</label>
+        <input #auth_login id="auth-login"  name="login" class="auth__form_data" placeholder="Логин" [(ngModel)]="loginFormData.login" required/>
+      </div>
+
+      <div class="auth__form__field-wrapper">
+        <label for="auth-pwd">Пароль</label>
+        <input type="password" id="auth-pwd" name="password" class="auth__form_data" placeholder="Пароль" [(ngModel)]="loginFormData.password" required/>
+      </div>
+
+      <div class="auth__form__field-wrapper">
+        <input type="submit" class="auth__form_submit-button" value="Войти">
+      </div>
+
+      <span (click)="goToRegistration()" class="auth__form_nav-link">Создать аккаунт</span>
+    </form>
+
+    <form #registration #registrationForm="ngForm" id="registration" class="auth__form" (ngSubmit)="createUser(registrationForm)">
+      <h2>Регистрация</h2>
+      <div class="auth__form__field-wrapper">
+        <label for="reg-login">Логин</label>
+        <input id="reg-login" name="login" class="auth__form_data" placeholder="Логин" required/>
+      </div>
+
+      <div class="auth__form__field-wrapper">
+        <label for="reg-pwd">Пароль</label>
+        <input type="password" name="pwd" class="reg-pwd auth__form_data" id="reg-pwd" [(ngModel)]="reg_pwd" (keyup)="validatePassword()" placeholder="Пароль" required/>
+      </div>
+
+      <div class="auth__form__field-wrapper">
+        <label for="re-reg-pwd">Повторите пароль</label>
+        <input type="password" name="re-pwd" class="reg-pwd auth__form_data" id="re-reg-pwd" [(ngModel)]="re_reg_pwd" (keyup)="validatePassword()" placeholder="Повторите пароль" required/>
+      </div>
+
+      <input type="submit" value="Зарегистрироваться" class="auth__form_submit-button" [disabled]="isButtonDisabled">
+      <span (click)="goToRegistration()" class="auth__form_nav-link">Выполнить вход</span>
+    </form>
+  </div>
+</div>
+
+

@@ -1,0 +1,29 @@
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div #toolbar class="toolbar">
+      <div #toolbar__info class="toolbar__info">
+        Информация тут
+      </div>
+
+      <div #toolbar__buttons class="toolbar__buttons">
+        <button (click)="deleteCertificate()">Удалить</button>
+        <button>Редактировать</button>
+      </div>
+
+    </div>
+    <div #certificate class="certificate">
+      Сертификат тут
+    </div>
+  </div>
+</div>
+<div #modal>
+  <div class="modal-overlay" *ngIf="isModalOpen">
+    <div class="modal">
+      <h2>Удалить сертификат?</h2>
+      <button class="delete-btn" (click)="closeModal()">Да</button>
+      <button class="close-btn" (click)="closeModal()">Нет</button>
+    </div>
+  </div>
+</div>

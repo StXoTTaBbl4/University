@@ -1,0 +1,50 @@
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <button class="navigation__button" (click)="openModal()">Загрузить сертификат</button>
+    <table class="certificates-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Возраст</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let certificate of data" routerLink='/certificate'>
+        <td>{{ certificate.id }}</td>
+        <td>{{ certificate.name }}</td>
+        <td>{{ certificate.type }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div #modal>
+  <div class="modal-overlay" *ngIf="isModalOpen">
+    <div class="modal">
+      <h2>Загрузка файла</h2>
+
+      <label>Имя:</label>
+      <input type="text" [(ngModel)]="name" class="input-field">
+
+      <label>Тип:</label>
+      <select [(ngModel)]="type" class="input-field">
+        <option value="option1">Опция 1</option>
+        <option value="option2">Опция 2</option>
+      </select>
+
+      <label>Дата:</label>
+      <input type="date" [(ngModel)]="date" class="input-field">
+
+      <label>Файл (PNG, PDF):</label>
+      <input type="file" (change)="onFileSelected($event)" accept="image/png, application/pdf">
+
+      <div class="modal-actions">
+        <button (click)="closeModal()" class="close-btn">Закрыть</button>
+        <button (click)="upload()" class="upload-btn">Загрузить</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div class="assessment_navigation">
+      <button *ngFor="let block of blocks" (click)="switchBlock(blocks.indexOf(block))" class="assessment_navigation__button">{{block}}</button>
+      <button (click)="sendData()" class="assessment_navigation__button">Отправить</button>
+    </div>
+    <div #block *ngFor="let block of blocks" #{{block}} class="block hidden" id="{{block}}">
+      <h2>{{block}}</h2>
+      <sa-block></sa-block>
+    </div>
+  </div>
+</div>
