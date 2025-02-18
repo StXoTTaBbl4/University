@@ -3,7 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:panelGroup id="coordinates-info" layout="block">
-        <h:form>
+        <h:form id="coordinates-form">
             <h3>Coordinates Information</h3>
 
             <!-- Coordinates ID -->
@@ -22,7 +22,6 @@
             <h:inputText value="#{coordinatesInfo.coordinates.y}" disabled="#{!coordinatesInfo.editable}"/>
 
             <h:commandButton value="Сохранить" type="submit" action="#{coordinatesInfo.update}" disabled="#{!coordinatesInfo.editable}"/>
-            <h:commandButton value="Сбросить" action="#{coordinatesInfo.reset}" disabled="#{!coordinatesInfo.editable}"/>
             <h:commandButton value="Удалить" action="#{coordinatesInfo.delete}" disabled="#{!coordinatesInfo.editable}"/>
         </h:form>
     </h:panelGroup>

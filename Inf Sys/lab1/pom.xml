@@ -65,8 +65,12 @@
             <artifactId>primefaces</artifactId>
             <version>14.0.8</version>
             <classifier>jakarta</classifier>
+        </dependency><!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.10</version>
         </dependency>
-
 
         <dependency>
             <groupId>jakarta.enterprise</groupId>
@@ -162,6 +166,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
   <build>
     <plugins>

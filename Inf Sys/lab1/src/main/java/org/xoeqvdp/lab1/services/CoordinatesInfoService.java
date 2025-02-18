@@ -1,9 +1,9 @@
 package org.xoeqvdp.lab1.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.xoeqvdp.lab1.beans.CoordinatesInfoBean;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.Coordinates;
 import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
@@ -13,12 +13,17 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class CoordinatesInfoService {
-    private static final Logger logger = Logger.getLogger(CoordinatesInfoBean.class.getName());
+    private static final Logger logger = Logger.getLogger(CoordinatesInfoService.class.getName());
 
     public ServiceResult<Coordinates> update(Coordinates coordinates) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
+                Coordinates existingCoordinates = session.find(Coordinates.class, coordinates.getId(), LockMode.PESSIMISTIC_WRITE);
+                if (existingCoordinates == null) {
+                    return new ServiceResult<>("Запись не найдена");
+                }
+
                 session.merge(coordinates);
                 transaction.commit();
                 NotificationWebSocket.broadcast("update-coordinates");
@@ -38,7 +43,12 @@ public class CoordinatesInfoService {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
-                session.remove(coordinates);
+                Coordinates existingCoordinates = session.find(Coordinates.class, coordinates.getId(), LockMode.PESSIMISTIC_WRITE);
+                if (existingCoordinates == null) {
+                    return new ServiceResult<>("Запись не найдена");
+                }
+
+                session.remove(existingCoordinates);
                 session.flush();
                 transaction.commit();
                 NotificationWebSocket.broadcast("update-coordinates");

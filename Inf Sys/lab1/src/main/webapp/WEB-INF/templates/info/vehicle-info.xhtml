@@ -3,9 +3,6 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
    <h:panelGroup id="vehicle-info" layout="block">
-      <h:panelGroup id="vehicle-info--message">
-         <h:outputText value="#{vehicleInfo.message}"/>
-      </h:panelGroup>
       <h:form id="vehicle-form">
          <h3>Vehicle Information</h3>
          <!-- ID (readonly) -->
@@ -73,9 +70,6 @@
          </h:selectOneMenu>
 
          <h:commandButton value="Сохранить" type="submit" action="#{vehicleInfo.update}" disabled="#{!vehicleInfo.editable}"/>
-         <h:commandButton value="Сбросить" action="#{vehicleInfo.init}" disabled="#{!vehicleInfo.editable}">
-            <f:ajax render="@form"/>
-         </h:commandButton>
          <h:commandButton value="Удалить" action="#{vehicleInfo.delete}" disabled="#{!vehicleInfo.editable}"/>
       </h:form>
    </h:panelGroup>

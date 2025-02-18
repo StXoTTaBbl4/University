@@ -8,6 +8,9 @@
 <h:head>
     <title>Info page</title>
     <h:outputStylesheet name="remove_primeface_styles.css" library="CSS"/>
+    <h:outputStylesheet name="info/info.css" library="CSS"/>
+    <h:outputStylesheet name="info/vehicle.css" library="CSS"/>
+    <h:outputStylesheet name="info/coordinates.css" library="CSS"/>
     <h:outputStylesheet name="search/search.css" library="CSS"/>
     <h:outputStylesheet name="sidebar.css" library="CSS"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,8 +26,13 @@
     </f:metadata>
 
     <ui:include src="WEB-INF/templates/sidebar.xhtml"/>
-    <h:panelGroup layout="block" id="info-outer-wrapper">
-        <h:panelGroup layout="block" id="info-inner-wrapper">
+    <h:panelGroup layout="block" styleClass="info-outer-wrapper">
+        <div id="snackbar-wrapper">
+            <div id="snackbar">
+                <h:messages globalOnly="true" id="snackbar-text" />
+            </div>
+        </div>
+        <h:panelGroup layout="block" styleClass="info-inner-wrapper">
             <ui:include src="#{info.template}"/>
         </h:panelGroup>
     </h:panelGroup>

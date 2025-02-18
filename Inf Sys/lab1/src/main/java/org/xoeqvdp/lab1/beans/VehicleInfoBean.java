@@ -38,6 +38,7 @@ public class VehicleInfoBean implements Serializable {
 
     private Vehicle vehicle;
     private VehicleInteraction vehicleInteraction;
+    private String message;
 
     @Setter
     private Long coordinatesID = null;

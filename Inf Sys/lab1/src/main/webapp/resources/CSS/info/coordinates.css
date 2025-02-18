@@ -1,0 +1,18 @@
+#coordinates-info {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#coordinates-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 2.5rem;
+}
+
+#coordinates-form input {
+    scale: 1.5;
+    margin: 7px;
+}
