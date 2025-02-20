@@ -39,6 +39,10 @@
             <img alt="ENT" src="#{resource['Images/login.png']}"/>
             <span class="menu-text">Войти</span>
          </h:link>
+         <h:link outcome="fileUpload.xhtml" styleClass="menu-item" rendered="#{userBean.admin}">
+            <img alt="FUP" src="#{resource['Images/menu.png']}"/>
+            <span class="menu-text">Загрузка файлом</span>
+         </h:link>
          <h:panelGroup id="sidebar-logout" styleClass="menu-item"  rendered="#{userBean.loggedIn}">
             <img alt="EXT" src="#{resource['Images/logout.png']}"/>
             <span class="menu-text">Выйти</span>

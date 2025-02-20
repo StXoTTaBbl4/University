@@ -10,12 +10,12 @@
          <h:outputText value="#{vehicleInfo.vehicle.id}"/>
 
          <!-- Name -->
-         <h:outputLabel value="Name:" />
-         <h:inputText value="#{vehicleInfo.vehicle.name}" disabled="#{!vehicleInfo.editable}"/>
+         <h:outputLabel for="name" value="Name:" />
+         <h:inputText id="name" value="#{vehicleInfo.vehicle.name}" disabled="#{!vehicleInfo.editable}"/>
 
          <!-- Coordinates ID -->
-         <h:outputLabel value="Coordinates ID:" />
-         <h:inputText value="#{vehicleInfo.coordinatesID}" disabled="#{!vehicleInfo.editable}"/>
+         <h:outputLabel for="coord_id" value="Coordinates ID:" />
+         <h:inputText id="coord_id" value="#{vehicleInfo.coordinatesID}" disabled="#{!vehicleInfo.editable}"/>
          <h:commandButton action="#{vehicleInfo.goToCoordinates}" disabled="#{vehicleInfo.coordinatesID == null}" value="Перейти к координатам"/>
 
          <!-- Creation Date (readonly) -->
@@ -23,8 +23,8 @@
          <h:outputText value="#{vehicleInfo.vehicle.creationDate}" />
 
          <!-- Vehicle Type -->
-         <h:outputLabel value="Vehicle Type:" />
-         <h:selectOneMenu value="#{vehicleInfo.vehicle.type}" disabled="#{!vehicleInfo.editable}">
+         <h:outputLabel for="v_type" value="Vehicle Type:" />
+         <h:selectOneMenu id="v_type" value="#{vehicleInfo.vehicle.type}" disabled="#{!vehicleInfo.editable}">
             <f:selectItems value="#{vehicleInfo.vehicleTypes}" />
          </h:selectOneMenu>
 
@@ -64,13 +64,13 @@
          <h:message for="consumption" style="color: red;" />
 
          <!-- Fuel Type -->
-         <h:outputLabel value="Fuel Type:" />
-         <h:selectOneMenu value="#{vehicleInfo.vehicle.fuelType}" disabled="#{!vehicleInfo.editable}">
+         <h:outputLabel for="f_type" value="Fuel Type:" />
+         <h:selectOneMenu id="f_type" value="#{vehicleInfo.vehicle.fuelType}" disabled="#{!vehicleInfo.editable}">
             <f:selectItems value="#{vehicleInfo.fuelTypes}" />
          </h:selectOneMenu>
 
-         <h:commandButton value="Сохранить" type="submit" action="#{vehicleInfo.update}" disabled="#{!vehicleInfo.editable}"/>
-         <h:commandButton value="Удалить" action="#{vehicleInfo.delete}" disabled="#{!vehicleInfo.editable}"/>
+         <h:commandButton id="save" value="Сохранить" type="submit" action="#{vehicleInfo.update}" disabled="#{!vehicleInfo.editable}"/>
+         <h:commandButton id="remove" value="Удалить" action="#{vehicleInfo.delete}" disabled="#{!vehicleInfo.editable}"/>
       </h:form>
    </h:panelGroup>
 </ui:composition>

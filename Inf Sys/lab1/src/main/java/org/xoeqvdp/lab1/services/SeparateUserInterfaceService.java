@@ -1,9 +1,9 @@
 package org.xoeqvdp.lab1.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.LockModeType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.xoeqvdp.lab1.beans.SeparateUserInterface;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
 import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
@@ -14,41 +14,52 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class SeparateUserInterfaceService {
-    private static final Logger logger = Logger.getLogger(SeparateUserInterface.class.getName());
-    public ServiceResult<Vehicle> first(FuelType fuelType, User user){
+    private static final Logger logger = Logger.getLogger(SeparateUserInterfaceService.class.getName());
+    public ServiceResult<Vehicle> first(FuelType fuelType, User user) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
+            Transaction transaction = null;
             try {
+                transaction = session.beginTransaction();
+
+                // Устанавливаем уровень изоляции SERIALIZABLE (гарантия отсутствия фантомных чтений)
+                session.createNativeMutationQuery("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE").executeUpdate();
+
                 if (user.getId() == null) {
                     return new ServiceResult<>("Неавторизованные пользователи не могут изменять базу данных.");
                 }
 
-                if (user.getRole() == Roles.ADMIN){
-                    session.createMutationQuery("DELETE FROM Vehicle WHERE fuelType = :fuelType").setParameter("fuelType", fuelType).executeUpdate();
+                if (user.getRole() == Roles.ADMIN) {
+                    session.createMutationQuery(
+                                    "DELETE FROM Vehicle WHERE fuelType = :fuelType")
+                            .setParameter("fuelType", fuelType)
+                            .executeUpdate();
                 } else {
                     session.createMutationQuery(
-                                    "DELETE FROM Vehicle v " +
-                                            "WHERE v.id IN (" +
+                                    "DELETE FROM Vehicle v WHERE v.id IN (" +
                                             "   SELECT vi.vehicle.id FROM VehicleInteraction vi " +
                                             "   WHERE vi.creator.id = :creatorId" +
-                                            ") " +
-                                            "AND v.fuelType = :fuelType").
-                            setParameter("creatorId", user.getId()).
-                            setParameter("fuelType", fuelType).
-                            executeUpdate();
+                                            ") AND v.fuelType = :fuelType")
+                            .setParameter("creatorId", user.getId())
+                            .setParameter("fuelType", fuelType)
+                            .executeUpdate();
                 }
+
                 transaction.commit();
                 NotificationWebSocket.broadcast("update-vehicle");
-                return new ServiceResult<>(null,"Записи успешно удалены");
+                return new ServiceResult<>(null, "Записи успешно удалены");
             } catch (Exception e) {
+                if (transaction != null && transaction.getStatus().canRollback()) {
+                    transaction.rollback();
+                }
                 logger.log(Level.SEVERE, "Error executing query", e);
                 return new ServiceResult<>("Ошибка при обращении к БД");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Error managing Hibernate session", e);
             return new ServiceResult<>("Ошибка при попытке подключения к БД");
         }
     }
+
 
     public ServiceResult<Vehicle> second(){
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -102,6 +113,7 @@ public class SeparateUserInterfaceService {
                 try {
                     Vehicle result = session.createQuery("FROM Vehicle WHERE id = :id", Vehicle.class).
                             setParameter("id", id).
+                            setLockMode(LockModeType.PESSIMISTIC_WRITE).
                             uniqueResultOptional().
                             orElse(null);
 
@@ -118,6 +130,7 @@ public class SeparateUserInterfaceService {
 
                     result.setDistanceTravelled(1L);
                     vehicleInteraction.setModifier(user);
+                    // Optimistic lock
                     session.merge(result);
                     session.merge(vehicleInteraction);
                     session.flush();
@@ -142,7 +155,10 @@ public class SeparateUserInterfaceService {
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 Transaction transaction = session.beginTransaction();
                 try {
-                    Vehicle result = session.createQuery("FROM Vehicle WHERE id = :id", Vehicle.class).setParameter("id", id).uniqueResultOptional().orElse(null);
+                    Vehicle result = session.createQuery("FROM Vehicle WHERE id = :id", Vehicle.class).
+                            setParameter("id", id).
+                            uniqueResultOptional().
+                            orElse(null);
                     if (result == null) {
                         return new ServiceResult<>("По данному ID не найдено сущности");
                     }
@@ -156,6 +172,7 @@ public class SeparateUserInterfaceService {
 
                     result.setNumberOfWheels(result.getNumberOfWheels() + numberOfWheels);
                     vehicleInteraction.setModifier(user);
+                    // Optimistic lock
                     session.merge(result);
                     session.merge(vehicleInteraction);
                     session.flush();

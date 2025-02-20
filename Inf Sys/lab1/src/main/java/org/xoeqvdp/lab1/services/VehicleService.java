@@ -30,16 +30,30 @@ public class VehicleService {
                         return new ServiceResult<>("Записи Coordinates с таким ID не существует");
                     }
                 }
+
+                // Гыгыговнокод time, потому что, а как еще предотвратить параллельную запись если в БД unique нет?
+                session.createNativeMutationQuery("LOCK TABLE vehicles IN EXCLUSIVE MODE ").executeUpdate();
+
+                Long count = session.createQuery("SELECT COUNT(v) FROM Vehicle v WHERE v.name = :uniqueField", Long.class)
+                        .setParameter("uniqueField", vehicle.getName())
+                        .uniqueResult();
+
+                if (count != 0) {
+                    return new ServiceResult<>("Сущность с таким полем Name уже существует");
+                }
+
                 session.persist(vehicle);
                 session.persist(vehicleInteraction);
                 transaction.commit();
+
                 NotificationWebSocket.broadcast("update-vehicle");
                 return new ServiceResult<>(null, "");
             } catch (Exception e) {
+                transaction.rollback();
                 logger.log(Level.SEVERE, "Error executing query", e);
                 return new ServiceResult<>("Ошибка при обращении к БД");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Error managing Hibernate session", e);
             return new ServiceResult<>("Ошибка при попытке подключения к БД");
         }

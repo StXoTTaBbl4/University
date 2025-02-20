@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.Coordinates;
+import org.xoeqvdp.lab1.model.CoordinatesInteraction;
 import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
 
 import java.util.logging.Level;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 public class CoordinatesInfoService {
     private static final Logger logger = Logger.getLogger(CoordinatesInfoService.class.getName());
 
-    public ServiceResult<Coordinates> update(Coordinates coordinates) {
+    public ServiceResult<Coordinates> update(Coordinates coordinates, CoordinatesInteraction coordinatesInteraction) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
@@ -23,8 +24,9 @@ public class CoordinatesInfoService {
                 if (existingCoordinates == null) {
                     return new ServiceResult<>("Запись не найдена");
                 }
-
+                // Optimistic lock
                 session.merge(coordinates);
+                session.merge(coordinatesInteraction);
                 transaction.commit();
                 NotificationWebSocket.broadcast("update-coordinates");
                 return new ServiceResult<>(null, "Запись обновлена");

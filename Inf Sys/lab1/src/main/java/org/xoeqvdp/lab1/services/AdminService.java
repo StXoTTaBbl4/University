@@ -1,6 +1,7 @@
 package org.xoeqvdp.lab1.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.LockModeType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
@@ -42,11 +43,19 @@ public class AdminService {
                 try {
                     AdminRequest adminRequest = session.createQuery("from AdminRequest where id=:id", AdminRequest.class).
                             setParameter("id", id).
+                            setLockMode(LockModeType.PESSIMISTIC_WRITE).
                             uniqueResultOptional().
                             orElse(null);
 
                     if (adminRequest != null) {
-                        User user = session.find(User.class, adminRequest.getUser().getId());
+                        User user = session.createQuery("from User where id=:id", User.class).
+                                setParameter("id",adminRequest.getUser().getId()).
+                                setLockMode(LockModeType.PESSIMISTIC_WRITE).
+                                uniqueResultOptional().orElse(null);
+                        if (user == null) {
+                            transaction.rollback();
+                            return new ServiceResult<>("Не найдена запись о пользователе или о запросе");
+                        }
                         user.setRole(Roles.ADMIN);
                         session.merge(user);
                         session.remove(adminRequest);
@@ -79,7 +88,11 @@ public class AdminService {
             if (request != null) {
                 Transaction transaction = session.beginTransaction();
                 try {
-                    AdminRequest adminRequest = session.find(AdminRequest.class, id);
+                    AdminRequest adminRequest = session.createQuery("from AdminRequest where id=:id", AdminRequest.class).
+                            setParameter("id", id).
+                            setLockMode(LockModeType.PESSIMISTIC_WRITE).
+                            uniqueResultOptional().
+                            orElse(null);
                     if (adminRequest != null) {
                         session.remove(adminRequest);
                         transaction.commit();
@@ -96,7 +109,7 @@ public class AdminService {
                 }
             }
             return new ServiceResult<>("Запрос с данным id: " + id +" не найден");
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Error managing Hibernate session", e);
             return new ServiceResult<>("Ошибка при попытке подключения к БД");
         }

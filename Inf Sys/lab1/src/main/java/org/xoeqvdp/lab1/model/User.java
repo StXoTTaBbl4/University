@@ -28,7 +28,6 @@ public class User {
     private Roles role = Roles.USER;
 
     public void setPasswordHash(String password) {
-        System.out.println("\n\nPASSWORD FROM USER:" + password + "\n\n");
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-384");
 

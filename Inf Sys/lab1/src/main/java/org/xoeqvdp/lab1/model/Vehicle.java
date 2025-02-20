@@ -1,6 +1,7 @@
 package org.xoeqvdp.lab1.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @OneToOne
@@ -34,8 +35,9 @@ public class Vehicle {
     @Min(1)
     private Double enginePower;
 
-    @Column(name = "number_of_wheels")
+    @Column(name = "number_of_wheels", nullable = false)
     @Min(1)
+    @Max(26)
     private Long numberOfWheels = null;
 
     @Column(name = "capacity")
@@ -54,6 +56,10 @@ public class Vehicle {
     @Column(name = "fuel_type", nullable = false)
     private FuelType fuelType;
 
+    @Version
+    @Column(nullable = false)
+    private int version;
+
     @Override
     public String toString() {
         return "Vehicle{" +
@@ -68,6 +74,7 @@ public class Vehicle {
                 ", distanceTravelled=" + distanceTravelled +
                 ", fuelConsumption=" + fuelConsumption +
                 ", fuelType=" + fuelType +
+                ", version=" + version +
                 '}';
     }
 

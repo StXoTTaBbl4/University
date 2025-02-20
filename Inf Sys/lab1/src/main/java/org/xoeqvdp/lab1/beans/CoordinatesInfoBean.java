@@ -14,7 +14,8 @@ import org.xoeqvdp.lab1.services.ServiceResult;
 import org.xoeqvdp.lab1.utils.Utility;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,14 +68,16 @@ public class CoordinatesInfoBean implements Serializable {
             return;
         }
 
-        if (Objects.equals(coordinatesInteraction.getCreator().getId(), userBean.getUser().getId())) {
+        if (coordinatesInteraction.getCreator().getId().equals(userBean.getUser().getId())) {
             isEditable = true;
         }
 
     }
 
     public void update() {
-        ServiceResult<Coordinates> result = coordinatesInfoService.update(coordinates);
+        coordinatesInteraction.setModifier(userBean.getUser());
+        coordinatesInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+        ServiceResult<Coordinates> result = coordinatesInfoService.update(coordinates, coordinatesInteraction);
         Utility.sendMessage(result.getMessage());
     }
 

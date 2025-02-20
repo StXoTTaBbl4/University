@@ -3,7 +3,7 @@ package org.xoeqvdp.lab1.services;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.xoeqvdp.lab1.beans.UserBean;
+import org.hibernate.exception.ConstraintViolationException;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.AdminRequest;
 import org.xoeqvdp.lab1.model.Roles;
@@ -19,19 +19,24 @@ public class UserService {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
-                if (session.createQuery("from User where username = :username", User.class).setParameter("username", new_user.getUsername()).uniqueResult() != null){
-                    return new ServiceResult<>("Такой пользователь уже существует!");
-                }
                 session.persist(new_user);
                 session.flush();
                 transaction.commit();
-                return new ServiceResult<>(new_user,"Пользователь добавлен, выполните вход");
-            } catch (Exception e){
-                transaction.rollback();
+                return new ServiceResult<>(new_user, "Пользователь добавлен, выполните вход");
+            } catch (ConstraintViolationException e) {
+                if (transaction != null && transaction.getStatus().canRollback()) {
+                    transaction.rollback();
+                }
+                logger.warning("User with that username already exists: " + new_user.getUsername());
+                return new ServiceResult<>("Такой пользователь уже существует!");
+            } catch (Exception e) {
+                if (transaction != null && transaction.getStatus().canRollback()) {
+                    transaction.rollback();
+                }
                 logger.log(Level.SEVERE, "Error adding entity to database", e);
                 return new ServiceResult<>("Ошибка при создании пользователя");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Error managing Hibernate session", e);
             return new ServiceResult<>("Ошибка при попытке подключения к БД");
         }
@@ -74,7 +79,15 @@ public class UserService {
                     session.flush();
                     transaction.commit();
                     return new ServiceResult<>(user,"Заявка отправилена");
-                } catch (Exception e) {
+                }
+                catch (ConstraintViolationException e) {
+                    if (transaction != null && transaction.getStatus().canRollback()) {
+                        transaction.rollback();
+                    }
+                    logger.warning("Request already sent.");
+                    return new ServiceResult<>("Заявка уже отправлена");
+                }
+                catch (Exception e) {
                     transaction.rollback();
                     logger.log(Level.SEVERE, "Error adding entity to database", e);
                     return new ServiceResult<>("Ошибка при создании пользователя");

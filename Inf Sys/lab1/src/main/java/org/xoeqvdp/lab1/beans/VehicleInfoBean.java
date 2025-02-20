@@ -10,15 +10,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
+import org.xoeqvdp.lab1.services.ServiceResult;
+import org.xoeqvdp.lab1.services.VehicleInfoService;
 import org.xoeqvdp.lab1.utils.Utility;
-import org.xoeqvdp.lab1.websocket.NotificationWebSocket;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,9 +36,11 @@ public class VehicleInfoBean implements Serializable {
     @Inject
     private InfoBean infoBean;
 
+    @Inject
+    VehicleInfoService vehicleInfoService;
+
     private Vehicle vehicle;
     private VehicleInteraction vehicleInteraction;
-    private String message;
 
     @Setter
     private Long coordinatesID = null;
@@ -48,7 +50,6 @@ public class VehicleInfoBean implements Serializable {
     @PostConstruct
     public void init(){
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
             try {
                 vehicle = session.createQuery(
                                 "from Vehicle where id = :id", Vehicle.class)
@@ -68,14 +69,10 @@ public class VehicleInfoBean implements Serializable {
                 } else {
                     logger.log(Level.WARNING,"Vehicle with id " + infoBean.getId() + " not found.");
                     Utility.sendMessage("Vehicle с id " + infoBean.getId() + " не найден.");
-                    transaction.rollback();
                     return;
                 }
-                transaction.commit();
+
             } catch (Exception e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
                 logger.log(Level.SEVERE,"Error loading Vehicle data: " + e);
                 Utility.sendMessage("Ошибка при загрузке данных Vehicle");
             }
@@ -94,7 +91,7 @@ public class VehicleInfoBean implements Serializable {
             return;
         }
 
-        if (Objects.equals(vehicleInteraction.getCreator().getId(), userBean.getUser().getId())) {
+        if (vehicleInteraction.getCreator().getId().equals(userBean.getUser().getId())) {
             isEditable = true;
         }
     }
@@ -108,65 +105,18 @@ public class VehicleInfoBean implements Serializable {
     }
 
     public void update() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            try {
-                if (coordinatesID != null) {
-                    Coordinates coordinates = session.get(Coordinates.class, coordinatesID);
-                    if (coordinates != null) {
-                        vehicle.setCoordinates(coordinates);
-                    } else {
-                        Utility.sendMessage("Записи Coordinates с ID " + coordinatesID + " не найдена!");
-                        logger.log(Level.WARNING, "Coordinates records with ID " + coordinatesID + " not found!");
-                        transaction.rollback();
-                        return;
-                    }
-                }
-
-                vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
-                vehicleInteraction.setModifier(userBean.getUser());
-
-                session.merge(vehicleInteraction);
-                session.merge(vehicle);
-                session.flush();
-
-                transaction.commit();
-
-                NotificationWebSocket.broadcast("update-vehicle");
-            } catch (Exception e) {
-                if (transaction != null && transaction.getStatus().canRollback()) {
-                    transaction.rollback();
-                }
-                logger.severe("Error updating Vehicle data: " + e.getMessage());
-                Utility.sendMessage("Ошибка при обновлении данных Vehicle");
-            }
-        } catch (Exception e) {
-            logger.severe("Failed to update Vehicle data: " + e.getMessage());
-            Utility.sendMessage("Не удалось обновить данные Vehicle");
-        }
+        vehicleInteraction.setModifier(userBean.getUser());
+        vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+        ServiceResult<Vehicle> result = vehicleInfoService.update(vehicle, vehicleInteraction, coordinatesID);
+        Utility.sendMessage(result.getMessage());
     }
 
     public String delete(){
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.remove(vehicle);
-                session.flush();
-                transaction.commit();
-                NotificationWebSocket.broadcast("update-vehicle");
-                return "/main.xhtml?faces-redirect=true";
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Failed to delete Vehicle: " + e.getMessage());
-                if (transaction != null && transaction.getStatus().canRollback()) {
-                    transaction.rollback();
-                }
-                return null;
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to process request: " + e.getMessage());
-            return null;
+        ServiceResult<Vehicle> result = vehicleInfoService.delete(vehicle.getId());
+        if (result.isSuccess()){
+            return result.getMessage();
         }
+        return null;
     }
 
     public String goToCoordinates(){

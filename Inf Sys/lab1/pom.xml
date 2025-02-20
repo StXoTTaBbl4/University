@@ -17,7 +17,6 @@
     <junit.version>5.10.0</junit.version>
   </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -65,11 +64,24 @@
             <artifactId>primefaces</artifactId>
             <version>14.0.8</version>
             <classifier>jakarta</classifier>
-        </dependency><!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        </dependency>
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.opencsv/opencsv &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.opencsv</groupId>-->
+<!--            <artifactId>opencsv</artifactId>-->
+<!--            <version>5.10</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
         <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.10</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.13.0</version>
         </dependency>
 
         <dependency>
@@ -138,6 +150,7 @@
             <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

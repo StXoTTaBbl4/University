@@ -48,9 +48,12 @@
         <!-- Number of Wheels -->
         <h:outputLabel for="numberOfWheels" value="Number of Wheels: "/>
         <h:inputText id="numberOfWheels" value="#{vehicleBean.vehicle.numberOfWheels}"
-                     validatorMessage="Начальник сказал что хотя бы одно колесо должно быть. Даже если это лодка. Да."
-                     a:placeholder="Количество колёс">
+                     validatorMessage="Начальник сказал что хотя бы одно колесо должно быть. И больше 26 нельзя. Даже если это лодка. Да."
+                     a:placeholder="Количество колёс"
+                     required="true"
+                     requiredMessage="Без колёс далеко собрался?">
             <f:validateLongRange minimum="1" />
+            <f:validateLongRange maximum="26"/>
         </h:inputText>
         <h:message for="numberOfWheels" style="color: red;" />
         <br/>
@@ -129,7 +132,10 @@
         <h:inputText id="y" value="#{coordinatesBean.coordinates.y}"
                      required="true"
                      requiredMessage="Координата Y обязательна."
-                     a:placeholder="Координата Y"/>
+                     validatorMessage="Максимальное значение: 999"
+                     a:placeholder="Координата Y">
+            <f:validateLongRange maximum="999" />
+        </h:inputText>
         <h:message for="y" style="color: red;" />
         <br/>
         <p:commandButton

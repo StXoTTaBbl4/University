@@ -32,4 +32,9 @@
         <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
         <location>/auth.xhtml</location>
     </error-page>
+
+    <error-page>
+        <exception-type>jakarta.servlet.ServletException</exception-type>
+        <location>/main.xhtml</location>
+    </error-page>
 </web-app>

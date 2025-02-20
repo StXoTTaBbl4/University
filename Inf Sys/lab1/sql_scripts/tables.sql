@@ -35,7 +35,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL UNIQUE,
     password_hash VARCHAR NOT NULL,
-    role varchar NOT NULL DEFAULT 'USER',
+    role varchar NOT NULL DEFAULT 'USER'
 );
 
 CREATE TABLE vehicle_interactions (
@@ -58,6 +58,17 @@ CREATE TABLE coordinates_interactions (
     FOREIGN KEY (coordinate_id) REFERENCES coordinates(id) ON DELETE CASCADE,
 	FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE,
 	FOREIGN KEY (modifier_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+ALTER TABLE vehicles ADD COLUMN version INT DEFAULT 0 NOT NULL;
+ALTER TABLE coordinates ADD COLUMN version INT DEFAULT 0 NOT NULL;
+
+CREATE TABLE files_history (
+    id SERIAL PRIMARY KEY,
+    status VARCHAR(255) NOT NULL,
+    initiator_id INTEGER NOT NULL,
+    amount BIGINT NOT NULL,
+    CONSTRAINT fk_initiator FOREIGN KEY (initiator_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 	
