@@ -7,7 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <h:outputStylesheet name="admin/admin.css" library="CSS"/>
+    <h:outputStylesheet name="uploadFile/uploadFile.css" library="CSS"/>
     <h:outputStylesheet name="sidebar.css" library="CSS"/>
     <h:outputStylesheet name="snackbar.css" library="CSS"/>
 </h:head>
@@ -48,7 +48,7 @@
                                      update="historyTable messages" icon="pi pi-refresh"/>
 
                     <p:dataTable id="historyTable" value="#{csvUploadBean.filesHistory}" var="file"
-                                 paginator="true" rows="10" reflow="true" styleClass="custom-table">
+                                 paginator="true" rows="10" reflow="true" styleClass="custom-table" lazy="false">
 
                         <p:column headerText="ID">
                             <h:outputText value="#{file.id}"/>

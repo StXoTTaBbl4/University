@@ -35,16 +35,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CsvUploadBean implements Serializable {
-
-//    private final UserBean userBean;
-//    private final VehicleService vehicleService;
-//
-//    @Inject
-//    public CsvUploadBean(UserBean userBean, VehicleService vehicleService){
-//        this.userBean = userBean;
-//        this.vehicleService = vehicleService;
-//    }
-
     @Inject
     UserBean userBean;
 
