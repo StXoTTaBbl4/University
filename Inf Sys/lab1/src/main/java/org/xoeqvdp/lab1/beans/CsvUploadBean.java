@@ -18,6 +18,7 @@ import org.primefaces.model.file.UploadedFile;
 import org.xoeqvdp.lab1.database.HibernateUtil;
 import org.xoeqvdp.lab1.model.*;
 import org.xoeqvdp.lab1.services.CoordinatesService;
+import org.xoeqvdp.lab1.services.CsvUploadService;
 import org.xoeqvdp.lab1.services.ServiceResult;
 import org.xoeqvdp.lab1.services.VehicleService;
 import org.xoeqvdp.lab1.utils.Utility;
@@ -39,10 +40,7 @@ public class CsvUploadBean implements Serializable {
     UserBean userBean;
 
     @Inject
-    VehicleService vehicleService;
-
-    @Inject
-    CoordinatesService coordinatesService;
+    CsvUploadService csvUploadService;
 
     private UploadedFile uploadedFile;
 
@@ -113,71 +111,7 @@ public class CsvUploadBean implements Serializable {
     }
 
     private <T> void saveToDatabase(ArrayList<T> entities) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            if (entities.isEmpty()) {
-                reportUpload(-1L, String.valueOf(UploadStatus.FAILURE));
-                return;
-            }
-            if (selectedValue.equals("Vehicles")) {
-                for (T entity: entities){
-                    Vehicle vehicle = (Vehicle) entity;
-                    VehicleInteraction vehicleInteraction = new VehicleInteraction();
-                    vehicleInteraction.setVehicle(vehicle);
-                    vehicleInteraction.setCreator(userBean.getUser());
-                    vehicleInteraction.setModifier(userBean.getUser());
-                    vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
-                    ServiceResult<Vehicle>  result = vehicleService.createVehicle(vehicle, vehicleInteraction, vehicle.getCoordinatesID());
-                    if (!result.isSuccess()) {
-                        Utility.sendMessage(result.getMessage());
-                        reportUpload(-1L, String.valueOf(UploadStatus.FAILURE));
-                        transaction.rollback();
-                        return;
-                    }
-                }
-                reportUpload((long) entities.size(), String.valueOf(UploadStatus.SUCCESS));
-                session.flush();
-                transaction.commit();
-            } else {
-                for (T entity: entities){
-                    Coordinates coordinates = (Coordinates) entity;
-                    CoordinatesInteraction coordinatesInteraction = new CoordinatesInteraction();
-                    coordinatesInteraction.setCoordinate(coordinates);
-                    coordinatesInteraction.setCreator(userBean.getUser());
-                    coordinatesInteraction.setModifier(userBean.getUser());
-                    coordinatesInteraction.setModifiedDate(Timestamp.from(Instant.now()));
-
-                    ServiceResult<Coordinates> result = coordinatesService.createCoordinates(coordinates, coordinatesInteraction);
-                    if (!result.isSuccess()) {
-                        Utility.sendMessage(result.getMessage());
-                        reportUpload(-1L, String.valueOf(UploadStatus.FAILURE));
-                        transaction.rollback();
-                        return;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            Utility.sendMessage(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void reportUpload(Long amount, String status){
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            FilesHistory filesHistory = new FilesHistory();
-            filesHistory.setAmount(amount);
-            filesHistory.setStatus(status);
-            filesHistory.setInitiator(userBean.getUser());
-
-            session.persist(filesHistory);
-            session.flush();
-            transaction.commit();
-        }catch (Exception e){
-            Utility.sendMessage(e.getMessage());
-        }
+       csvUploadService.saveToDatabase(entities, selectedValue);
     }
 
     private Vehicle parseVehicle(CSVRecord record) {
@@ -303,19 +237,13 @@ public class CsvUploadBean implements Serializable {
     }
 
     public void getHistory(){
-        if (userBean.getUser() == null) {
-            return;
+        ServiceResult<ArrayList<FilesHistory>> result = csvUploadService.getHistory();
+        if (result.isSuccess()) {
+            filesHistory = result.getResult();
+        } else {
+            filesHistory = result.getResult();
+            Utility.sendMessage(result.getMessage());
         }
-        try (Session session =  HibernateUtil.getSessionFactory().openSession()) {
-            if (userBean.getUser().getRole().equals(Roles.ADMIN)) {
-                filesHistory = (ArrayList<FilesHistory>) session.createQuery("SELECT v FROM FilesHistory v", FilesHistory.class).getResultList();
-            } else {
-                filesHistory = (ArrayList<FilesHistory>) session.createQuery("SELECT v FROM FilesHistory v where initiator=:user", FilesHistory.class).
-                        setParameter("user", userBean.getUser()).
-                        getResultList();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }

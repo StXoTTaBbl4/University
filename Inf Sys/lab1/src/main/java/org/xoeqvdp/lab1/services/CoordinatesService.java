@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class CoordinatesService {
-    private static final Logger logger = Logger.getLogger(AdminBean.class.getName());
+    private static final Logger logger = Logger.getLogger(CoordinatesService.class.getName());
 
     public ServiceResult<Coordinates> createCoordinates(Coordinates coordinates , CoordinatesInteraction interaction){
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
