@@ -65,12 +65,6 @@
             <version>14.0.8</version>
             <classifier>jakarta</classifier>
         </dependency>
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.opencsv/opencsv &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.opencsv</groupId>-->
-<!--            <artifactId>opencsv</artifactId>-->
-<!--            <version>5.10</version>-->
-<!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -83,6 +77,21 @@
             <artifactId>commons-csv</artifactId>
             <version>1.13.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.minio/minio -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.17</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.microprofile/microprofile -->
+        <dependency>
+            <groupId>org.eclipse.microprofile</groupId>
+            <artifactId>microprofile</artifactId>
+            <version>7.0</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>jakarta.enterprise</groupId>

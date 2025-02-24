@@ -8,34 +8,38 @@ import jakarta.inject.Named;
 import jakarta.persistence.NoResultException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.xoeqvdp.lab1.database.HibernateUtil;
+import org.xoeqvdp.lab1.minio.MinioStorageService;
 import org.xoeqvdp.lab1.model.*;
-import org.xoeqvdp.lab1.services.CoordinatesService;
 import org.xoeqvdp.lab1.services.CsvUploadService;
 import org.xoeqvdp.lab1.services.ServiceResult;
-import org.xoeqvdp.lab1.services.VehicleService;
 import org.xoeqvdp.lab1.utils.Utility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+@Slf4j
 @Named
 @SessionScoped
 @Getter
 @Setter
 public class CsvUploadBean implements Serializable {
+    private static final Logger logger = Logger.getLogger(CsvUploadBean.class.getName());
+
     @Inject
     UserBean userBean;
 
@@ -47,6 +51,9 @@ public class CsvUploadBean implements Serializable {
     private String selectedValue;
     private List<String> types = Arrays.asList("Vehicles", "Coordinates");
 
+    @Inject
+    private MinioStorageService minioStorageService;
+
     @PostConstruct
     public void init(){
         getHistory();
@@ -55,10 +62,12 @@ public class CsvUploadBean implements Serializable {
     private ArrayList<FilesHistory> filesHistory;
 
     public void handleFileUpload() {
+        System.out.println("File check");
         if (uploadedFile == null) {
             Utility.sendMessage("Файла нет");
             return;
         }
+        System.out.println("Checked");
 
         try (InputStream input = uploadedFile.getInputStream();
              Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
@@ -83,7 +92,7 @@ public class CsvUploadBean implements Serializable {
                             return;
                         }
                     }
-
+                    System.out.println("Vehicles parsed");
                     saveToDatabase(vehicles);
 
                 } else {
@@ -110,8 +119,13 @@ public class CsvUploadBean implements Serializable {
 
     }
 
-    private <T> void saveToDatabase(ArrayList<T> entities) {
-       csvUploadService.saveToDatabase(entities, selectedValue);
+    private <T> void saveToDatabase(ArrayList<T> entities) throws IOException {
+       csvUploadService.saveToDatabase(entities,
+               selectedValue,
+               uploadedFile.getFileName(),
+               uploadedFile.getInputStream(),
+               uploadedFile.getSize(),
+               uploadedFile.getContentType());
     }
 
     private Vehicle parseVehicle(CSVRecord record) {
@@ -175,7 +189,6 @@ public class CsvUploadBean implements Serializable {
     }
 
     // Методы для обработки значений с учетом валидации
-
     private String getNullableString(CSVRecord record, int column) {
         String value = record.get(column);
         return (value == null || value.isEmpty()) ? null : value.trim();
@@ -245,5 +258,28 @@ public class CsvUploadBean implements Serializable {
             Utility.sendMessage(result.getMessage());
         }
 
+    }
+
+    public StreamedContent downloadFile(FilesHistory file) {
+        if (!"SUCCESS".equals(file.getStatus())) {
+            return null;
+        }
+
+        String fileName = file.getFileName();
+        InputStream fileStream;
+
+        try {
+            fileStream = minioStorageService.downloadFile(file.getInitiator().getId().toString(), fileName);
+
+            return DefaultStreamedContent.builder()
+                    .name(fileName)
+                    .contentType("text/csv")
+                    .stream(() -> fileStream) // Поток не закрываем
+                    .build();
+        } catch (Exception e) {
+            Utility.sendMessage("Failed to download");
+            logger.log(Level.WARNING, "Failed to download file from MinIO, fileName: " + file.getFileName(), e);
+            return null;
+        }
     }
 }

@@ -71,5 +71,7 @@ CREATE TABLE files_history (
     CONSTRAINT fk_initiator FOREIGN KEY (initiator_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+ALTER TABLE files_history ADD COLUMN file_name VARCHAR(255) NOT NULL default 'NAME_ME';
+
 	
 	

@@ -43,6 +43,16 @@ public class VehicleInteraction {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    public static VehicleInteraction createVehicleInteraction(Vehicle vehicle, User user) {
+        VehicleInteraction vehicleInteraction = new VehicleInteraction();
+        vehicleInteraction.setVehicle(vehicle);
+        vehicleInteraction.setCreator(user);
+        vehicleInteraction.setModifier(user);
+        vehicleInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+
+        return vehicleInteraction;
+    }
+
     @Override
     public String toString() {
         return "VehicleInteraction{" +

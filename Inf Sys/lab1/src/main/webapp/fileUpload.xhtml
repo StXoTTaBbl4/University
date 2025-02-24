@@ -17,7 +17,7 @@
         <h:panelGroup layout="block" styleClass="inner-wrapper">
             <h:panelGroup layout="block" id="snackbar-wrapper">
                 <h:panelGroup layout="block" id="snackbar">
-                    <h:messages globalOnly="true" id="snackbar-text" />
+                    <h:messages globalOnly="true" id="snackbar-text" style="color: red"/>
                 </h:panelGroup>
             </h:panelGroup>
             <h:panelGroup>
@@ -35,7 +35,7 @@
                                   allowTypes="/(\.|\/)csv$/"
                                   accept=".csv"
                     />
-                    <p:commandButton id="submit" value="Отправить"
+                    <p:commandButton id="submit" value="Отправить" update="snackbar-text" oncomplete="showSnackbar();"
                         action="#{csvUploadBean.handleFileUpload}"
                     />
                 </h:form>
@@ -64,6 +64,16 @@
 
                         <p:column headerText="Количество">
                             <h:outputText value="#{file.amount}"/>
+                        </p:column>
+
+                        <p:column headerText="Действие">
+                            <p:commandButton value="Скачать"
+                                             icon="pi pi-download"
+                                             ajax="false"
+                                             rendered="#{file.status eq 'SUCCESS'}"
+                                             >
+                                <p:fileDownload value="#{csvUploadBean.downloadFile(file)}"/>
+                            </p:commandButton>
                         </p:column>
                     </p:dataTable>
                 </h:form>

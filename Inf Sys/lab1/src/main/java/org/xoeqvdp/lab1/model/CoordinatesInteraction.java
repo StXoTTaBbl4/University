@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -41,4 +42,14 @@ public class CoordinatesInteraction {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "coordinate_id", nullable = false)
     private Coordinates coordinate;
+
+    public static CoordinatesInteraction createCoordinatesInteraction(User user, Coordinates coordinates){
+        CoordinatesInteraction coordinatesInteraction = new CoordinatesInteraction();
+        coordinatesInteraction.setCoordinate(coordinates);
+        coordinatesInteraction.setCreator(user);
+        coordinatesInteraction.setModifier(user);
+        coordinatesInteraction.setModifiedDate(Timestamp.from(Instant.now()));
+
+        return coordinatesInteraction;
+    }
 }

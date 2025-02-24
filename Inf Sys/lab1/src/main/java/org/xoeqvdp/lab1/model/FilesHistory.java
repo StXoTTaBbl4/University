@@ -27,6 +27,9 @@ public class FilesHistory {
     @JoinColumn(name = "initiator_id", nullable = false)
     private User initiator;
 
+    @Column(name = "file_name")
+    private String fileName;
+
     @Column(name = "amount", nullable = false)
     private Long amount;
 }
