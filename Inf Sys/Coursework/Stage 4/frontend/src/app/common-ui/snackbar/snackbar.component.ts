@@ -27,6 +27,6 @@ export class SnackbarComponent implements AfterViewInit{
     // snackbarEl.addEventListener('animationend', () => {
     //   snackbarEl.classList.remove('show');
     // }, { once: true });
-    setTimeout(() =>{ this.snackbar.nativeElement.classList.remove("show"); }, 4000);
+    setTimeout(() =>{ this.snackbar.nativeElement.classList.remove("show"); }, 3500);
   }
 }

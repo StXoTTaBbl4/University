@@ -41,14 +41,14 @@ export class AuthComponent  implements AfterViewInit{
 
   loginUser(form: any) {
     if (form.valid) {
-      this.http.post('http://localhost:8080/api/auth/login', this.loginFormData).subscribe({
+      this.http.post('http://localhost:8080/auth/login', this.loginFormData).subscribe({
         next: (response: any) => {
           this.router.navigate(['/main'])
           console.log('Ответ от сервера:', response);
         },
         error: (error: any) => {
           console.error('Ошибка:', error);
-          this.snackbar.showSnackbar(error);
+          this.snackbar.showSnackbar(error.statusText);
         }
       });
     }
@@ -57,13 +57,13 @@ export class AuthComponent  implements AfterViewInit{
   createUser(form: any){
     if (form.valid) {
       console.log("validated")
-      this.http.post('http://localhost:8080/api/auth/registration', this.registrationFormData).subscribe({
+      this.http.post('http://localhost:8080/auth/registration', this.registrationFormData).subscribe({
         next: (response: any) => {
           console.log('Ответ от сервера:', response);
         },
         error: (error: any) => {
           console.error('Ошибка:', error);
-          this.snackbar.showSnackbar(error);
+          this.snackbar.showSnackbar(error.statusText);
         }
       });
     }

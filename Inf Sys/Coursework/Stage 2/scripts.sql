@@ -2,7 +2,7 @@ CREATE TABLE UserLog (
     log_id SERIAL PRIMARY KEY,
     new_user_id INTEGER NOT NULL,
     new_user_name VARCHAR NOT NULL,
-    added_by_user VARCHAR NOT NULL,
+    added_by_user VARCHAR NOT NULL DEFAULT 'SYSTEM',
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
