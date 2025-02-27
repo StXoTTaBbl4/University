@@ -82,6 +82,7 @@ CREATE TABLE "certificate_sub_category" (
 
 CREATE TABLE "certificates" (
   "id" SERIAL PRIMARY KEY,
+  "name" TEXT NoT NULL,
   "employee_id" INTEGER NOT NULL,
   "subcategory_id" INTEGER NOT NULL,
   "file_path" varchar(256) UNIQUE NOT NULL
