@@ -23,13 +23,10 @@ public class FileService {
     public FileService(CertificateRepository  fileRepository) {
         this.fileRepository = fileRepository;
         File dir = new File(uploadDir);
-        if (!dir.exists()) dir.mkdirs(); // Создаём папку uploads, если её нет
+        if (!dir.exists()) dir.mkdirs();
     }
 
-    /**
-     * Сохранение файла в папку пользователя и запись пути в БД.
-     */
-    public Certificate saveFile(MultipartFile file, Employee employee, CertificateSubCategory subCategory) throws IOException {
+    public Certificate saveFile(MultipartFile file, Employee employee, CertificateSubCategory subCategory, String name) throws IOException {
         String userDir = uploadDir + "/" + employee.getId(); // Папка пользователя
         File dir = new File(userDir);
         if (!dir.exists()) dir.mkdirs(); // Создать папку, если её нет
@@ -44,13 +41,12 @@ public class FileService {
         certificate.setEmployee(employee);
         certificate.setSubCategory(subCategory);
         certificate.setFilePath(filePath);
+        certificate.setName(name);
 
         return fileRepository.save(certificate);
     }
 
-    /**
-     * Получение файла по ID сертификата.
-     */
+
     public Optional<File> getFile(Long certificateId) {
         return fileRepository.findById(certificateId)
                 .map(cert -> new File(cert.getFilePath()));

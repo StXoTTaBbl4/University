@@ -103,7 +103,7 @@ ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("employee_id") REFERENCES "Employ
 
 ALTER TABLE "certificate_sub_category" ADD FOREIGN KEY ("category_id") REFERENCES "certificate_category" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "certificates" ADD FOREIGN KEY ("employee_id") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+ALTER TABLE "certificates" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "certificates" ADD FOREIGN KEY ("subcategory_id") REFERENCES "certificate_sub_category" ("id") ON DELETE NO ACTION;
 

@@ -24,6 +24,17 @@ public class Certificate {
     @Column(name = "file_path", nullable = false, unique = true, length = 256)
     private String filePath;
 
+    @Column(nullable = false)
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

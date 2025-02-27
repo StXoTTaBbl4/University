@@ -8,14 +8,12 @@
       <tr>
         <th>ID</th>
         <th>Имя</th>
-        <th>Возраст</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let certificate of data" routerLink='/certificate'>
+      <tr *ngFor="let certificate of data" [routerLink]="['/certificate/'+certificate.id]">
         <td>{{ certificate.id }}</td>
         <td>{{ certificate.name }}</td>
-        <td>{{ certificate.type }}</td>
       </tr>
       </tbody>
     </table>
@@ -28,28 +26,24 @@
         <h2>Загрузка файла</h2>
 
         <label>Имя:</label>
-        <input type="text" [(ngModel)]="name" class="input-field">
+        <input type="text" [(ngModel)]="certificate.name" name="name" class="input-field" required>
 
         <label>Тип:</label>
-        <select [(ngModel)]="type" class="input-field">
-          <option value="option1">Опция 1</option>
-          <option value="option2">Опция 2</option>
-        </select>
-        <label>Подтип</label>
-        <select [(ngModel)]="sub_type" class="input-field">
-          <option value="option1">Опция 1</option>
-          <option value="option2">Опция 2</option>
+        <select [(ngModel)]="certificate.cType" name="type" class="input-field">
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
         </select>
 
-        <label>Дата:</label>
-        <input type="date" [(ngModel)]="date" class="input-field">
+        <label>Подтип:</label>
+        <select [(ngModel)]="certificate.subType" name="subType" class="input-field">
+          <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.name }}</option>
+        </select>
 
         <label>Файл (PNG, JPG, PDF):</label>
-        <input type="file" (change)="onFileSelected($event)" accept="image/png,image/jpg, application/pdf">
+        <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpg, application/pdf">
 
         <div class="modal-actions">
-          <button (click)="closeModal()" class="close-btn">Закрыть</button>
-          <button (click)="upload()" class="upload-btn">Загрузить</button>
+          <button type="button" (click)="closeModal()" class="close-btn">Закрыть</button>
+          <button type="button" (click)="upload()" class="upload-btn">Загрузить</button>
         </div>
       </div>
     </form>
