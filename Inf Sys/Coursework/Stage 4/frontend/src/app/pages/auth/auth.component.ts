@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {NgIf} from '@angular/common';
 import {SnackbarComponent} from '../../common-ui/snackbar/snackbar.component';
 import {Router} from '@angular/router';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'auth',
@@ -21,17 +22,19 @@ export class AuthComponent  implements AfterViewInit{
   reg_pwd: string = '';
   re_reg_pwd: string = '';
 
-  loginFormData = {login:'', password:''}
-  registrationFormData = {login:'', password:''}
+  loginFormData = {email:'', password:''}
+  registrationFormData = {email:'', password:'', name:''}
 
   isButtonDisabled: boolean = true;
 
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {
   }
 
+
+
   validatePassword(){
-    this.isButtonDisabled = this.reg_pwd !== this.re_reg_pwd;
+    this.isButtonDisabled = this.registrationFormData.password !== this.re_reg_pwd;
   }
 
   goToRegistration() {
@@ -41,14 +44,19 @@ export class AuthComponent  implements AfterViewInit{
 
   loginUser(form: any) {
     if (form.valid) {
-      this.http.post('http://localhost:8080/auth/login', this.loginFormData).subscribe({
+      this.http.post('http://localhost:8080/api/auth/login' , this.loginFormData, { withCredentials: true }).subscribe({
         next: (response: any) => {
-          this.router.navigate(['/main'])
           console.log('Ответ от сервера:', response);
+          localStorage.setItem("access-token", response.accessToken)
+          localStorage.setItem('expires-at', response.expiresAt);
+          this.snackbar.showSnackbar(response.message)
+
+          this.authService.scheduleTokenRefresh();
+          this.router.navigate(['/main'])
         },
         error: (error: any) => {
           console.error('Ошибка:', error);
-          this.snackbar.showSnackbar(error.statusText);
+          this.snackbar.showSnackbar(error.error.message);
         }
       });
     }
@@ -57,13 +65,14 @@ export class AuthComponent  implements AfterViewInit{
   createUser(form: any){
     if (form.valid) {
       console.log("validated")
-      this.http.post('http://localhost:8080/auth/registration', this.registrationFormData).subscribe({
+      this.http.post('http://localhost:8080/api/auth/registration', this.registrationFormData).subscribe({
         next: (response: any) => {
           console.log('Ответ от сервера:', response);
+          this.snackbar.showSnackbar(response.message);
         },
         error: (error: any) => {
           console.error('Ошибка:', error);
-          this.snackbar.showSnackbar(error.statusText);
+          this.snackbar.showSnackbar(error.error.message);
         }
       });
     }

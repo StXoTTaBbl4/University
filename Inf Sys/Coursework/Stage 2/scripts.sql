@@ -1,42 +1,42 @@
-CREATE TABLE UserLog (
-    log_id SERIAL PRIMARY KEY,
-    new_user_id INTEGER NOT NULL,
-    new_user_name VARCHAR NOT NULL,
-    added_by_user VARCHAR NOT NULL DEFAULT 'SYSTEM',
-    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE user_log (
+                         log_id SERIAL PRIMARY KEY,
+                         new_user_id INTEGER NOT NULL,
+                         new_user_name VARCHAR NOT NULL,
+                         added_by_user VARCHAR NOT NULL DEFAULT 'SYSTEM',
+                         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION log_new_user()
-RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS $$
 BEGIN
-    -- Вставляем данные о новом пользователе в таблицу логов
-    INSERT INTO UserLog (new_user_id, new_user_name, added_by_user)
+    INSERT INTO user_log (new_user_id, new_user_name, added_by_user)
     VALUES (NEW.id, NEW.name, CURRENT_USER);
 
-    RETURN NEW; -- Возвращаем новую строку, чтобы продолжить вставку
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER after_employee_insert
-AFTER INSERT ON Employee
-FOR EACH ROW
+    AFTER INSERT ON employee
+    FOR EACH ROW
 EXECUTE FUNCTION log_new_user();
 
 CREATE OR REPLACE FUNCTION get_employees_with_level_above(p_level INTEGER)
-RETURNS TABLE(
-    employee_id INTEGER,
-    name VARCHAR,
-    email VARCHAR
-) AS $$
+    RETURNS TABLE(
+                     employee_id INTEGER,
+                     name VARCHAR,
+                     email VARCHAR
+                 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT e.id, e.name, e.email
-    FROM Employee e
-    JOIN EmployeeSkills es ON e.id = es.employeeID
-    JOIN Levels l ON es.levelID = l.id
-    WHERE l.weight > p_level;
+        SELECT e.id, e.name, e.email
+        FROM Employee e
+                 JOIN employee_skills es ON e.id = es."employeeID"
+                 JOIN Levels l ON es."levelID" = l.id
+        WHERE l.weight > p_level;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- Создаем процедуру для назначения задачи
 CREATE OR REPLACE PROCEDURE assign_task_to_employee(

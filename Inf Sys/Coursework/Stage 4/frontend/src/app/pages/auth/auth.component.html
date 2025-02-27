@@ -4,8 +4,8 @@
     <form #login #loginForm="ngForm" id="login" class="auth__form" (ngSubmit)="loginUser(loginForm)">
       <h2>Вход</h2>
       <div class="auth__form__field-wrapper">
-        <label for="auth-login">Логин</label>
-        <input id="auth-login"  name="login" class="auth__form_data" placeholder="Логин" [(ngModel)]="loginFormData.login" required/>
+        <label for="auth-login">Почта</label>
+        <input id="auth-login"  name="email" class="auth__form_data" placeholder="Логин" [(ngModel)]="loginFormData.email" required/>
       </div>
 
       <div class="auth__form__field-wrapper">
@@ -23,13 +23,18 @@
     <form #registration #registrationForm="ngForm" id="registration" class="auth__form" (ngSubmit)="createUser(registrationForm)">
       <h2>Регистрация</h2>
       <div class="auth__form__field-wrapper">
-        <label for="reg-login">Логин</label>
-        <input id="reg-login" name="login" class="auth__form_data" placeholder="Логин" required/>
+        <label for="reg-mail">Почта</label>
+        <input id="reg-mail" name="login" class="auth__form_data" placeholder="example@mail.com" [(ngModel)]="registrationFormData.email" required/>
+      </div>
+
+      <div class="auth__form__field-wrapper">
+        <label for="reg-name">ФИО</label>
+        <input id="reg-name" name="login" class="auth__form_data" [(ngModel)]="registrationFormData.name" placeholder="ФИО..." required/>
       </div>
 
       <div class="auth__form__field-wrapper">
         <label for="reg-pwd">Пароль</label>
-        <input type="password" name="pwd" class="reg-pwd auth__form_data" id="reg-pwd" [(ngModel)]="reg_pwd" (keyup)="validatePassword()" placeholder="Пароль" required/>
+        <input type="password" name="pwd" class="reg-pwd auth__form_data" id="reg-pwd" [(ngModel)]="registrationFormData.password" (keyup)="validatePassword()" placeholder="Пароль" required/>
       </div>
 
       <div class="auth__form__field-wrapper">

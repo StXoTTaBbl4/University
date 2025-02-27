@@ -1,12 +1,14 @@
-<div *ngFor="let section of questions" class="block__discipline">
-  <h2>{{ section.title }}</h2>
+<div *ngFor="let productId of (groupedTasks | keyvalue)" class="block__discipline">
+  <h2>{{ productId.value[0].product.product }}</h2>
   <div class="questions-wrapper">
-    <div *ngFor="let question of section.items" class="question">
-      <h2>{{question.name}}</h2>
-      <div *ngFor="let option of question.options" class="block__discipline__question">
+    <div *ngFor="let task of productId.value" class="question">
+      <h2>{{ task.task }}</h2>
+      <div *ngFor="let level of levels" class="block__discipline__question">
         <label>
-          {{option}}
-          <input type="radio" name="{{question.name}}" value="{{option}}">
+          {{level.level}}
+          <input type="radio"
+                 name="{{productId.value[0].product.product}}:{{ task.task }}"
+                 value="{{level.weight}}">
         </label>
       </div>
     </div>

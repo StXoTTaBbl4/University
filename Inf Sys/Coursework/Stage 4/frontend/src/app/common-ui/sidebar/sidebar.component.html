@@ -35,7 +35,7 @@
 
     <a class="menu-item" routerLink="/auth">
       <img src="assets/img/login.png" alt="AUTH">
-      <span class="menu-text">Выйти/Войти</span>
+      <span class="menu-text" (click)="authService.logout()">Выйти/Войти</span>
     </a>
   </div>
 </div>

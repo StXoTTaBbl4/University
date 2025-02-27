@@ -29,6 +29,7 @@ export class CertificatesComponent implements OnInit, AfterViewInit{
   isModalOpen: boolean = false;
   name: string = '';
   type: string = '';
+  sub_type: string = '';
   date: string = '';
   file: File | null = null;
 

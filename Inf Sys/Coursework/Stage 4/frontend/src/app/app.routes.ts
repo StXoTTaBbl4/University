@@ -7,15 +7,16 @@ import {CertificatesComponent} from './pages/certificates/certificates.component
 import {ProfileComponent} from './pages/profile/profile.component';
 import {SearchComponent} from './pages/search/search.component';
 import {CertificateComponent} from './pages/certificate/certificate.component';
+import {AuthGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: AuthComponent },
-  { path: 'main', component: MainComponent },
-  { path: 'self-assessment', component: SelfAssessmentComponent},
-  { path: 'admin', component: AdminComponent},
-  { path: 'certificates', component: CertificatesComponent},
-  { path: 'certificate', component: CertificateComponent},
-  { path: 'profile', component: ProfileComponent},
-  { path: 'search', component: SearchComponent},
+  { path: 'main', component: MainComponent, canActivate: [AuthGuard]},
+  { path: 'self-assessment', component: SelfAssessmentComponent, canActivate: [AuthGuard]},
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard]},
+  { path: 'certificates', component: CertificatesComponent, canActivate: [AuthGuard]},
+  { path: 'certificate', component: CertificateComponent, canActivate: [AuthGuard]},
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'search', component: SearchComponent, canActivate: [AuthGuard]},
   { path: '**', redirectTo: '' }
 ];

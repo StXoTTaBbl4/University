@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
+import org.xoeqvdp.backend.entities.Employee;
 
 import java.security.Key;
 import java.util.Date;
@@ -24,13 +25,22 @@ public class JwtService{
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(Long id, String email, List<String> roles) {
+    public String generateAccessToken(Employee employee, List<String> roles) {
         return Jwts.builder()
-                .subject(email)  // Используем email как subject
-                .claim("id", id)  // Включаем id
+                .subject(employee.getEmail())  // Используем email как subject
+                .claim("id", employee.getId())  // Включаем id
                 .claim("roles", roles)  // Включаем роли
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + lifetime))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(Employee employee) {
+        return Jwts.builder()
+                .subject(employee.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 7 дней
                 .signWith(getSigningKey())
                 .compact();
     }

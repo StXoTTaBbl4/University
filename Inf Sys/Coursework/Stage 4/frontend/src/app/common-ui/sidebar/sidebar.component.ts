@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'sidebar',
@@ -11,5 +13,7 @@ import {RouterLink} from '@angular/router';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+  constructor(protected authService: AuthService) {
 
+  }
 }

@@ -23,28 +23,35 @@
 </div>
 <div #modal>
   <div class="modal-overlay" *ngIf="isModalOpen">
-    <div class="modal">
-      <h2>Загрузка файла</h2>
+    <form>
+      <div class="modal">
+        <h2>Загрузка файла</h2>
 
-      <label>Имя:</label>
-      <input type="text" [(ngModel)]="name" class="input-field">
+        <label>Имя:</label>
+        <input type="text" [(ngModel)]="name" class="input-field">
 
-      <label>Тип:</label>
-      <select [(ngModel)]="type" class="input-field">
-        <option value="option1">Опция 1</option>
-        <option value="option2">Опция 2</option>
-      </select>
+        <label>Тип:</label>
+        <select [(ngModel)]="type" class="input-field">
+          <option value="option1">Опция 1</option>
+          <option value="option2">Опция 2</option>
+        </select>
+        <label>Подтип</label>
+        <select [(ngModel)]="sub_type" class="input-field">
+          <option value="option1">Опция 1</option>
+          <option value="option2">Опция 2</option>
+        </select>
 
-      <label>Дата:</label>
-      <input type="date" [(ngModel)]="date" class="input-field">
+        <label>Дата:</label>
+        <input type="date" [(ngModel)]="date" class="input-field">
 
-      <label>Файл (PNG, PDF):</label>
-      <input type="file" (change)="onFileSelected($event)" accept="image/png, application/pdf">
+        <label>Файл (PNG, JPG, PDF):</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/png,image/jpg, application/pdf">
 
-      <div class="modal-actions">
-        <button (click)="closeModal()" class="close-btn">Закрыть</button>
-        <button (click)="upload()" class="upload-btn">Загрузить</button>
+        <div class="modal-actions">
+          <button (click)="closeModal()" class="close-btn">Закрыть</button>
+          <button (click)="upload()" class="upload-btn">Загрузить</button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>
