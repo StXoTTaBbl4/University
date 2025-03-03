@@ -41,7 +41,7 @@ public class MinioStorageService {
             );
 
             return true;
-        } catch (Exception e){
+        } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e){
             logger.log(Level.WARNING, "Error occurred while uploading to MinIO:" + e.getMessage());
             return false;
         }

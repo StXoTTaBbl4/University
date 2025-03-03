@@ -17,6 +17,7 @@ public class AssignedRoles {
     @JoinColumn(name = "employeeID")
     private Employee employee;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role;
 
