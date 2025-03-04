@@ -12,8 +12,13 @@ export class AuthService {
 
   isAuthenticated = new BehaviorSubject<boolean>(this.hasValidToken());
 
-  constructor(private http: HttpClient, private router: Router) {}
-
+  constructor(private http: HttpClient, private router: Router) {
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'logout') {
+        this.logout(false);
+      }
+    });
+  }
 
   hasValidToken(): boolean {
     const token = localStorage.getItem('access-token');
@@ -25,8 +30,8 @@ export class AuthService {
   scheduleTokenRefresh(): void {
     const expiresAt = Number(localStorage.getItem('expires-at'));
     const now = Date.now();
-    // const delay = expiresAt - now - 60000*4; //каждую минуту
-    const delay = expiresAt - now - 60000; //за минуту до
+    const delay = expiresAt - now - 60000*4; //каждую минуту
+    // const delay = expiresAt - now - 60000; //за минуту до
     console.log("Delay set " + delay);
 
     if (delay > 0) {
@@ -38,7 +43,7 @@ export class AuthService {
   refreshToken(): void {
     console.log("Refreshing...")
 
-    this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/refreshToken`, {}, { withCredentials: true })
+    this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/refreshToken`, {email: localStorage.getItem('user-email')}, { withCredentials: true })
       .subscribe({
         next: (response) => {
           localStorage.setItem('access-token', response.accessToken);
@@ -53,12 +58,20 @@ export class AuthService {
   }
 
 
-  logout(): void {
+  logout(triggerStorage=true): void {
     localStorage.removeItem('access-token');
     localStorage.removeItem('expires-at');
+    localStorage.removeItem('user-email')
     clearTimeout(this.refreshTimeout);
     this.isAuthenticated.next(false);
-    this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
+    // this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
+
+    if (triggerStorage) {
+      console.log("add logout to storage")
+      localStorage.setItem('logout', Date.now().toString());
+      localStorage.removeItem('logout');
+    }
+
     this.router.navigate(['/']);
   }
 }

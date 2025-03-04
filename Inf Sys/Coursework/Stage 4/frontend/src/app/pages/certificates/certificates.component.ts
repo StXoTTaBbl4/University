@@ -49,10 +49,19 @@ export class CertificatesComponent implements OnInit, AfterViewInit{
   }
 
   loadCertificates() {
-    this.http.get<any[]>('http://localhost:8080/api/files/certificates').subscribe({
+    // this.http.get<any[]>('http://localhost:8080/api/files/certificates').subscribe({
+    //   next: (response) => {
+    //     this.data = response; // Привязываем ответ сервера к переменной data
+    //     console.log('Данные загружены:', this.data);
+    //   },
+    //   error: (error) => {
+    //     console.error('Ошибка загрузки сертификатов', error);
+    //   }
+    // });
+    this.http.get<any[]>('http://localhost:8080/api/certificates/ping').subscribe({
       next: (response) => {
         this.data = response; // Привязываем ответ сервера к переменной data
-        console.log('Данные загружены:', this.data);
+        console.log(response);
       },
       error: (error) => {
         console.error('Ошибка загрузки сертификатов', error);

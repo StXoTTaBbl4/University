@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
-
     @Query("SELECT new org.xoeqvdp.backend.dto.CertificatesResponse(c.name, c.id) FROM Certificate c WHERE c.employee = :employee")
     List<CertificatesResponse> findByEmployee(Employee employee);
 }

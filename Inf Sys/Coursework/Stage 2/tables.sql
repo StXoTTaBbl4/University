@@ -10,9 +10,9 @@ CREATE TYPE "Roles" AS ENUM (
   'ADMINISTRATOR'
 );
 
-CREATE TABLE "assignedroles" (
-  "employee_id" INTEGER NOT NULL,
-  "role" Roles NOT NULL
+CREATE TABLE "assigned_roles" (
+  employee_id INTEGER NOT NULL,
+  role "Roles" NOT NULL
 );
 
 CREATE TABLE "refresh_token" (
@@ -96,7 +96,7 @@ ALTER TABLE "employee_skills" ADD FOREIGN KEY ("task_id") REFERENCES "tasks" ("i
 
 ALTER TABLE "employee_skills" ADD FOREIGN KEY ("level_id") REFERENCES "levels" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "assignedroles" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id") ON DELETE CASCADE;
+ALTER TABLE "assigned_roles" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("task_id") REFERENCES "TasksDescription" ("id") ON DELETE CASCADE;
 

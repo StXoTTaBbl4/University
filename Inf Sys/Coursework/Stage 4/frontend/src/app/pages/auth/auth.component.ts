@@ -48,7 +48,8 @@ export class AuthComponent  implements AfterViewInit{
         next: (response: any) => {
           console.log('Ответ от сервера:', response);
           localStorage.setItem("access-token", response.accessToken)
-          localStorage.setItem('expires-at', response.expiresAt);
+          localStorage.setItem('expires-at', response.accessTokenExpiresAt);
+          localStorage.setItem('user-email', this.loginFormData.email);
           this.snackbar.showSnackbar(response.message)
 
           this.authService.scheduleTokenRefresh();
