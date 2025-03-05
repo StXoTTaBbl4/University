@@ -1,1 +1,27 @@
-<p>search works!</p>
+<div class="outer-wrapper">
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div class="search-form">
+      <input [(ngModel)]="searchCriteria.id" placeholder="ID" type="number" />
+      <input [(ngModel)]="searchCriteria.name" placeholder="Name" type="text" />
+      <input [(ngModel)]="searchCriteria.email" placeholder="Email" type="email" />
+      <button (click)="filterData()">Search</button>
+    </div>
+    <table class="tokens-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of filteredEmployees" [routerLink]="['/profile', e.id]">
+        <td>{{e.id}}</td>
+        <td>{{e.name}}</td>
+        <td>{{e.email}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

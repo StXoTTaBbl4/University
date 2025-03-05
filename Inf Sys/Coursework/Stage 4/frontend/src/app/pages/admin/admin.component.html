@@ -1,1 +1,57 @@
-<p>admin works!</p>
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div id="tokens">
+      <table class="tokens-table">
+        <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Expires At</th>
+          <th>Revoked</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let token of tokens">
+          <td>{{ token.employee_id }}</td>
+          <td>{{ token.expiresAt }}</td>
+          <td>{{ token.revoked }}</td>
+          <td>
+            <button *ngIf="!token.revoked" (click)="revokeToken(token.employee_id)">Отозвать</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="roles">
+      <table class="tokens-table">
+        <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Employee</th>
+          <th>Leader</th>
+          <th>Administrator</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let rolesEntity of roles">
+          <td>{{ rolesEntity.employeeId }}</td>
+          <td>
+            <button *ngIf="rolesEntity.roles.indexOf('EMPLOYEE') === -1" (click)="addRole(rolesEntity.employeeId, 'EMPLOYEE')">Добавить</button>
+            <button *ngIf="rolesEntity.roles.indexOf('EMPLOYEE') !== -1" (click)="removeRole(rolesEntity.employeeId, 'EMPLOYEE')">Убрать</button>
+          </td>
+          <td>
+            <button *ngIf="rolesEntity.roles.indexOf('LEADER') === -1" (click)="addRole(rolesEntity.employeeId, 'LEADER')">Добавить</button>
+            <button *ngIf="rolesEntity.roles.indexOf('LEADER') !== -1" (click)="removeRole(rolesEntity.employeeId, 'LEADER')">Убрать</button>
+          </td>
+          <td>
+            <button *ngIf="rolesEntity.roles.indexOf('ADMINISTRATOR') === -1" (click)="addRole(rolesEntity.employeeId, 'ADMINISTRATOR')">Добавить</button>
+            <button *ngIf="rolesEntity.roles.indexOf('ADMINISTRATOR') !== -1" (click)="removeRole(rolesEntity.employeeId, 'ADMINISTRATOR')">Убрать</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

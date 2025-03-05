@@ -32,12 +32,13 @@ CREATE TABLE "employee" (
   "password" VARCHAR NOT NULL
 );
 
-CREATE TABLE "TasksDescription" (
+CREATE TABLE "tasks_description" (
   "id" SERIAL PRIMARY KEY,
-  "task_description" VARCHAR(256) NOT NULL
+  "name" VARCHAR(256) NOT NULL,
+  "description" VARCHAR(256) NOT NULL
 );
 
-CREATE TABLE "TasksAssignment" (
+CREATE TABLE "tasks_assignment" (
   "task_id" INTEGER NOT NULL,
   "employee_id" INTEGER NOT NULL
 );
@@ -77,12 +78,12 @@ CREATE TABLE "certificate_category" (
 CREATE TABLE "certificate_sub_category" (
   "id" SERIAL PRIMARY KEY,
   "category_id" INTEGER NOT NULL,
-  "name" VARCHAR NOT NULL
+  "name" VARCHAR(64) UNIQUE NOT NULL
 );
 
 CREATE TABLE "certificates" (
   "id" SERIAL PRIMARY KEY,
-  "name" TEXT NoT NULL,
+  "name" TEXT UNIQUE NoT NULL,
   "employee_id" INTEGER NOT NULL,
   "subcategory_id" INTEGER NOT NULL,
   "file_path" varchar(256) UNIQUE NOT NULL
@@ -98,9 +99,9 @@ ALTER TABLE "employee_skills" ADD FOREIGN KEY ("level_id") REFERENCES "levels" (
 
 ALTER TABLE "assigned_roles" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("task_id") REFERENCES "TasksDescription" ("id") ON DELETE CASCADE;
+ALTER TABLE "tasks_assignment" ADD FOREIGN KEY ("task_id") REFERENCES "tasks_description" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "TasksAssignment" ADD FOREIGN KEY ("employee_id") REFERENCES "Employee" ("id") ON DELETE CASCADE;
+ALTER TABLE "tasks_assignment" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "certificate_sub_category" ADD FOREIGN KEY ("category_id") REFERENCES "certificate_category" ("id") ON DELETE CASCADE;
 

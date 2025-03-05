@@ -18,7 +18,7 @@
       <span class="menu-text">Сертификаты</span>
     </a>
 
-    <a class="menu-item" routerLink="/profile">
+    <a class="menu-item" [routerLink]="['/profile', userId]">
       <img src="assets/img/profile.png" alt="PRFL">
       <span class="menu-text">Профиль</span>
     </a>
@@ -28,14 +28,29 @@
       <span class="menu-text">Поиск</span>
     </a>
 
-    <a class="menu-item" routerLink="/admin">
+    <a class="menu-item" routerLink="/leader-search"  *ngIf="roles.indexOf('LEADER') != -1">
+      <img src="assets/img/search.png" alt="SRCH">
+      <span class="menu-text">Начальничий Поиск</span>
+    </a>
+
+    <a class="menu-item" routerLink="/tasks"  *ngIf="roles.indexOf('LEADER') != -1">
+      <img src="assets/img/search.png" alt="SRCH">
+      <span class="menu-text">Задачи</span>
+    </a>
+
+    <a class="menu-item" routerLink="/admin" *ngIf="roles.indexOf('ADMINISTRATOR') != -1">
       <img src="assets/img/admin.png" alt="ADM">
       <span class="menu-text">Админ-панель</span>
     </a>
 
-    <a class="menu-item" routerLink="/auth">
+    <a class="menu-item" routerLink="/auth" *ngIf="localStorage.getItem('user-email')">
       <img src="assets/img/login.png" alt="AUTH">
-      <span class="menu-text" (click)="authService.logout()">Выйти/Войти</span>
+      <span class="menu-text" (click)="authService.logout()">Выйти</span>
+    </a>
+
+    <a class="menu-item" routerLink="/auth" *ngIf="!localStorage.getItem('user-email')">
+      <img src="assets/img/login.png" alt="AUTH">
+      <span class="menu-text" (click)="authService.logout()">Выйти</span>
     </a>
   </div>
 </div>

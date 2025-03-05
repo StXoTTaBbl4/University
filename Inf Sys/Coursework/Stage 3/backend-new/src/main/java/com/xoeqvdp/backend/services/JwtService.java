@@ -41,7 +41,7 @@ public class JwtService {
         return token;
     }
 
-    public static String generateToken(UserDetails userDetails, Long expiration) {
+    public String generateToken(UserDetails userDetails, Long expiration) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities().stream()
@@ -53,7 +53,7 @@ public class JwtService {
                 .compact();
     }
 
-    public static String extractUsername(String token) {
+    public String extractUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(KEY) // Используем тот же ключ
                 .build()

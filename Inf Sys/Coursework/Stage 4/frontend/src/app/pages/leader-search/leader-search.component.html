@@ -1,0 +1,52 @@
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+
+    <div class="filter-form">
+      <form (ngSubmit)="onSubmit()">
+        <div>
+          <label for="input1">Hardware</label>
+          <input type="number" id="input1" [(ngModel)]="filters.hw" name="hw" min="0" required />
+        </div>
+
+        <div>
+          <label for="input2">Software</label>
+          <input type="number" id="input2" [(ngModel)]="filters.sw" name="sw" min="0" required />
+        </div>
+
+        <div>
+          <label for="input3">Processes</label>
+          <input type="number" id="input3" [(ngModel)]="filters.pr" name="pr" min="0" required />
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+
+    <table class="tokens-table">
+      <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Employee</th>
+        <th>Email</th>
+        <th>HW</th>
+        <th>SW</th>
+        <th>PR</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of filteredEmployees">
+        <td>{{ e.employeeId }}</td>
+        <td>{{ e.name }}</td>
+        <td>{{ e.email }}</td>
+        <td>{{ e.hardwarePoints }}</td>
+        <td>{{ e.softwarePoints }}</td>
+        <td>{{ e.processesPoints }}</td>
+
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

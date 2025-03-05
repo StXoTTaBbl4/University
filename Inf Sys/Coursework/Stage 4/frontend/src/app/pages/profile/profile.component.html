@@ -1,1 +1,58 @@
-<p>profile works!</p>
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div class="info">
+      <div>
+        <h3>
+          Имя
+        </h3>
+        {{info?.name}}
+      </div>
+      <div>
+        <h3>
+          Почта
+        </h3>
+        {{info?.email}}
+      </div>
+      <div>
+        <h3>
+          ID
+        </h3>
+        {{info?.id}}
+      </div>
+      <div>
+        <h3>
+          Роли
+        </h3>
+        {{info?.roles}}
+      </div>
+    </div>
+    <div id="skills">
+      <div id="hardware" >
+        <h1> Hardware </h1>
+        <div *ngFor="let skill of hw_skills" class="skill-card">
+          <h3>{{ skill.product }}</h3>
+          <p><strong>Task:</strong> {{ skill.task }}</p>
+          <p><strong>Level:</strong> {{ skill.level }}</p>
+        </div>
+      </div>
+      <div id="software" >
+        <h1> Software </h1>
+        <div *ngFor="let skill of sw_skills" class="skill-card">
+          <h3>{{ skill.product }}</h3>
+          <p><strong>Task:</strong> {{ skill.task }}</p>
+          <p><strong>Level:</strong> {{ skill.level }}</p>
+        </div>
+      </div>
+      <div id="processes" >
+        <h1> Processes </h1>
+        <div *ngFor="let skill of pr_skills" class="skill-card">
+          <h3>{{ skill.product }}</h3>
+          <p><strong>Task:</strong> {{ skill.task }}</p>
+          <p><strong>Level:</strong> {{ skill.level }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,13 @@ import {MatFormField} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 
+
+interface Category {
+  id: number;
+  name: string;
+  subCategories: string[];
+}
+
 @Component({
   selector: 'app-certificates',
   imports: [
@@ -29,60 +36,47 @@ export class CertificatesComponent implements OnInit, AfterViewInit{
   protected isModalOpen: boolean = false;
   certificate: any = {
     name: '',
-    type: '',
-    cType: '',
+    category: '',
+    subcategory: '',
     subType: '',
-    date: '',
     file: null
   };
 
-  categories: any[] = [{id: 1, name:"type1"}, {id: 2, name:"type2"}]; // Категории (тип)
-  subCategories: any[] = [{id: 1, name:"subtype1"}, {id: 2, name:"subtype2"}]; // Подкатегории (подтип)
+  categories: Category[] = [];
+  subCategories:string[] = []
 
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.loadCertificates()
-    // this.loadCategories();
-    // this.loadSubCategories();
+    this.loadCategories();
   }
 
   loadCertificates() {
-    // this.http.get<any[]>('http://localhost:8080/api/files/certificates').subscribe({
-    //   next: (response) => {
-    //     this.data = response; // Привязываем ответ сервера к переменной data
-    //     console.log('Данные загружены:', this.data);
-    //   },
-    //   error: (error) => {
-    //     console.error('Ошибка загрузки сертификатов', error);
-    //   }
-    // });
-    this.http.get<any[]>('http://localhost:8080/api/certificates/ping').subscribe({
+    this.http.get<any[]>('http://localhost:8080/api/certificates/certificates').subscribe({
       next: (response) => {
-        this.data = response; // Привязываем ответ сервера к переменной data
-        console.log(response);
+        this.data = response;
+        this.snackbar.showSnackbar('Данные загружены');
       },
       error: (error) => {
         console.error('Ошибка загрузки сертификатов', error);
+        this.snackbar.showSnackbar('Ошибка загрузки сертификатов, статус: ' + error.status);
       }
     });
   }
 
   loadCategories() {
-    this.http.get('http://localhost:8080/api/files/categories').subscribe((data: any) => {
-      this.categories = data;
+    this.http.get<Category[]>('http://localhost:8080/api/certificates/categories').subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (error) => {
+        console.error('Ошибка загрузки категорий:', error);
+        this.snackbar.showSnackbar('Ошибка загрузки категорий.')
+      }
     });
   }
-
-  loadSubCategories() {
-    if (this.certificate.type) {
-      this.http.get(`http://localhost:8080/api/files/categories/${this.certificate.type}/subcategories`).subscribe((data: any) => {
-        this.subCategories = data;
-      });
-    }
-  }
-
 
   ngAfterViewInit(): void {
   }
@@ -101,27 +95,42 @@ export class CertificatesComponent implements OnInit, AfterViewInit{
     }
   }
 
-  upload() {
-    if (!this.certificate.file) {
-      alert('Выберите файл');
-      return;
+  upload(form:any) {
+    if (form.valid) {
+      const formData = new FormData();
+      formData.append('file', this.certificate.file);
+      formData.append('category', this.certificate.category);
+      formData.append('subcategory', this.certificate.subcategory);
+      formData.append('name', this.certificate.name);
+
+      this.http.post('http://localhost:8080/api/certificates/upload-certificate', formData, {withCredentials: true}).subscribe({
+        next: () => {
+          this.snackbar.showSnackbar('Файл успешно загружен');
+          this.loadCertificates();
+        },
+        error: (error) => {
+          console.log(error);
+          this.snackbar.showSnackbar(error.status + ": " + error.error.message);
+        }
+      });
+      this.closeModal();
+    } else {
+      this.snackbar.showSnackbar("Заполните все поля формы для загрузки!")
+    }
+  }
+
+  onCategoryChange() {
+    this.subCategories = [];
+    this.certificate.subcategory = null;
+    for (const category in this.categories) {
+      console.log(this.categories[category].subCategories)
+      if(Number(this.categories[category].id) === Number(this.certificate.category)) {
+        this.subCategories = this.categories[category].subCategories;
+        break;
+      }
     }
 
-    const formData = new FormData();
-    formData.append('file', this.certificate.file);
-    formData.append('categoryId', this.certificate.cType);
-    formData.append('subCategoryId', this.certificate.subType);
-    formData.append('name', this.certificate.name);
-
-    this.http.post('http://localhost:8080/api/files/upload-certificate', formData, {withCredentials: true}).subscribe({
-      next: (response) => {
-        console.log('Файл успешно загружен');
-        this.loadCertificates();
-      },
-      error: (error) => {
-        console.log('Ошибка загрузки файла');
-      }
-    });
+    console.log(this.subCategories)
   }
 
 }

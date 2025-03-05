@@ -46,10 +46,11 @@ export class AuthComponent  implements AfterViewInit{
     if (form.valid) {
       this.http.post('http://localhost:8080/api/auth/login' , this.loginFormData, { withCredentials: true }).subscribe({
         next: (response: any) => {
-          console.log('Ответ от сервера:', response);
           localStorage.setItem("access-token", response.accessToken)
           localStorage.setItem('expires-at', response.accessTokenExpiresAt);
           localStorage.setItem('user-email', this.loginFormData.email);
+          localStorage.setItem('user-roles', response.roles);
+          localStorage.setItem('user-id', response.id);
           this.snackbar.showSnackbar(response.message)
 
           this.authService.scheduleTokenRefresh();
@@ -76,6 +77,8 @@ export class AuthComponent  implements AfterViewInit{
           this.snackbar.showSnackbar(error.error.message);
         }
       });
+    } else {
+      this.snackbar.showSnackbar("Все поля должны быть заполнены корректно. ")
     }
   }
 

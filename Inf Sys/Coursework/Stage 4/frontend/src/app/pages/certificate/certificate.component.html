@@ -4,12 +4,31 @@
   <div class="inner-wrapper">
     <div #toolbar class="toolbar">
       <div #toolbar__info class="toolbar__info">
-        Информация тут
+        <div>
+          <h3>ID:</h3>
+          {{info?.id}}
+        </div>
+        <div>
+          <h3>Владелец:</h3>
+          {{info?.employee_name}}
+        </div>
+        <div>
+          <h3>Название</h3>
+          {{info?.name}}
+        </div>
+        <div>
+          <h3>Категория</h3>
+          {{info?.category}}
+        </div>
+        <div>
+          <h3>Подкатегория</h3>
+          {{info?.subCategory}}
+        </div>
       </div>
 
       <div #toolbar__buttons class="toolbar__buttons">
-        <button (click)="deleteCertificate()">Удалить</button>
-        <button>Редактировать</button>
+        <button (click)="openModal()">Удалить</button>
+        <button (click)="downloadFile()" [disabled]="!fileBlob">Скачать файл</button>
       </div>
 
     </div>
@@ -22,7 +41,7 @@
   <div class="modal-overlay" *ngIf="isModalOpen">
     <div class="modal">
       <h2>Удалить сертификат?</h2>
-      <button class="delete-btn" (click)="closeModal()">Да</button>
+      <button class="delete-btn" (click)="deleteCertificate()">Да</button>
       <button class="close-btn" (click)="closeModal()">Нет</button>
     </div>
   </div>

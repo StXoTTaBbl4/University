@@ -7,43 +7,52 @@
       <thead>
       <tr>
         <th>ID</th>
-        <th>Имя</th>
+        <th>Название</th>
+        <th>Категория</th>
+        <th>Подкатегория</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let certificate of data" [routerLink]="['/certificate/'+certificate.id]">
+      <tr *ngFor="let certificate of data" [routerLink]="['../certificate', certificate.id]">
         <td>{{ certificate.id }}</td>
         <td>{{ certificate.name }}</td>
+        <td>{{ certificate.category }}</td>
+        <td>{{ certificate.subCategory }}</td>
       </tr>
       </tbody>
     </table>
   </div>
 </div>
-<div #modal>
+<div>
   <div class="modal-overlay" *ngIf="isModalOpen">
-    <form>
+    <form #certificateForm="ngForm" (ngSubmit)="upload(certificateForm)">
       <div class="modal">
         <h2>Загрузка файла</h2>
 
         <label>Имя:</label>
         <input type="text" [(ngModel)]="certificate.name" name="name" class="input-field" required>
 
-        <label>Тип:</label>
-        <select [(ngModel)]="certificate.cType" name="type" class="input-field">
-          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        <label for="category">Категория:</label>
+        <select id="category" [(ngModel)]="certificate.category" name="category" (change)="onCategoryChange()" required>
+          <option [value]="null" disabled selected>Выберите категорию</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
         </select>
 
-        <label>Подтип:</label>
-        <select [(ngModel)]="certificate.subType" name="subType" class="input-field">
-          <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.name }}</option>
+        <label for="subcategory">Подкатегория</label>
+        <select id="subcategory"  [(ngModel)]="certificate.subcategory" name="subcategory" [disabled]="subCategories.length == 0">
+          <option *ngFor="let subCategory of subCategories" [value]="subCategory">
+            {{ subCategory }}
+          </option>
         </select>
 
         <label>Файл (PNG, JPG, PDF):</label>
-        <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpg, application/pdf">
+        <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpg, image/jpeg, application/pdf" required>
 
         <div class="modal-actions">
           <button type="button" (click)="closeModal()" class="close-btn">Закрыть</button>
-          <button type="button" (click)="upload()" class="upload-btn">Загрузить</button>
+          <button type="submit"  class="upload-btn">Загрузить</button>
         </div>
       </div>
     </form>

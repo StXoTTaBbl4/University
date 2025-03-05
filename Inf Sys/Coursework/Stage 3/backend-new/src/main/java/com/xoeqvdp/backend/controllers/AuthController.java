@@ -9,12 +9,10 @@ import com.xoeqvdp.backend.services.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,20 +47,22 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        Employee employee = employeeRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        Optional<Employee> employee = employeeRepository.findByEmail(request.getEmail());
+        if (employee.isEmpty()) {
+            return ResponseEntity.status(403).body(new LoginResponseDTO(null, null, "Пользователь не найден", null, null));
+        }
 
-        Cookie cookie = new Cookie("refresh_token", jwtService.generateRefreshToken(employee));
+        Cookie cookie = new Cookie("refresh_token", jwtService.generateRefreshToken(employee.get()));
         cookie.setHttpOnly(true);
         cookie.setSecure(false); //TODO потом вернуть на true
         cookie.setPath("api/auth/refresh");
         cookie.setMaxAge(jwtService.getRefreshTokenExpirationPeriod());
         response.addCookie(cookie);
 
-        String accessToken = jwtService.generateAccessToken(employee);
+        String accessToken = jwtService.generateAccessToken(employee.get());
         Long accessTokenExpiresAt = Instant.now().toEpochMilli() + jwtService.getAccessTokenExpirationPeriod();
 
-        return ResponseEntity.ok(new LoginResponseDTO(accessToken, accessTokenExpiresAt, ""));
+        return ResponseEntity.ok(new LoginResponseDTO(accessToken, accessTokenExpiresAt, "", employee.get().getRoles(), employee.get().getId()));
     }
 
     @Operation(summary = "Регистрация пользователя", description = "Отправка почты, ФИО и пароля на сервер для создания пользователя(по дефолту у всех роль EMPLOYEE)")
@@ -86,13 +86,14 @@ public class AuthController {
     @Operation(summary = "Обновление Access-токена", description = "Получение нового Access-токена по Refresh-токену")
     @ApiResponse(responseCode = "200", description = "Новый токен успешно выдан")
     @ApiResponse(responseCode = "401", description = "Либо Refresh-токен просрочен/отозван, либо не сошлись email из токена и переданный.")
-    @PostMapping("/refresh")
-    public ResponseEntity<RefreshAccessTokenResponseDTO> refreshAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken, RefreshAccessTokenRequestDTO request) {
+    @PostMapping("/refreshToken")
+    public ResponseEntity<RefreshAccessTokenResponseDTO> refreshAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken, @RequestBody RefreshAccessTokenRequestDTO request) {
         Optional<Employee> employee = employeeRepository.findByEmail(request.getEmail());
         Boolean isTokenRevoked= refreshTokenService.isRefreshTokenRevoked(refreshToken);
         if (employee.isPresent() && jwtService.validateToken(refreshToken, employee.get()) && isTokenRevoked != null && !isTokenRevoked){
-             return ResponseEntity.ok(new RefreshAccessTokenResponseDTO(jwtService.generateAccessToken(employee.get()), ""));
+            String token = jwtService.generateAccessToken(employee.get());
+             return ResponseEntity.ok(new RefreshAccessTokenResponseDTO(token, jwtService.getExpirationDate(token).toEpochMilli(),""));
         }
-        return ResponseEntity.status(401).body(new RefreshAccessTokenResponseDTO(null, "Refresh token expired||Wrong email"));
+        return ResponseEntity.status(401).body(new RefreshAccessTokenResponseDTO(null, null,"Refresh token expired||Wrong email"));
     }
 }

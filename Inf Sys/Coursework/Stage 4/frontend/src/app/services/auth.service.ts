@@ -30,18 +30,20 @@ export class AuthService {
   scheduleTokenRefresh(): void {
     const expiresAt = Number(localStorage.getItem('expires-at'));
     const now = Date.now();
-    const delay = expiresAt - now - 60000*4; //каждую минуту
-    // const delay = expiresAt - now - 60000; //за минуту до
+    // const delay = expiresAt - now - 60000*14.5; //каждую минуту
+    const delay = expiresAt - now - 60000; //за минуту до
     console.log("Delay set " + delay);
 
     if (delay > 0) {
       this.refreshTimeout = setTimeout(() => this.refreshToken(), delay);
+    } else {
+      this.refreshToken();
     }
   }
 
 
   refreshToken(): void {
-    console.log("Refreshing...")
+    console.log("Refreshing access token...");
 
     this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/refreshToken`, {email: localStorage.getItem('user-email')}, { withCredentials: true })
       .subscribe({
@@ -50,8 +52,10 @@ export class AuthService {
           localStorage.setItem('expires-at', response.expiresAt.toString());
           this.scheduleTokenRefresh();
           this.isAuthenticated.next(true);
+          console.log("Successfully refreshed.")
         },
-        error: () => {
+        error: (err) => {
+          console.log(err)
           this.logout();
         }
       });
@@ -61,7 +65,9 @@ export class AuthService {
   logout(triggerStorage=true): void {
     localStorage.removeItem('access-token');
     localStorage.removeItem('expires-at');
-    localStorage.removeItem('user-email')
+    localStorage.removeItem('user-email');
+    localStorage.removeItem('user-roles');
+    localStorage.removeItem('user-id');
     clearTimeout(this.refreshTimeout);
     this.isAuthenticated.next(false);
     // this.http.post<{ accessToken: string; expiresAt: number }>(`${this.apiUrl}/logout`, {}, { withCredentials: true })

@@ -53,9 +53,9 @@ public class SecurityConfig {
                                 "/configuration/ui",     // Swagger UI конфигурация
                                 "/configuration/security"
                         ).permitAll() // Доступ для всех
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMINISTRATOR") // Только администраторы
-                        .requestMatchers("/api/leader/**").hasAnyAuthority("LEADER", "ADMINISTRATOR") // Лидеры и администраторы
-                        .requestMatchers("/api/employee/**").hasAnyAuthority("EMPLOYEE", "LEADER", "ADMINISTRATOR") // Все пользователи
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMINISTRATOR")
+                        .requestMatchers("/api/leader/**").hasAnyAuthority("LEADER", "ADMINISTRATOR")
+                        .requestMatchers("/api/employee/**", "/api/profile/**", "/api/certificates/**", "/api/assessment/**").hasAnyAuthority("EMPLOYEE", "LEADER", "ADMINISTRATOR")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

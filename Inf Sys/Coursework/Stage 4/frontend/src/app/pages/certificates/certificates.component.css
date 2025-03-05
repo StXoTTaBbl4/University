@@ -126,3 +126,15 @@
   background: #0056b3;
 }
 
+.certificates-table th{
+  font-size: 2rem;
+}
+
+.certificates-table tr{
+  font-size: 1.5rem;
+}
+
+.certificates-table tbody tr:hover {
+  background-color: rgba(250, 128, 114, 0.5);
+}
+

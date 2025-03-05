@@ -34,12 +34,12 @@
 
       <div class="auth__form__field-wrapper">
         <label for="reg-pwd">Пароль</label>
-        <input type="password" name="pwd" class="reg-pwd auth__form_data" id="reg-pwd" [(ngModel)]="registrationFormData.password" (keyup)="validatePassword()" placeholder="Пароль" required/>
+        <input type="password" name="pwd" class="reg-pwd auth__form_data" id="reg-pwd" [(ngModel)]="registrationFormData.password" (keyup)="validatePassword()" placeholder="Пароль" minlength="5" required/>
       </div>
 
       <div class="auth__form__field-wrapper">
         <label for="re-reg-pwd">Повторите пароль</label>
-        <input type="password" name="re-pwd" class="reg-pwd auth__form_data" id="re-reg-pwd" [(ngModel)]="re_reg_pwd" (keyup)="validatePassword()" placeholder="Повторите пароль" required/>
+        <input type="password" name="re-pwd" class="reg-pwd auth__form_data" id="re-reg-pwd" [(ngModel)]="re_reg_pwd" (keyup)="validatePassword()" placeholder="Повторите пароль" minlength="5" required/>
       </div>
 
       <input type="submit" value="Зарегистрироваться" class="auth__form_submit-button" [disabled]="isButtonDisabled">

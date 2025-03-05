@@ -1,0 +1,19 @@
+.filter-form {
+  margin: 20px;
+}
+
+.filter-form div {
+  margin-bottom: 10px;
+}
+
+.filter-form button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.filter-form button:hover {
+  background-color: #0056b3;
+}
