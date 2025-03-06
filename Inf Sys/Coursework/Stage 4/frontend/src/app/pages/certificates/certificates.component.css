@@ -59,8 +59,9 @@
 
 /* Само модальное окно */
 .modal {
-  background: #303030;
-  padding: 20px;
+  background: rgba(48,48,48,0.3);
+  border: 2px solid var(--default-bright);
+  padding: 50px;
   width: 350px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -86,33 +87,23 @@
   justify-content: space-between;
 }
 
-.upload-btn {
-  background: #28a745;
-  color: white;
+.modal-button {
+  border: 3px none var(--default-bright);
+  border-bottom-style: solid;
   padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
+  margin: 0 10px;
+  background-color: transparent;
   cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--default-bright);
 }
 
-.upload-btn:hover {
-  background: #218838;
+.modal-button:hover {
+  border: 3px none salmon;
+  border-bottom-style: solid;
 }
 
-.close-btn {
-  background: #dc3545;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  background: #c82333;
-}
-
-/* Кнопка для открытия */
+  /* Кнопка для открытия */
 .open-modal-btn {
   background: #007bff;
   color: white;
@@ -136,5 +127,14 @@
 
 .certificates-table tbody tr:hover {
   background-color: rgba(250, 128, 114, 0.5);
+}
+
+.certificates-table thead {
+  user-select: none;
+}
+
+.modal {
+  display: flex;
+  align-items: center;
 }
 

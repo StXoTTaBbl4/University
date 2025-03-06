@@ -16,7 +16,7 @@ a {
   transition: width 0.3s;
   overflow: hidden;
   white-space: nowrap;
-  background-color: #333;
+  background-color: rgba(51,51,51,0.3);
   color: white;
 }
 

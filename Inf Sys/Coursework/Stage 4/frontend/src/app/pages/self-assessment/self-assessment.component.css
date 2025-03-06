@@ -4,6 +4,7 @@
 
 .block {
   display: block;
+  padding-bottom: 30px;
 }
 
 .assessment_navigation__button {

@@ -8,7 +8,7 @@
   margin: 20px;
   display: none;
   min-width: 250px;
-  background-color: #202020;
+  background-color: rgba(32,32,32,0.3);
   box-shadow: 0 0 10px salmon;
   color: var(--default-bright);
   text-align: center;

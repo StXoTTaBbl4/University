@@ -15,14 +15,11 @@ import java.util.List;
 @RequestMapping("/api/leader")
 public class LeaderController {
 
-
-
     private final SkillsRepository skillsRepository;
 
     public LeaderController( SkillsRepository skillsRepository) {
         this.skillsRepository = skillsRepository;
     }
-
 
     @PostMapping("/search/filterEmployees")
     public ResponseEntity<List<FilteredByScoreEmployeesDTO>> getSearchOptions(@RequestBody LeaderSearchFiltersDTO filters){
