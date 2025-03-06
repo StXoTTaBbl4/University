@@ -1,10 +1,13 @@
 <div class="outer-wrapper">
   <sidebar></sidebar>
   <div class="inner-wrapper">
-    This is just a placeholder page
-    <img
-      ngSrc="https://media.giphy.com/media/5Zesu5VPNGJlm/giphy.gif?cid=790b76117kxrei0y5xipfvtz0exaxkrnlx5fa19cll28pthq&ep=v1_gifs_search&rid=giphy.gif&ct=g"
-      alt="MONKEY" height="150" width="500" priority>
-<!--    <img ngSrc="https://media1.tenor.com/m/0i1iYtef-E8AAAAd/senator-armstrong-mgr.gif" alt="ARMSTRONG" height="150" width="500"/>-->
+    <h1>История репозитория {{repoName}}, в частности и создания этого адища</h1>
+    <div *ngIf="commits.length != 0">
+      <div *ngFor="let commit of commits" class="commit">
+        <div class="commit-name">{{commit.commit.author.name}}</div>
+        <div class="commit-date">{{commit.commit.author.date}}</div>
+        <div class="commit-message">{{commit.commit.message}}</div>
+      </div>
+    </div>
   </div>
 </div>

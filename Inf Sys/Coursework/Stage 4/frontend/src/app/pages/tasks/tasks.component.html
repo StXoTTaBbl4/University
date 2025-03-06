@@ -1,1 +1,35 @@
-<p>tasks works!</p>
+<div class="outer-wrapper">
+  <snackbar></snackbar>
+  <sidebar></sidebar>
+  <div class="inner-wrapper">
+    <div style="color: red">{{errorMsg}}</div>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label for="name">Название:</label>
+        <input id="name" formControlName="name" required />
+      </div>
+
+      <div>
+        <label for="description">Описание:</label>
+        <textarea id="description" formControlName="description" required></textarea>
+      </div>
+
+      <div>
+        <label for="employeeIds">ID сотрудников (через запятую):</label>
+        <input id="employeeIds" formControlName="employeeIds" />
+      </div>
+
+      <div>
+        <label for="taskId">Таск-ограничитель:</label>
+        <input id="taskId" formControlName="taskId" />
+      </div>
+
+      <div>
+        <label for="levelId">Уровень таски(0-4):</label>
+        <input id="levelId" formControlName="levelId" />
+      </div>
+
+      <button type="submit">Создать задачу</button>
+    </form>
+  </div>
+</div>

@@ -23,7 +23,7 @@ public class CommonExceptionAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public  ResponseEntity<ErrorResponse> handleRuntimeException(Exception ex) {
-        log.warn("RuntimeException occurred during execution: {}", ex.getMessage());
+        log.error("RuntimeException occurred during execution: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse("Runtime error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
