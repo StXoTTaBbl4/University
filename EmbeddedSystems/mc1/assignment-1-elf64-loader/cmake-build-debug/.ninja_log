@@ -1,6 +1,0 @@
-# ninja log v6
-51	84	7530565472549057	D:/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug/CMakeFiles/cmake.verify_globs	4c1de0674b61532f
-84	788	7530565479004648	build.ninja	433c716161155360
-19	39	7530565480109786	D:/ITMO/3-re/University/EmbeddedSystems/mc1/assignment-1-elf64-loader/cmake-build-debug/CMakeFiles/cmake.verify_globs	4c1de0674b61532f
-39	322	7530565480309779	solution/CMakeFiles/elf64-loader.dir/src/main.c.obj	386f56519adcb7c8
-322	619	7530565483142403	solution/elf64-loader.exe	8b1df0a15030cd65
