@@ -1,0 +1,20 @@
+digraph DKA {
+    rankdir=LR;
+    
+    // Состояния
+    q0 [label="q0 (S)" shape=circle];
+    q1 [label="q1 (X)" shape=circle];
+    q2 [label="q2 (X)" shape=doublecircle];
+    q3 [label="q3 (F)" shape=circle];
+    q4 [label="q4 (E)" shape=circle];
+
+    // Переходы
+    q0 -> q1 [label="a"];
+    q0 -> q3 [label="b, c"];
+    q1 -> q2 [label="b, c"];
+    q2 -> q1 [label="b, c, ε"];
+    q3 -> q2 [label="a"];
+    q3 -> q4 [label="b, c"];
+    q4 -> q1 [label="a"];
+    q4 -> q3 [label="b, c"];
+}	

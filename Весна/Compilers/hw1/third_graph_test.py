@@ -11,21 +11,18 @@ class DFA:
         # G→bD|cD|E
         # D→bG|cG
         # E→ε
-        self.states = {"q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7"}  # Узлы
+        self.states = {"q0", "q1", "q2", "q3", "q4","q5"}  # Узлы
         self.alphabet = {"a", "b", "c"}  # Допустимые символы
         self.start_state = "q0"  # Начальное состояние
-        self.accept_states = {"q7"}  # Конечное состояние
+        self.accept_states = {"q5"}  # Конечное состояние
 
         # Таблица переходов (состояние -> {входной символ -> следующее состояние})
         self.transitions = {
             "q0": {"a": "q1", "b": "q3", "c": "q3"},    # S
             "q1": {"b": "q2", "c": "q2"},               # F
-            "q2": {"b": "q1", "c": "q1", "#": "q7"},    # M
-            "q3": {"a": "q4", "b": "q6", "c": "q6"},    # X
-            "q4": {"b": "q5", "c": "q5", "#": "q7"},    # Z
-            "q5": {"b": "q4", "c": "q4"},               # K
-            "q6": {"a": "q8", "b": "q3", "c": "q3"},               # Y
-            "q8": {"b": "q4", "c": "q4"},               # Y
+            "q2": {"b": "q1", "c": "q1", "#": "q5"},    # M
+            "q3": {"a": "q2", "b": "q4", "c": "q4"},    # X
+            "q4": {"a": "q1", "b": "q3", "c": "q3"},    # Z
         }
 
     def process_input(self, input_string, debug=False):
@@ -42,7 +39,7 @@ class DFA:
                 if debug:
                     print(f"\t\tСимвол найден в словаре, новое состояние: {state}")
 
-                if state == "q4":
+                if state == "q5":
                     return True
             else:
                 print_error(input_string, symbol, i)
@@ -52,7 +49,7 @@ class DFA:
 
 dfa = DFA()
 
-TEST_CASES = ["cbcbc#", "cbcbbca#", "ccccca#", "abacb#", "abc#", "abcb#", "bcba#", "bcac#", "cbac#", "ccac#", "bbbab#", "cbcacb"]
+TEST_CASES = ["cbcbc#", "cbcbbca#", "ccccca#", "abacb#", "abc#", "abcb#", "bcba#", "bcac#", "cbac#", "ccac#", "bbbab#", "cbcacb#", "caccbb#"]
 for string in TEST_CASES:
     result = dfa.process_input(string, debug=False)
     print(f"Строка '{string}' -> {'Допустима' if result else 'Недопустима'}")
