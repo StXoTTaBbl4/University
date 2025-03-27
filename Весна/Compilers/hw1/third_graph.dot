@@ -3,16 +3,18 @@ digraph DKA {
     
     // Состояния
     q0 [label="q0 (S)" shape=circle];
-    q1 [label="q1 (X)" shape=circle];
-    q2 [label="q2 (X)" shape=doublecircle];
-    q3 [label="q3 (F)" shape=circle];
-    q4 [label="q4 (E)" shape=circle];
+    q1 [label="q1 (F)" shape=circle];
+    q2 [label="q2 (M)" shape=circle];
+    q3 [label="q3 (X)" shape=circle];
+    q4 [label="q4 (Z)" shape=circle];
+    q5 [label="q5 (Exit)" shape=doublecircle];
 
     // Переходы
     q0 -> q1 [label="a"];
     q0 -> q3 [label="b, c"];
     q1 -> q2 [label="b, c"];
-    q2 -> q1 [label="b, c, ε"];
+    q2 -> q1 [label="b, c"];
+    q2 -> q5 [label="#"];
     q3 -> q2 [label="a"];
     q3 -> q4 [label="b, c"];
     q4 -> q1 [label="a"];
