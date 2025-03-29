@@ -1,6 +1,9 @@
 package org.xoeqvdp;
 
+import org.junit.Test;
+
 import static java.lang.Math.PI;
+import static org.junit.Assert.assertEquals;
 
 
 public class ArcCos {
@@ -12,11 +15,11 @@ public class ArcCos {
         System.out.println(custom.arccos(0.5));
     }
 
-    private static final int MAX_ITERATIONS = 1000;
+    private static final int MAX_ITERATIONS = 10000;
 
     private static final double EPSILON = 1e-10;
 
-    public Double arccos(Double val){
+    public Double arccos(Double val) {
         if (val.isNaN() || val > 1 || val < -1) {
             return null;
         }
@@ -29,8 +32,8 @@ public class ArcCos {
             return PI;
         }
 
-        double result = PI / 2; // Начальное значение
-        double term = val; // Первый член ряда
+        double result = PI / 2;
+        double term = val;
         int n = 0;
 
         while (Math.abs(term) > EPSILON && n < MAX_ITERATIONS) {
