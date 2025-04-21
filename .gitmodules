@@ -1,6 +1,3 @@
 [submodule "EmbeddedSystems/mc1/assignment-1-elf64-loader"]
 	path = EmbeddedSystems/mc1/assignment-1-elf64-loader
 	url = https://gitlab.se.ifmo.ru/262512/assignment-1-elf64-loader
-[submodule "Весна/MP/lab2"]
-	path = Весна/MP/lab2
-	url = https://gitlab.se.ifmo.ru/multithreading-programming/itmo_spring_2025/02-posix/262512.git
