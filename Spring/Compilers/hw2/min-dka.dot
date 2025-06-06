@@ -1,0 +1,17 @@
+digraph Minimized_DFA {
+    rankdir=LR;
+    size="8,5";
+    
+    node [shape = circle, style=filled, fillcolor=lightblue];
+    A, B;
+    start [shape=point, style=invis];
+    B [shape=doublecircle, fillcolor=lightgreen];
+
+    start -> A;
+    A -> B [label="b"];
+    A -> A [label="a, c"];
+
+    B -> B [label="b"];
+    B -> A [label="a, c"];
+
+}

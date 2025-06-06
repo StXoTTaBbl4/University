@@ -1,0 +1,40 @@
+// Вычисление факториала числа 5
+n = 5;
+res = 1;
+counter = n;
+
+while (counter > 0) {
+    res = res * counter;
+    counter = counter - 1;
+}
+
+print "Факториал от";
+print n;
+print "равен";
+print res; // Ожидаемый вывод: 120
+
+// Проверка uninitialized
+// print uninitVar; // NameError
+
+// Проверка деления на ноль
+// badDiv = 10 / 0; // ZeroDivisionError
+// print badDiv;
+
+a = 10;
+b = 20;
+if (a > b) {
+    print "a > b (не должно напечататься)";
+} else {
+    print "a <= b (должно напечататься)";
+}
+
+c = 0;
+if (c == 0) {
+    print "c is zero";
+}
+
+if (c) { // c это 0, трактуется как false
+    print "c is truthy (не должно)";
+} else {
+    print "c is falsy (должно)";
+}

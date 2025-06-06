@@ -1,0 +1,36 @@
+a = 48;
+b = 18;
+
+print "НОД для";
+print a;
+print "и";
+print b;
+print "равен:";
+c = 5;
+while (b != 0) {
+    temp = b;
+    remainder = a - (a / b) * b; 
+    
+    step1 = a;
+    print "step a";
+    print step1;
+
+    step4 = b;
+    print "step b";
+    print step4;
+
+    step2 = a / b;
+    print "step  (a / b)";
+    print step2;
+
+    step3 = step2 * b;
+    print "step  (a / b) * b";
+    print step3;
+
+    a = temp;
+    b = step1-step3;
+    print "remainder";
+    print remainder;
+    print "";
+}
+print a; // Ожидаемый вывод: 6

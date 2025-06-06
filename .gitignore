@@ -12,7 +12,8 @@ target/
 
 # Python
 *.pyc
-.venv
+.venv/
+venv/
 
 # Clangd
 .cache
@@ -62,3 +63,7 @@ cmake-build-debug
 # Other stuff
 local_stuff
 hibernate.cfg.xml
+
+*.mp4
+*.pptx
+Spring/IOSystems/Sem2/Fiber Channel.mp4

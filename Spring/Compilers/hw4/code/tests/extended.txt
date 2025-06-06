@@ -1,0 +1,15 @@
+one = 4 + "abc";
+two ="xyz" + 5;
+three = "abc" * 3;
+four = 3 * "abc";
+five = 5 / 2;
+six = 5.0 / 2;
+seven = "abc" + "def";
+
+print one;
+print two;
+print three;
+print four;
+print five;
+print six;
+print seven;

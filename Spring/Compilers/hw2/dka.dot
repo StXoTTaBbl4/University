@@ -1,0 +1,29 @@
+digraph DFA_from_NFA {
+    rankdir=LR;
+    size="8,5";
+    
+    node [shape = circle];
+    S0, S1, S2, S3;
+
+    start [shape=point, style=invis];
+    S2 [shape=doublecircle];          
+
+    start -> S0;
+
+
+    S0 -> S1 [label="a"];
+    S0 -> S2 [label="b"];
+    S0 -> S3 [label="c"];
+    
+    S1 -> S1 [label="a"];
+    S1 -> S2 [label="b"];
+    S1 -> S3 [label="c"];
+
+    S2 -> S1 [label="a"];
+    S2 -> S2 [label="b"];
+    S2 -> S3 [label="c"];
+
+    S3 -> S1 [label="a"];
+    S3 -> S2 [label="b"];
+    S3 -> S3 [label="c"];
+}

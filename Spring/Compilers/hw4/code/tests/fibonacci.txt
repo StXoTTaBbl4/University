@@ -1,0 +1,16 @@
+n = 10;
+a = 0;
+b = 1;
+
+if (n == 0) {
+    print a;
+} else {
+    count = 1;
+    while (count < n) {
+        temp = a + b;
+        a = b;
+        b = temp;
+        count = count + 1;
+    }
+    print b; // Ожидаемый вывод: 55
+}
